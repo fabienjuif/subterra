@@ -74,24 +74,8 @@ function App() {
         setActionPoints(old => old - 1);
         return;
       }
-
-      // ---- WAITING TILE ----
-      // control the cell is empty
-      if (targetedTile) return;
-
-      // control we didn't block path after we put tile
-      if (!canMoveFromTo(playerTile, { ...waitingTile, x, y })) return;
-
-      setTiles(old => [...old, { ...waitingTile, ...targetedCell }]);
-      setActionPoints(old => old - 1);
-      setWaitingTile(undefined);
-      setTargetedCell(undefined);
-      setAction(undefined);
-      if (action === "explore") {
-        setPlayer(old => ({ ...old, ...targetedCell }));
-      }
     },
-    [waitingTile, player, tiles, action, targetedCell]
+    [waitingTile, player, tiles, targetedCell]
   );
 
   useEffect(() => {
@@ -177,6 +161,42 @@ function App() {
             cancel
           </button>
         </div>
+      )}
+      {waitingTile && (
+        <button
+          onClick={() => {
+            if (!targetedCell) return;
+
+            const targetedTile = tiles.find(
+              tile => tile.x === targetedCell.x && tile.y === targetedCell.y
+            );
+
+            // control the cell is not empty
+            if (targetedTile) return;
+
+            // control we didn't block path after we put tile
+            const playerTile = tiles.find(
+              tile => tile.x === player.x && tile.y === player.y
+            );
+            if (
+              !canMoveFromTo(playerTile, { ...waitingTile, ...targetedCell })
+            ) {
+              return;
+            }
+
+            // update states
+            setTiles(old => [...old, { ...waitingTile, ...targetedCell }]);
+            setActionPoints(old => old - 1);
+            setWaitingTile(undefined);
+            setTargetedCell(undefined);
+            setAction(undefined);
+            if (action === "explore") {
+              setPlayer(old => ({ ...old, ...targetedCell }));
+            }
+          }}
+        >
+          done
+        </button>
       )}
       <button onClick={nextTurn}>Next turn</button>
       <div className={cn("ui-grid", classes.uiGrid)}>
