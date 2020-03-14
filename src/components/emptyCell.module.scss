@@ -1,6 +1,10 @@
 .emptyCell {
-    width: 4em;
-    height: 4em;
-    background-color: grey;
-    border: 1px solid black;
+  width: 4em;
+  height: 4em;
+  background-color: #e4e4e4;
+  border: 1px dashed #b7b7b7;
+
+  &:hover {
+      filter: brightness(0.95);
+  }
 }

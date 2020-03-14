@@ -11,7 +11,6 @@ const Tile = ({ id, start, end, top, bottom, left, right, rotation }) => {
       })}
       style={{ transform: `rotate(${rotation}deg)` }}
     >
-      tile - {id}
       <div>
         {top || <div className={classes.top}>&nbsp;</div>}
         {bottom || <div className={classes.bottom}>&nbsp;</div>}
