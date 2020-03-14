@@ -4,6 +4,7 @@ import TilesDeck from "./components/tilesDeck";
 import CardsDeck from "./components/cardsDeck";
 import Grid from "./components/grid";
 import tilesData from "./utils/tiles";
+import { roll6 } from './utils/dices'
 import classes from "./app.module.scss";
 
 const rotate = old => howMany => {
@@ -15,7 +16,9 @@ const rotate = old => howMany => {
 function App() {
   const [tiles, setTiles] = useState([]);
   const [waitingTile, setWaitingTile] = useState();
-  const [player, setPlayer] = useState({ x: 0, y: 0 });
+  const [player, setPlayer] = useState({ x: 0, y: 0, health: 3 });
+  const [actionPoints, setActionPoints] = useState(2);
+  const [turn, setTurn] = useState(0);
 
   useEffect(() => {
     setTiles([{ ...tilesData[0], x: 0, y: 0 }]);
@@ -28,9 +31,23 @@ function App() {
       setTiles(old => [...old, { ...waitingTile, x, y }]);
       setWaitingTile(undefined);
       setPlayer(old => ({ ...old, x, y }));
+      setActionPoints(old => old - 1)
     },
     [waitingTile]
   );
+
+  useEffect(() => {
+    setActionPoints(2);
+  }, [turn]);
+
+  useEffect(() => {
+    if (actionPoints === -1) {
+      if (roll6() < 4) {
+        setPlayer(old => ({ ...old, health: old.health - 1 }))
+      }
+      setTurn(old => old + 1)
+    }
+  }, [actionPoints])
 
   const onClick = useCallback(() => {
     if (!waitingTile) {
@@ -43,12 +60,20 @@ function App() {
     }
   }, [waitingTile]);
 
+  const nextTurn = useCallback(() => setTurn(old => old + 1), []);
+
   return (
     <div className="App">
+      {turn} {actionPoints}
+      <div>
+        <h4>Player</h4>
+        {player.health}
+      </div>
+      <TilesDeck tile={waitingTile} onClick={onClick} />
+      <button onClick={nextTurn}>Next turn</button>
       <div className={cn("ui-grid", classes.uiGrid)}>
         <Grid onCellClick={onCellClick} tiles={tiles} player={player} />
       </div>
-      <TilesDeck tile={waitingTile} onClick={onClick} />
       {/* <CardsDeck /> */}
     </div>
   );
