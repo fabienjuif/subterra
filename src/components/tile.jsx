@@ -2,13 +2,14 @@ import React from "react";
 import cn from "classnames";
 import classes from "./tile.module.scss";
 
-const Tile = ({ id, start, end, top, bottom, left, right }) => {
+const Tile = ({ id, start, end, top, bottom, left, right, rotation }) => {
   return (
     <div
       className={cn(classes.tile, {
         [classes.start]: start,
         [classes.end]: end
       })}
+      style={{ transform: `rotate(${rotation}deg)` }}
     >
       tile - {id}
       <div>

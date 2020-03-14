@@ -3,7 +3,7 @@ import cn from "classnames";
 import Cell from "./cell";
 import classes from "./grid.module.scss";
 
-const Grid = ({ tiles, onCellClick }) => {
+const Grid = ({ tiles, onCellClick, player }) => {
   const [cells, setCells] = useState([]);
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
@@ -50,6 +50,8 @@ const Grid = ({ tiles, onCellClick }) => {
       {cells.map(cell => (
         <Cell {...cell} onClick={onCellClick} />
       ))}
+
+      <Cell x={player.x} y={player.y} player={player} />
     </div>
   );
 };

@@ -1,23 +1,12 @@
 import React, { useState, useEffect } from "react";
-import tilesData from '../utils/tiles'
+import cn from "classnames";
 import Tile from "./tile";
+import classes from "./tilesDeck.module.scss";
 
-const TilesDeck = () => {
-  const [tiles, setTiles] = useState([]);
-
-  useEffect(() => {
-    setTiles(Array
-        .from({ length: 64 })
-        .map((_, index) => ({ id: index === 0 ? 0 : index === 63 ? 1 : 2 }))
-        .map(({ id }) => tilesData[id])
-    );
-  }, []);
-
+const TilesDeck = ({ tile, onClick }) => {
   return (
-    <div>
-      {tiles.map(tile => (
-        <Tile {...tile} />
-      ))}
+    <div className={cn("tiles-deck", classes.tilesDeck)} onClick={onClick}>
+      {!!tile ? <Tile {...tile} /> : <div>Click to play a tile</div>}
     </div>
   );
 };
