@@ -121,10 +121,27 @@ function App() {
 
   return (
     <div className="App">
-      {turn} {actionPoints}
+      turn: {turn}
       <div>
         <h4>Player</h4>
-        {player.health}
+        <table>
+          <tr>
+            <td>name</td>
+            <td>Sutat</td>
+          </tr>
+          <tr>
+            <td>archetype</td>
+            <td>Explorer</td>
+          </tr>
+          <tr>
+            <td>action points</td>
+            <td>{actionPoints}</td>
+          </tr>
+          <tr>
+            <td>health</td>
+            <td>{player.health}</td>
+          </tr>
+        </table>
       </div>
       {tilesDeckSize > -1 && (
         <TilesDeck
