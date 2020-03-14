@@ -2,7 +2,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import cn from "classnames";
 import TilesDeck from "./components/tilesDeck";
 import Grid from "./components/grid";
-import tilesData, { isOpen } from "./utils/tiles";
+import tilesData, {
+  isOpen,
+  isTilesTouched,
+  canMoveFromTo
+} from "./utils/tiles";
 import { roll, roll6, getRandomInArray } from "./utils/dices";
 import classes from "./app.module.scss";
 
@@ -26,51 +30,38 @@ function App() {
 
   const onCellClick = useCallback(
     ({ x, y }) => {
-      if (!waitingTile) return;
-
-      // control the cell is empty
-      // - it means no other tiles exists here
-      if (tiles.some(tile => tile.x === x && tile.y === y)) return;
-
       // retrieve the player tile
       const playerTile = tiles.find(
         tile => tile.x === player.x && tile.y === player.y
       );
 
+      // targeted tile (if it exists)
+      const targetedTile = tiles.find(tile => tile.x === x && tile.y === y);
+
       // control the player is next to the tile
-      if (Math.abs(playerTile.y - y) > 1 || Math.abs(playerTile.x - x) > 1) {
+      if (!isTilesTouched(playerTile, { x, y })) return;
+
+      // ---- MOVE ----
+      if (!waitingTile) {
+        // control the targeted tile exists
+        if (!targetedTile) return;
+
+        // control the player can move to the tile
+        if (!canMoveFromTo(playerTile, targetedTile)) return;
+
+        // move the player
+        setPlayer(old => ({ ...old, x, y }));
+        setActionPoints(old => old - 1);
         return;
       }
 
-      // control than we can move
-      if (playerTile.y !== y && playerTile.x !== x) return;
-      if (playerTile.y === y) {
-        // left & right
-        if (playerTile.x < x) {
-          if (!isOpen("right")(playerTile) || !isOpen("left")(waitingTile)) {
-            return;
-          }
-        } else if (
-          !isOpen("left")(playerTile) ||
-          !isOpen("right")(waitingTile)
-        ) {
-          return;
-        }
-      } else {
-        // top & bottom
-        if (playerTile.y < y) {
-          if (!isOpen("bottom")(playerTile) || !isOpen("top")(waitingTile)) {
-            return;
-          }
-        } else if (
-          !isOpen("top")(playerTile) ||
-          !isOpen("bottom")(waitingTile)
-        ) {
-          return;
-        }
-      }
+      // ---- WAITING TILE ----
+      // control the cell is empty
+      if (targetedTile) return;
 
-      // TODO: control than we can move here
+      // control we didn't block path after we put tile
+      if (!canMoveFromTo(playerTile, { ...waitingTile, x, y })) return;
+
       setTiles(old => [...old, { ...waitingTile, x, y }]);
       setWaitingTile(undefined);
       setPlayer(old => ({ ...old, x, y }));
@@ -96,12 +87,12 @@ function App() {
     if (tilesDeckSize < 0) return;
 
     if (!waitingTile) {
-      let nextTile = getRandomInArray(Object.values(tilesData).slice(2))
+      let nextTile = getRandomInArray(Object.values(tilesData).slice(2));
       if (tilesDeckSize <= 6 && tilesDeckSize === roll(tilesDeckSize)) {
-        nextTile = tilesData[1]
+        nextTile = tilesData[1];
       }
       setWaitingTile({ ...nextTile, rotation: 0 });
-      setTilesDeckSize(old => old - 1)
+      setTilesDeckSize(old => old - 1);
     } else {
       setWaitingTile(old => ({
         ...old,

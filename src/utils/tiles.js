@@ -19,8 +19,36 @@ export const isOpen = where => tile => {
   for (let i = 0; i < rotations; i += 1) {
     rotatedWhere = rotate90(rotatedWhere);
   }
-  console.log({ tile, rotations, rotatedWhere, where })
   return tile[rotatedWhere];
+};
+
+export const isTilesTouched = (tile1, tile2) =>
+  Math.abs(tile1.y - tile2.y) <= 1 && Math.abs(tile1.x - tile2.x) <= 1;
+
+export const canMoveFromTo = (from, to) => {
+  // control than we can move
+  if (from.y !== to.y && from.x !== to.x) return false;
+  if (from.y === to.y) {
+    // left & right
+    if (from.x < to.x) {
+      if (!isOpen("right")(from) || !isOpen("left")(to)) {
+        return false;
+      }
+    } else if (!isOpen("left")(from) || !isOpen("right")(to)) {
+      return false;
+    }
+  } else {
+    // top & bottom
+    if (from.y < to.y) {
+      if (!isOpen("bottom")(from) || !isOpen("top")(to)) {
+        return false;
+      }
+    } else if (!isOpen("top")(from) || !isOpen("bottom")(to)) {
+      return false;
+    }
+  }
+
+  return true
 };
 
 export default {
@@ -35,7 +63,7 @@ export default {
   1: {
     id: 1,
     end: true,
-    bottom: true,
+    bottom: true
   },
   2: {
     id: 2,
@@ -45,6 +73,6 @@ export default {
   3: {
     id: 3,
     left: true,
-    bottom: true,
+    bottom: true
   }
 };
