@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import cn from "classnames";
 import TilesDeck from "./components/tilesDeck";
-import CardsDeck from "./components/cardsDeck";
 import Grid from "./components/grid";
 import tilesData, { isOpen } from "./utils/tiles";
-import { roll6, getRandomInArray } from "./utils/dices";
+import { roll, roll6, getRandomInArray } from "./utils/dices";
 import classes from "./app.module.scss";
 
 const rotate = old => howMany => {
@@ -14,6 +13,7 @@ const rotate = old => howMany => {
 };
 
 function App() {
+  const [tilesDeckSize, setTilesDeckSize] = useState(10);
   const [tiles, setTiles] = useState([]);
   const [waitingTile, setWaitingTile] = useState();
   const [player, setPlayer] = useState({ x: 0, y: 0, health: 3 });
@@ -93,16 +93,22 @@ function App() {
   }, [actionPoints]);
 
   const onTilesDeckClick = useCallback(() => {
+    if (tilesDeckSize < 0) return;
+
     if (!waitingTile) {
-      const tiles = Object.values(tilesData)
-      setWaitingTile({ ...getRandomInArray(tiles.slice(2)), rotation: 0 });
+      let nextTile = getRandomInArray(Object.values(tilesData).slice(2))
+      if (tilesDeckSize <= 6 && tilesDeckSize === roll(tilesDeckSize)) {
+        nextTile = tilesData[1]
+      }
+      setWaitingTile({ ...nextTile, rotation: 0 });
+      setTilesDeckSize(old => old - 1)
     } else {
       setWaitingTile(old => ({
         ...old,
         rotation: rotate(old.rotation)(90)
       }));
     }
-  }, [waitingTile]);
+  }, [waitingTile, tilesDeckSize]);
 
   const nextTurn = useCallback(() => setTurn(old => old + 1), []);
 
@@ -113,7 +119,13 @@ function App() {
         <h4>Player</h4>
         {player.health}
       </div>
-      <TilesDeck tile={waitingTile} onClick={onTilesDeckClick} />
+      {tilesDeckSize > -1 && (
+        <TilesDeck
+          tile={waitingTile}
+          onClick={onTilesDeckClick}
+          size={tilesDeckSize}
+        />
+      )}
       <button onClick={nextTurn}>Next turn</button>
       <div className={cn("ui-grid", classes.uiGrid)}>
         <Grid onCellClick={onCellClick} tiles={tiles} player={player} />
