@@ -2,11 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import cn from "classnames";
 import TilesDeck from "./components/tilesDeck";
 import Grid from "./components/grid";
-import tilesData, {
-  isOpen,
-  isTilesTouched,
-  canMoveFromTo
-} from "./utils/tiles";
+import tilesData, { isTilesTouched, canMoveFromTo } from "./utils/tiles";
 import { roll, roll6, getRandomInArray } from "./utils/dices";
 import classes from "./app.module.scss";
 
@@ -23,10 +19,24 @@ function App() {
   const [player, setPlayer] = useState({ x: 0, y: 0, health: 3 });
   const [actionPoints, setActionPoints] = useState(2);
   const [turn, setTurn] = useState(0);
+  const [waitingAction, setWaitingAction] = useState(false);
+  const [action, setAction] = useState();
+  const [targetedCell, setTargetedCell] = useState();
 
   useEffect(() => {
     setTiles([{ ...tilesData[0], x: 0, y: 0 }]);
   }, []);
+
+  useEffect(() => {
+    if (!action) return;
+
+    let nextTile = getRandomInArray(Object.values(tilesData).slice(2));
+    if (tilesDeckSize <= 6 && tilesDeckSize === roll(tilesDeckSize)) {
+      nextTile = tilesData[1];
+    }
+    setWaitingTile({ ...nextTile, rotation: 0 });
+    setTilesDeckSize(old => old - 1);
+  }, [action]); // TODO:
 
   const onCellClick = useCallback(
     ({ x, y }) => {
@@ -36,16 +46,26 @@ function App() {
       );
 
       // targeted tile (if it exists)
-      const targetedTile = tiles.find(tile => tile.x === x && tile.y === y);
+      let targetedTile = undefined;
+      if (targetedCell) {
+        targetedTile = tiles.find(
+          tile => tile.x === targetedCell.x && tile.y === targetedCell.y
+        );
+      } else {
+        targetedTile = tiles.find(tile => tile.x === x && tile.y === y);
+      }
 
       // control the player is next to the tile
       if (!isTilesTouched(playerTile, { x, y })) return;
 
-      // ---- MOVE ----
       if (!waitingTile) {
-        // control the targeted tile exists
-        if (!targetedTile) return;
+        if (!targetedTile) {
+          setWaitingAction(true);
+          setTargetedCell({ x, y });
+          return;
+        }
 
+        // ---- MOVE ----
         // control the player can move to the tile
         if (!canMoveFromTo(playerTile, targetedTile)) return;
 
@@ -62,12 +82,16 @@ function App() {
       // control we didn't block path after we put tile
       if (!canMoveFromTo(playerTile, { ...waitingTile, x, y })) return;
 
-      setTiles(old => [...old, { ...waitingTile, x, y }]);
-      setWaitingTile(undefined);
-      setPlayer(old => ({ ...old, x, y }));
+      setTiles(old => [...old, { ...waitingTile, ...targetedCell }]);
       setActionPoints(old => old - 1);
+      setWaitingTile(undefined);
+      setTargetedCell(undefined);
+      setAction(undefined);
+      if (action === "explore") {
+        setPlayer(old => ({ ...old, ...targetedCell }));
+      }
     },
-    [waitingTile, player, tiles]
+    [waitingTile, player, tiles, action, targetedCell]
   );
 
   useEffect(() => {
@@ -85,20 +109,12 @@ function App() {
 
   const onTilesDeckClick = useCallback(() => {
     if (tilesDeckSize < 0) return;
+    if (!waitingTile) return;
 
-    if (!waitingTile) {
-      let nextTile = getRandomInArray(Object.values(tilesData).slice(2));
-      if (tilesDeckSize <= 6 && tilesDeckSize === roll(tilesDeckSize)) {
-        nextTile = tilesData[1];
-      }
-      setWaitingTile({ ...nextTile, rotation: 0 });
-      setTilesDeckSize(old => old - 1);
-    } else {
-      setWaitingTile(old => ({
-        ...old,
-        rotation: rotate(old.rotation)(90)
-      }));
-    }
+    setWaitingTile(old => ({
+      ...old,
+      rotation: rotate(old.rotation)(90)
+    }));
   }, [waitingTile, tilesDeckSize]);
 
   const nextTurn = useCallback(() => setTurn(old => old + 1), []);
@@ -116,6 +132,34 @@ function App() {
           onClick={onTilesDeckClick}
           size={tilesDeckSize}
         />
+      )}
+      {waitingAction && (
+        <div>
+          <button
+            onClick={() => {
+              setWaitingAction(false);
+              setAction("look");
+            }}
+          >
+            look
+          </button>
+          <button
+            onClick={() => {
+              setWaitingAction(false);
+              setAction("explore");
+            }}
+          >
+            explore
+          </button>
+          <button
+            onClick={() => {
+              setWaitingAction(false);
+              setAction(undefined);
+            }}
+          >
+            cancel
+          </button>
+        </div>
       )}
       <button onClick={nextTurn}>Next turn</button>
       <div className={cn("ui-grid", classes.uiGrid)}>

@@ -48,7 +48,7 @@ const Grid = ({ tiles, onCellClick, player }) => {
       }}
     >
       {cells.map(cell => (
-        <Cell {...cell} onClick={onCellClick} />
+        <Cell key={`${cell.x}:${cell.y}`} {...cell} onClick={onCellClick} />
       ))}
 
       <Cell x={player.x} y={player.y} player={player} />
