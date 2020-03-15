@@ -1,14 +1,18 @@
 export default {
     0: {
         id: 0,
-        type: 'gaz',
+        type: 'end',
     },
     1: {
         id: 1,
         type: 'water',
     },
-    2: { // FIXME:
+    2: {
         id: 2,
-        type: 'unknown'
+        type: 'gaz',
+    },
+    3: {
+        id: 3,
+        type: 'shaking'
     }
 }

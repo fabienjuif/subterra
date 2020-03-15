@@ -1,23 +1,18 @@
-import React, { useState, useEffect } from "react";
-import data from "../utils/cards";
+import React from "react";
 import Card from "./card";
 
-const CardsDeck = () => {
-  const [cards, setCards] = useState([]);
-
-  useEffect(() => {
-    setCards(
-      Array.from({ length: 64 })
-        .map((_, index) => ({ id: index === 0 ? 0 : index === 1 ? 1 : 2 }))
-        .map(({ id }) => data[id])
-    );
-  }, []);
-
+const CardsDeck = ({ size, card }) => {
   return (
     <div>
-      {cards.map(tile => (
-        <Card {...tile} />
-      ))}
+      <div>Remaining cards: {size}</div>
+      <Card
+        {...card}
+        text={
+          card
+            ? undefined
+            : "First card will be revealed after the first turn ends"
+        }
+      />
     </div>
   );
 };

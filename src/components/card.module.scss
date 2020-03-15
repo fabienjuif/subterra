@@ -1,18 +1,22 @@
 .card {
-    width: 5em;
-    height: 8em;
-    background-color: grey;
-    border: 1px solid black;
+  width: 5em;
+  height: 8em;
+  background-color: grey;
+  border: 1px solid black;
 }
 
 .gaz {
-    background-color: green;
+  background-color: green;
 }
 
 .water {
-    background-color: blue;
+  background-color: blue;
 }
 
 .unknown {
-    background-color: hotpink;
+  background-color: hotpink;
+}
+
+.end {
+  background-color: red;
 }

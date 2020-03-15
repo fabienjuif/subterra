@@ -3,6 +3,8 @@ import cn from "classnames";
 import TilesDeck from "./components/tilesDeck";
 import Grid from "./components/grid";
 import Player from "./components/ui/player";
+import CardsDeck from "./components/cardsDeck";
+import cardsData from "./utils/cards";
 import tilesData, {
   canMoveFromTo,
   getWrappingCells,
@@ -29,6 +31,8 @@ function App() {
   const [turn, setTurn] = useState(0);
   const [waitingAction, setWaitingAction] = useState(false);
   const [action, setAction] = useState();
+  const [cardsDeckSize, setCardsDeckSize] = useState(2);
+  const [card, setCard] = useState();
 
   const getPlayer = useCallback(index => players[index], [players]);
   const updatePlayer = useCallback(
@@ -70,7 +74,17 @@ function App() {
     setCells(cells);
   }, [tiles, playerIndex, getPlayer]);
 
-  const nextTurn = useCallback(() => setTurn(old => old + 1), []);
+  const nextTurn = useCallback(() => {
+    if (cardsDeckSize > 0) {
+      const nextCard = getRandomInArray(Object.values(cardsData).slice(1));
+      setCard(nextCard);
+      setCardsDeckSize(old => old - 1);
+    } else {
+      setCard(cardsData[0])
+    }
+
+    setTurn(old => old + 1);
+  }, [cardsDeckSize]);
 
   const toNextPlayer = useCallback(() => {
     // find next player
@@ -80,9 +94,13 @@ function App() {
       nextTurn();
     }
 
+    if (cardsDeckSize <= 0) {
+      // TODO: roll dice for each player at start of their turn
+    }
+
     setPlayerIndex(currPlayerIndex + 1);
     setActionPoints(2);
-  }, [players, nextTurn, playerIndex]);
+  }, [players, nextTurn, playerIndex, cardsDeckSize]);
 
   const onTilesDeckClick = useCallback(() => {
     if (tilesDeckSize < 0) return;
@@ -156,6 +174,7 @@ function App() {
   return (
     <div className="App">
       turn: {turn}
+      <CardsDeck size={cardsDeckSize} card={card} />
       <Player {...getPlayer(playerIndex)} actionPoints={actionPoints} />
       {tilesDeckSize > -1 && (
         <TilesDeck
@@ -197,7 +216,6 @@ function App() {
       <div className={cn("ui-grid", classes.uiGrid)}>
         <Grid onAction={onAction} cells={cells} players={players} />
       </div>
-      {/* <CardsDeck /> */}
     </div>
   );
 }
