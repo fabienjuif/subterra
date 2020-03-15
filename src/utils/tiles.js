@@ -108,8 +108,8 @@ export const getDistanceFromTo = from => to => {
 };
 
 export const findActionsOnCell = playerCell => cell => {
-  if (getDistanceFromTo(playerCell)(cell) > 1) return []
-  
+  if (getDistanceFromTo(playerCell)(cell) > 1) return [];
+
   const actions = [];
 
   if (isCellTile(cell)) {
@@ -117,7 +117,20 @@ export const findActionsOnCell = playerCell => cell => {
       actions.push({ cell, code: "move", cost: 1 });
     }
   } else {
-    if (isCellsTouched(playerCell, cell)) {
+    // create a fake tile that is opened everywhere
+    // so we can test we can go to this fake tile
+    const fakeOpenTile = {
+      ...cell,
+      top: true,
+      left: true,
+      bottom: true,
+      right: true
+    };
+
+    if (
+      isCellsTouched(playerCell, cell) &&
+      canMoveFromTo(playerCell.tile, fakeOpenTile)
+    ) {
       actions.push({ cell, code: "look", cost: 1 });
       actions.push({ cell, code: "explore", cost: 1 });
     }
