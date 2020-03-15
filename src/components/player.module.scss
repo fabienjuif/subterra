@@ -1,9 +1,28 @@
 .player {
-    width: 1em;
-    height: 1em;
-    border-radius: 100%;
-    background-color: #d46ee0;
-    top: 1em;
-    left: 1em;
-    position: absolute;
+  width: 1em;
+  height: 1em;
+  border-radius: 100%;
+  background-color: #d46ee0;
+  top: 1em;
+  left: 1em;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1em;
+}
+
+.explorer {
+  background-color: black;
+  border: 1px solid white;
+}
+
+.chef {
+  background-color: green;
+  border: 1px solid black;
+}
+
+.miner {
+  background-color: brown;
+  border: 1px solid black;
 }

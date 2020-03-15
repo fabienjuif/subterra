@@ -4,7 +4,7 @@ import { getCellsBounds } from "../utils/tiles";
 import Cell from "./cell";
 import classes from "./grid.module.scss";
 
-const Grid = ({ cells, onAction, player }) => {
+const Grid = ({ cells, onAction, players }) => {
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
 
@@ -26,7 +26,9 @@ const Grid = ({ cells, onAction, player }) => {
         <Cell key={`${cell.x}:${cell.y}`} {...cell} onAction={onAction} />
       ))}
 
-      <Cell x={player.x} y={player.y} player={player} />
+      {players.map(player => (
+        <Cell key={player.id} x={player.x} y={player.y} player={player} />
+      ))}
     </div>
   );
 };
