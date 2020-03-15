@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import cn from "classnames";
-import { getCellsBounds } from "../utils/tiles";
+import { getCellsBounds, isCellEqual } from "../utils/tiles";
 import Cell from "./cell";
 import classes from "./grid.module.scss";
 
@@ -23,11 +23,12 @@ const Grid = ({ cells, onAction, players }) => {
       }}
     >
       {cells.map(cell => (
-        <Cell key={`${cell.x}:${cell.y}`} {...cell} onAction={onAction} />
-      ))}
-
-      {players.map(player => (
-        <Cell key={player.id} x={player.x} y={player.y} player={player} />
+        <Cell
+          key={`${cell.x}:${cell.y}`}
+          {...cell}
+          onAction={onAction}
+          players={players.filter(isCellEqual(cell))}
+        />
       ))}
     </div>
   );

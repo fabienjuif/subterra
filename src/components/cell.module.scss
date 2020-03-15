@@ -18,3 +18,15 @@
   flex-direction: column;
   background-color: #bebebe5c;
 }
+
+.players {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+}
