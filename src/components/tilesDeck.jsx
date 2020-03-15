@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import cn from "classnames";
 import Tile from "./tile";
 import classes from "./tilesDeck.module.scss";

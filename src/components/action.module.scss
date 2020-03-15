@@ -1,0 +1,12 @@
+.action {
+  border: 1px solid #757575;
+  border-radius: 0.2em;
+  margin-bottom: 0.1em;
+  background-color: #6f6f6f;
+  color: #f1f1f1;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+}

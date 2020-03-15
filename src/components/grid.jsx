@@ -1,44 +1,19 @@
 import React, { useState, useEffect } from "react";
 import cn from "classnames";
+import { getCellsBounds } from "../utils/tiles";
 import Cell from "./cell";
 import classes from "./grid.module.scss";
 
-const Grid = ({ tiles, onCellClick, player }) => {
-  const [cells, setCells] = useState([]);
+const Grid = ({ cells, onAction, player }) => {
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
 
   useEffect(() => {
-    let minX = +Infinity;
-    let minY = +Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
+    const { left, top } = getCellsBounds(cells);
 
-    tiles.forEach(({ x, y }) => {
-      minX = Math.min(minX, x);
-      minY = Math.min(minY, y);
-      maxX = Math.max(maxX, x);
-      maxY = Math.max(maxY, y);
-    });
-
-    const emptyCells = [];
-
-    for (let y = minY - 1; y < maxY + 2; y += 1) {
-      for (let x = minX - 1; x < maxX + 2; x += 1) {
-        if (!tiles.some(tile => tile.x === x && tile.y === y)) {
-          emptyCells.push({ x, y, empty: true });
-        }
-      }
-    }
-
-    setCells([
-      ...emptyCells,
-      ...tiles.map(tile => ({ x: tile.x, y: tile.y, empty: false, tile }))
-    ]);
-
-    setTranslateX((minX - 1) * -1);
-    setTranslateY((minY - 1) * -1);
-  }, [tiles]);
+    setTranslateX(left * -1);
+    setTranslateY(top * -1);
+  }, [cells]);
 
   return (
     <div
@@ -48,7 +23,7 @@ const Grid = ({ tiles, onCellClick, player }) => {
       }}
     >
       {cells.map(cell => (
-        <Cell key={`${cell.x}:${cell.y}`} {...cell} onClick={onCellClick} />
+        <Cell key={`${cell.x}:${cell.y}`} {...cell} onAction={onAction} />
       ))}
 
       <Cell x={player.x} y={player.y} player={player} />
