@@ -1,4 +1,8 @@
-.uiGrid {
+.app {
+  display: flex;
+}
+
+.grid {
   position: relative;
   width: 30em;
   height: 30em;
@@ -6,6 +10,7 @@
 
 .players {
   display: flex;
+  flex-direction: column;
 
   & > :global(.player) {
     margin-right: 3em;

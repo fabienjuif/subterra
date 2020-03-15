@@ -171,7 +171,7 @@ function App() {
   if (playerIndex === undefined) return null;
 
   return (
-    <div className="App">
+    <div className={cn("app", classes.app)}>
       <div className={cn("ui-players", classes.players)}>
         {players.map((player, index) => (
           <Player
@@ -182,21 +182,23 @@ function App() {
           />
         ))}
       </div>
-      <div> turn: {turn}</div>
-      <div className={cn('ui-cards', classes.cards)}>
-        <CardsDeck size={cardsDeckSize} card={card} />
-        {tilesDeckSize > -1 && (
-          <TilesDeck
-            tile={waitingTile}
-            onClick={onTilesDeckClick}
-            size={tilesDeckSize}
-          />
-        )}
-      </div>
-      {waitingTile && <button onClick={onDone}>done</button>}
-      <button onClick={toNextPlayer}>Next player</button>
-      <div className={cn("ui-grid", classes.uiGrid)}>
+      <div className={cn("ui-grid", classes.grid)}>
         <Grid onAction={onAction} cells={cells} players={players} />
+      </div>
+      <div>
+        <div> turn: {turn}</div>
+        <div className={cn("ui-cards", classes.cards)}>
+          <CardsDeck size={cardsDeckSize} card={card} />
+          {tilesDeckSize > -1 && (
+            <TilesDeck
+              tile={waitingTile}
+              onClick={onTilesDeckClick}
+              size={tilesDeckSize}
+            />
+          )}
+        </div>
+        {waitingTile && <button onClick={onDone}>done</button>}
+        <button onClick={toNextPlayer}>Next player</button>
       </div>
     </div>
   );
