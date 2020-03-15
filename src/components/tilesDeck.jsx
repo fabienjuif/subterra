@@ -6,7 +6,7 @@ import classes from "./tilesDeck.module.scss";
 const TilesDeck = ({ tile, size, onClick }) => {
   return (
     <div className={cn("tiles-deck", classes.tilesDeck)} onClick={onClick}>
-      {!!tile ? <Tile {...tile} /> : <div>Click to play a tile ({size})</div>}
+      {!!tile ? <Tile {...tile} /> : <div>Tiles ({size})</div>}
     </div>
   );
 };

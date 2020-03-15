@@ -1,0 +1,11 @@
+.player {
+  border: 1px solid black;
+  padding: 1em;
+  min-width: 15em;
+  filter: opacity(0.8) contrast(0.8);
+}
+
+.current {
+  box-shadow: 0px 0px 20px -8px black;
+  filter: unset;
+}

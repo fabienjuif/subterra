@@ -29,7 +29,6 @@ function App() {
   const [playerIndex, setPlayerIndex] = useState();
   const [actionPoints, setActionPoints] = useState(2);
   const [turn, setTurn] = useState(0);
-  const [waitingAction, setWaitingAction] = useState(false);
   const [action, setAction] = useState();
   const [cardsDeckSize, setCardsDeckSize] = useState(2);
   const [card, setCard] = useState();
@@ -80,7 +79,7 @@ function App() {
       setCard(nextCard);
       setCardsDeckSize(old => old - 1);
     } else {
-      setCard(cardsData[0])
+      setCard(cardsData[0]);
     }
 
     setTurn(old => old + 1);
@@ -173,44 +172,27 @@ function App() {
 
   return (
     <div className="App">
-      turn: {turn}
-      <CardsDeck size={cardsDeckSize} card={card} />
-      <Player {...getPlayer(playerIndex)} actionPoints={actionPoints} />
-      {tilesDeckSize > -1 && (
-        <TilesDeck
-          tile={waitingTile}
-          onClick={onTilesDeckClick}
-          size={tilesDeckSize}
-        />
-      )}
-      {waitingAction && (
-        <div>
-          <button
-            onClick={() => {
-              setWaitingAction(false);
-              setAction("look");
-            }}
-          >
-            look
-          </button>
-          <button
-            onClick={() => {
-              setWaitingAction(false);
-              setAction("explore");
-            }}
-          >
-            explore
-          </button>
-          <button
-            onClick={() => {
-              setWaitingAction(false);
-              setAction(undefined);
-            }}
-          >
-            cancel
-          </button>
-        </div>
-      )}
+      <div className={cn("ui-players", classes.players)}>
+        {players.map((player, index) => (
+          <Player
+            key={player.id}
+            {...player}
+            current={index === playerIndex}
+            actionPoints={actionPoints}
+          />
+        ))}
+      </div>
+      <div> turn: {turn}</div>
+      <div className={cn('ui-cards', classes.cards)}>
+        <CardsDeck size={cardsDeckSize} card={card} />
+        {tilesDeckSize > -1 && (
+          <TilesDeck
+            tile={waitingTile}
+            onClick={onTilesDeckClick}
+            size={tilesDeckSize}
+          />
+        )}
+      </div>
       {waitingTile && <button onClick={onDone}>done</button>}
       <button onClick={toNextPlayer}>Next player</button>
       <div className={cn("ui-grid", classes.uiGrid)}>

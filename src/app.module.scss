@@ -1,5 +1,23 @@
 .uiGrid {
-    position: relative;
-    width: 30em;
-    height: 30em;
+  position: relative;
+  width: 30em;
+  height: 30em;
+}
+
+.players {
+  display: flex;
+
+  & > :global(.player) {
+    margin-right: 3em;
+  }
+}
+
+
+.cards {
+  display: flex;
+  align-items: center;
+
+  & > *:first-child {
+    margin-right: 2em;
+  }
 }
