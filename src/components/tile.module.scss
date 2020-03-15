@@ -1,17 +1,25 @@
 .tile {
   width: 4em;
   height: 4em;
-  background-color: #7070c5;
+  background: linear-gradient(pink, white);
   position: relative;
   border: 1px solid #0000001a;
 }
 
 .start {
-  background-color: lightblue;
+  background: lightblue;
 }
 
 .end {
-  background-color: green;
+  background: linear-gradient(green, lightgreen);
+}
+
+.water {
+  background: blue;
+}
+
+.gaz {
+  background: green;
 }
 
 .top,

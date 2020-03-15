@@ -142,7 +142,7 @@ export const findActionsOnCell = playerCell => cell => {
 export default {
   0: {
     id: 0,
-    start: true,
+    type: 'start',
     top: true,
     left: true,
     bottom: true,
@@ -150,7 +150,7 @@ export default {
   },
   1: {
     id: 1,
-    end: true,
+    type: 'end',
     bottom: true
   },
   2: {
@@ -160,7 +160,14 @@ export default {
   },
   3: {
     id: 3,
+    type: 'water',
     left: true,
-    bottom: true
+    bottom: true,
+  },
+  4: {
+    id: 4,
+    type: 'gaz',
+    left: true,
+    bottom: true,
   }
 };
