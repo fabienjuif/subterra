@@ -1,68 +1,38 @@
 import React, { useState, useEffect, useCallback } from "react";
 import cn from "classnames";
+import { useImmerReducer } from "use-immer";
 import TilesDeck from "./components/tilesDeck";
 import Grid from "./components/grid";
 import Player from "./components/ui/player";
 import CardsDeck from "./components/cardsDeck";
-import cardsData from "./utils/cards";
-import tilesData, {
-  canMoveFromTo,
+import {
   getWrappingCells,
   findActionsOnCell,
   isCellEqual
 } from "./utils/tiles";
-import { roll, roll6, getRandomInArray } from "./utils/dices";
+import { game, initState } from "./engine";
 import classes from "./app.module.scss";
 
-const rotate = old => howMany => {
-  const value = old + howMany;
-  if (value >= 360) return 0;
-  return value;
-};
-
 function App() {
-  const [tilesDeckSize, setTilesDeckSize] = useState(10);
-  const [tiles, setTiles] = useState([]);
+  const [state, dispatch] = useImmerReducer(game, initState());
   const [cells, setCells] = useState([]);
-  const [waitingTile, setWaitingTile] = useState();
-  const [players, setPlayers] = useState([]);
-  const [playerIndex, setPlayerIndex] = useState();
-  const [actionPoints, setActionPoints] = useState(2);
-  const [turn, setTurn] = useState(0);
-  const [action, setAction] = useState();
-  const [cardsDeckSize, setCardsDeckSize] = useState(2);
-  const [card, setCard] = useState();
 
-  const getPlayer = useCallback(index => players[index], [players]);
-  const updatePlayer = useCallback(
-    player =>
-      setPlayers(old =>
-        old.map(currPlayer =>
-          currPlayer.id === player.id ? player : currPlayer
-        )
-      ),
-    []
+  const getPlayer = useCallback(
+    () => state.players.find(({ current }) => current),
+    [state.players]
   );
 
   useEffect(() => {
-    const players = [
-      { id: 0, x: 0, y: 0, health: 3, name: "Sutat", archetype: "explorer" },
-      { id: 1, x: 0, y: 0, health: 3, name: "Tripa", archetype: "chef" },
-      { id: 2, x: 0, y: 0, health: 5, name: "SoE", archetype: "miner" }
-    ];
-
-    setPlayers(players);
-    setPlayerIndex(0);
-
-    setTiles([{ ...tilesData[0], x: 0, y: 0 }]);
-  }, []);
+    dispatch({ type: "ON_INIT_PLAYER" });
+  }, [dispatch]);
 
   useEffect(() => {
-    if (playerIndex === undefined) return;
+    const player = getPlayer();
+    if (!player) return;
 
-    let cells = getWrappingCells(tiles);
+    let cells = getWrappingCells(state.board.tiles);
 
-    const playerCell = cells.find(isCellEqual(getPlayer(playerIndex)));
+    const playerCell = cells.find(isCellEqual(player));
     const findActionsFromPlayer = findActionsOnCell(playerCell);
 
     cells = cells.map(cell => ({
@@ -71,134 +41,48 @@ function App() {
     }));
 
     setCells(cells);
-  }, [tiles, playerIndex, getPlayer]);
+  }, [state.board.tiles, getPlayer]);
 
-  const nextTurn = useCallback(() => {
-    if (cardsDeckSize > 0) {
-      const nextCard = getRandomInArray(Object.values(cardsData).slice(1));
-      setCard(nextCard);
-      setCardsDeckSize(old => old - 1);
-    } else {
-      setCard(cardsData[0]);
-    }
+  const onTilesDeckClick = useCallback(
+    () => dispatch({ type: "ON_ROTATE_TILE" }),
+    [dispatch]
+  );
 
-    setTurn(old => old + 1);
-  }, [cardsDeckSize]);
-
-  const toNextPlayer = useCallback(() => {
-    // find next player
-    let currPlayerIndex = playerIndex;
-    if (playerIndex === players.length - 1) {
-      currPlayerIndex = -1;
-      nextTurn();
-    }
-
-    if (cardsDeckSize <= 0) {
-      // TODO: roll dice for each player at start of their turn
-    }
-
-    setPlayerIndex(currPlayerIndex + 1);
-    setActionPoints(2);
-  }, [players, nextTurn, playerIndex, cardsDeckSize]);
-
-  const onTilesDeckClick = useCallback(() => {
-    if (tilesDeckSize < 0) return;
-    if (!waitingTile) return;
-
-    setWaitingTile(old => ({
-      ...old,
-      rotation: rotate(old.rotation)(90)
-    }));
-  }, [waitingTile, tilesDeckSize]);
-
-  const onDone = useCallback(() => {
-    // control we didn't block path after we put tile
-    const player = getPlayer(playerIndex);
-    const playerCell = cells.find(isCellEqual(player));
-    if (!canMoveFromTo(playerCell.tile, waitingTile)) {
-      return;
-    }
-
-    // update states
-    setTiles(old => [...old, waitingTile]);
-    setWaitingTile(undefined);
-    if (action.code === "explore") {
-      updatePlayer({ ...player, x: action.cell.x, y: action.cell.y });
-    }
-    setAction(undefined);
-  }, [playerIndex, getPlayer, updatePlayer, cells, waitingTile, action]);
+  const onDone = useCallback(() => dispatch({ type: "ON_DONE" }), [dispatch]);
 
   const onAction = useCallback(
     action => {
-      let player = getPlayer(playerIndex);
-      if (action.code === "move") {
-        player = { ...player, x: action.cell.x, y: action.cell.y };
-      } else {
-        let nextTile = getRandomInArray(Object.values(tilesData).slice(2));
-        if (tilesDeckSize <= 6 && tilesDeckSize === roll(tilesDeckSize)) {
-          nextTile = tilesData[1];
-        }
-        setWaitingTile({
-          ...nextTile,
-          rotation: 0,
-          x: action.cell.x,
-          y: action.cell.y
-        });
-        setTilesDeckSize(old => old - 1);
-        setAction(action);
-      }
-
-      if (actionPoints === 0) {
-        if (roll6() < 4) {
-          player = { ...player, health: player.health - 1 };
-        }
-        toNextPlayer();
-      } else {
-        setActionPoints(actionPoints - 1);
-      }
-      updatePlayer(player);
+      dispatch({ type: "ON_ACTION", payload: action });
     },
-    [
-      tilesDeckSize,
-      toNextPlayer,
-      actionPoints,
-      playerIndex,
-      getPlayer,
-      updatePlayer
-    ]
+    [dispatch]
   );
 
-  if (playerIndex === undefined) return null;
+  if (state.players.length === 0) return null;
 
   return (
     <div className={cn("app", classes.app)}>
       <div className={cn("ui-players", classes.players)}>
-        {players.map((player, index) => (
-          <Player
-            key={player.id}
-            {...player}
-            current={index === playerIndex}
-            actionPoints={actionPoints}
-          />
+        {state.players.map((player, index) => (
+          <Player key={player.id} {...player} />
         ))}
       </div>
       <div className={cn("ui-grid", classes.grid)}>
-        <Grid onAction={onAction} cells={cells} players={players} />
+        <Grid onAction={onAction} cells={cells} players={state.players} />
       </div>
       <div>
-        <div> turn: {turn}</div>
+        <div> turn: {state.turn}</div>
         <div className={cn("ui-cards", classes.cards)}>
-          <CardsDeck size={cardsDeckSize} card={card} />
-          {tilesDeckSize > -1 && (
+          <CardsDeck size={state.decks.cards.length} card={state.board.card} />
+          {state.decks.tiles.length > -1 && (
             <TilesDeck
-              tile={waitingTile}
+              tile={state.board.tile}
               onClick={onTilesDeckClick}
-              size={tilesDeckSize}
+              size={state.decks.tiles.length}
             />
           )}
         </div>
-        {waitingTile && <button onClick={onDone}>done</button>}
-        <button onClick={toNextPlayer}>Next player</button>
+        {state.board.tile && <button onClick={onDone}>done</button>}
+        {/* FIXME: <button onClick={toNextPlayer}>Next player</button> */}
       </div>
     </div>
   );
