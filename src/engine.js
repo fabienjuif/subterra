@@ -16,7 +16,7 @@ const rotate = old => howMany => {
 /**
  * This is needed because of immer.
  * If we don't do this it will log proxy information.
- * 
+ *
  * @param {State} state state or part of the state
  */
 // eslint-disable-next-line
@@ -43,6 +43,23 @@ export const initState = () => ({
 });
 
 /**
+ * If the current card is gaz: check if player is in gaz, and in which case remove them 2 HP.
+ *
+ * @param {State} state
+ * @param {Player} player the player to check
+ */
+const checkGaz = state => player => {
+  if (state.board.card.type !== "gaz") return;
+  if (
+    state.board.tiles.some(
+      tile => isCellEqual(tile)(player) && tile.type === "gaz"
+    )
+  ) {
+    player.health = Math.max(0, player.health - 2);
+  }
+};
+
+/**
  * new turn.
  *
  * New player is drawn, everybody get their action points and a new card is drawn.
@@ -58,6 +75,7 @@ export const newTurn = state => {
   }
 
   state.turn += 1;
+  state.players.forEach(checkGaz(state));
 };
 
 /**
@@ -69,6 +87,7 @@ export const newTurn = state => {
 const movePlayer = (state, player) => {
   player.x = state.action.cell.x;
   player.y = state.action.cell.y;
+  checkGaz(state)(player)
 };
 
 /**
@@ -131,11 +150,14 @@ const decrementActionPoint = state => {
 const findAndSetActions = state => {
   const [player] = getCurrentPlayer(state);
 
-  const playerTile = state.board.tiles.find(isCellEqual(player))
+  const playerTile = state.board.tiles.find(isCellEqual(player));
   const cells = getWrappingCells(state.board.tiles);
-  const findActionsFromPlayer = findActionsOnCell({ ...player, tile: playerTile });
+  const findActionsFromPlayer = findActionsOnCell({
+    ...player,
+    tile: playerTile
+  });
 
-  state.actions = cells.flatMap(findActionsFromPlayer)
+  state.actions = cells.flatMap(findActionsFromPlayer);
 };
 
 export const game = (state, action = {}) => {
@@ -162,7 +184,7 @@ export const game = (state, action = {}) => {
         y: state.action.cell.y
       };
       state.decks.tiles.length -= 1;
-      state.actions = []
+      state.actions = [];
     } else {
       movePlayer(state, player);
       decrementActionPoint(state);
