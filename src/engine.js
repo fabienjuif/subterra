@@ -56,6 +56,58 @@ const movePlayer = (state, player) => {
   player.y = state.action.cell.y;
 };
 
+/**
+ * Get the current player and its index in state.players.
+ *
+ * @param {State} state
+ */
+const getCurrentPlayer = state => {
+  const playerIndex = state.players.findIndex(({ current }) => current);
+  const player = state.players[playerIndex];
+
+  return [player, playerIndex];
+};
+
+/**
+ * Selected the next player to play.
+ * If this is the last player to play, this is a new turn!
+ *
+ * @param {State} state
+ */
+const selectNextPlayer = state => {
+  const [player, playerIndex] = getCurrentPlayer(state);
+
+  player.current = false;
+  
+  if (playerIndex + 1 >= state.players.length) {
+    newTurn(state);
+  } else {
+    state.players[playerIndex + 1].current = true;
+  }
+};
+
+/**
+ * Decrement action point.
+ *
+ * If the current player has 0 action point
+ * 1. a dice is rolled and it can loose some hp.
+ * 2. the next player is selected
+ *
+ * @param {State} state
+ */
+const decrementActionPoint = state => {
+  const [player] = getCurrentPlayer(state);
+
+  if (player.actionPoints === 0) {
+    if (roll6() < 4) {
+      player.health -= 1;
+    }
+    selectNextPlayer(state);
+  } else {
+    player.actionPoints -= 1;
+  }
+};
+
 export const game = (state, action = {}) => {
   const { type, payload } = action;
 
@@ -79,27 +131,10 @@ export const game = (state, action = {}) => {
         x: state.action.cell.x,
         y: state.action.cell.y
       };
-    }
-
-    if (player.actionPoints === 0) {
-      if (roll6() < 4) {
-        player.health -= 1;
-      }
-      player.current = false;
-
-      if (playerIndex + 1 >= state.players.length) {
-        newTurn(state);
-      } else {
-        state.players[playerIndex + 1].current = true;
-      }
-    } else {
-      player.actionPoints -= 1;
-    }
-
-    if (state.action.code !== "move") {
       state.decks.tiles.length -= 1;
     } else {
       movePlayer(state, player);
+      decrementActionPoint(state);
     }
   } else if (type === "ON_ROTATE_TILE") {
     if (state.decks.tiles.length < 0) return;
@@ -118,6 +153,8 @@ export const game = (state, action = {}) => {
     if (state.action.code === "explore") {
       movePlayer(state, player);
     }
+
+    decrementActionPoint(state);
   } else if (type === "ON_INIT_PLAYER") {
     state.players = [
       {
