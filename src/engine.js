@@ -1,12 +1,26 @@
 import { roll, roll6, getRandomInArray } from "./utils/dices";
 import cardsData from "./utils/cards";
-import tilesData, { canMoveFromTo, isCellEqual } from "./utils/tiles";
+import tilesData, {
+  canMoveFromTo,
+  isCellEqual,
+  findActionsOnCell,
+  getWrappingCells
+} from "./utils/tiles";
 
 const rotate = old => howMany => {
   const value = old + howMany;
   if (value >= 360) return 0;
   return value;
 };
+
+/**
+ * This is needed because of immer.
+ * If we don't do this it will log proxy information.
+ * 
+ * @param {State} state state or part of the state
+ */
+// eslint-disable-next-line
+const debug = state => console.log(JSON.parse(JSON.stringify(state)));
 
 export const initState = () => ({
   decks: {
@@ -19,7 +33,8 @@ export const initState = () => ({
   },
   turn: 0,
   players: [],
-  action: {},
+  action: {}, // action the player is currently doing
+  actions: [], // known possible actions for the current player
   board: {
     card: undefined,
     tile: undefined,
@@ -78,7 +93,7 @@ const selectNextPlayer = state => {
   const [player, playerIndex] = getCurrentPlayer(state);
 
   player.current = false;
-  
+
   if (playerIndex + 1 >= state.players.length) {
     newTurn(state);
   } else {
@@ -108,6 +123,21 @@ const decrementActionPoint = state => {
   }
 };
 
+/**
+ * Set actions the current player can perform.
+ *
+ * @param {State} state
+ */
+const findAndSetActions = state => {
+  const [player] = getCurrentPlayer(state);
+
+  const playerTile = state.board.tiles.find(isCellEqual(player))
+  const cells = getWrappingCells(state.board.tiles);
+  const findActionsFromPlayer = findActionsOnCell({ ...player, tile: playerTile });
+
+  state.actions = cells.flatMap(findActionsFromPlayer)
+};
+
 export const game = (state, action = {}) => {
   const { type, payload } = action;
 
@@ -132,9 +162,11 @@ export const game = (state, action = {}) => {
         y: state.action.cell.y
       };
       state.decks.tiles.length -= 1;
+      state.actions = []
     } else {
       movePlayer(state, player);
       decrementActionPoint(state);
+      findAndSetActions(state);
     }
   } else if (type === "ON_ROTATE_TILE") {
     if (state.decks.tiles.length < 0) return;
@@ -155,6 +187,7 @@ export const game = (state, action = {}) => {
     }
 
     decrementActionPoint(state);
+    findAndSetActions(state);
   } else if (type === "ON_INIT_PLAYER") {
     state.players = [
       {
@@ -186,5 +219,7 @@ export const game = (state, action = {}) => {
         actionPoints: 2
       }
     ];
+
+    findAndSetActions(state);
   }
 };

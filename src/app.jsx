@@ -7,7 +7,6 @@ import Player from "./components/ui/player";
 import CardsDeck from "./components/cardsDeck";
 import {
   getWrappingCells,
-  findActionsOnCell,
   isCellEqual
 } from "./utils/tiles";
 import { game, initState } from "./engine";
@@ -17,31 +16,20 @@ function App() {
   const [state, dispatch] = useImmerReducer(game, initState());
   const [cells, setCells] = useState([]);
 
-  const getPlayer = useCallback(
-    () => state.players.find(({ current }) => current),
-    [state.players]
-  );
-
   useEffect(() => {
     dispatch({ type: "ON_INIT_PLAYER" });
   }, [dispatch]);
 
   useEffect(() => {
-    const player = getPlayer();
-    if (!player) return;
-
     let cells = getWrappingCells(state.board.tiles);
-
-    const playerCell = cells.find(isCellEqual(player));
-    const findActionsFromPlayer = findActionsOnCell(playerCell);
 
     cells = cells.map(cell => ({
       ...cell,
-      actions: findActionsFromPlayer(cell)
+      actions: state.actions.filter(action => isCellEqual(action.cell)(cell))
     }));
 
     setCells(cells);
-  }, [state.board.tiles, getPlayer]);
+  }, [state.board.tiles, state.actions,]);
 
   const onTilesDeckClick = useCallback(
     () => dispatch({ type: "ON_ROTATE_TILE" }),
@@ -62,7 +50,7 @@ function App() {
   return (
     <div className={cn("app", classes.app)}>
       <div className={cn("ui-players", classes.players)}>
-        {state.players.map((player, index) => (
+        {state.players.map(player => (
           <Player key={player.id} {...player} />
         ))}
       </div>
