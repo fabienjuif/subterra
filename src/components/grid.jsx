@@ -4,7 +4,7 @@ import { getCellsBounds, isCellEqual } from "../utils/tiles";
 import Cell from "./cell";
 import classes from "./grid.module.scss";
 
-const Grid = ({ cells, onAction, players }) => {
+const Grid = ({ cells, onAction, players, nextTile }) => {
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
 
@@ -22,14 +22,27 @@ const Grid = ({ cells, onAction, players }) => {
         transform: `translate(${translateX * 4}em, ${translateY * 4}em)`
       }}
     >
-      {cells.map(cell => (
+      {cells.map(
+        cell =>
+          (!nextTile || !isCellEqual(cell)(nextTile)) && (
+            <Cell
+              key={`${cell.x}:${cell.y}`}
+              {...cell}
+              onAction={onAction}
+              players={players.filter(isCellEqual(cell))}
+            />
+          )
+      )}
+
+      {nextTile && (
         <Cell
-          key={`${cell.x}:${cell.y}`}
-          {...cell}
+          {...nextTile}
+          tile={nextTile}
+          empty={false}
+          actions={[{ code: "done" }, { code: "rotate" }]}
           onAction={onAction}
-          players={players.filter(isCellEqual(cell))}
         />
-      ))}
+      )}
     </div>
   );
 };

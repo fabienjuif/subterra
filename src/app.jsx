@@ -1,14 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import cn from "classnames";
 import { useImmerReducer } from "use-immer";
-import TilesDeck from "./components/tilesDeck";
 import Grid from "./components/grid";
 import Player from "./components/ui/player";
 import CardsDeck from "./components/cardsDeck";
-import {
-  getWrappingCells,
-  isCellEqual
-} from "./utils/tiles";
+import { getWrappingCells, isCellEqual } from "./utils/tiles";
 import { game, initState } from "./engine";
 import classes from "./app.module.scss";
 
@@ -29,18 +25,17 @@ function App() {
     }));
 
     setCells(cells);
-  }, [state.board.tiles, state.actions,]);
-
-  const onTilesDeckClick = useCallback(
-    () => dispatch({ type: "ON_ROTATE_TILE" }),
-    [dispatch]
-  );
-
-  const onDone = useCallback(() => dispatch({ type: "ON_DONE" }), [dispatch]);
+  }, [state.board.tiles, state.actions]);
 
   const onAction = useCallback(
     action => {
-      dispatch({ type: "ON_ACTION", payload: action });
+      if (action.code === "done") {
+        dispatch({ type: "ON_DONE" });
+      } else if (action.code === "rotate") {
+        dispatch({ type: "ON_ROTATE_TILE" });
+      } else {
+        dispatch({ type: "ON_ACTION", payload: action });
+      }
     },
     [dispatch]
   );
@@ -55,21 +50,19 @@ function App() {
         ))}
       </div>
       <div className={cn("ui-grid", classes.grid)}>
-        <Grid onAction={onAction} cells={cells} players={state.players} />
+        <Grid
+          onAction={onAction}
+          cells={cells}
+          players={state.players}
+          nextTile={state.board.tile}
+        />
       </div>
       <div>
-        <div> turn: {state.turn}</div>
+        <div>turn: {state.turn}</div>
+        <div>tiles: {state.decks.tiles.length}</div>
         <div className={cn("ui-cards", classes.cards)}>
           <CardsDeck size={state.decks.cards.length} card={state.board.card} />
-          {state.decks.tiles.length > -1 && (
-            <TilesDeck
-              tile={state.board.tile}
-              onClick={onTilesDeckClick}
-              size={state.decks.tiles.length}
-            />
-          )}
         </div>
-        {state.board.tile && <button onClick={onDone}>done</button>}
         {/* FIXME: <button onClick={toNextPlayer}>Next player</button> */}
       </div>
     </div>

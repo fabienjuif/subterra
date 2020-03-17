@@ -7,7 +7,7 @@ const Action = ({ onClick, ...action }) => {
   return (
     <button
       className={cn("action", classes.action)}
-      onClick={() => onClick(action)}
+      onClick={(e) => onClick && onClick(action, e)}
     >
       {action.code}
     </button>
