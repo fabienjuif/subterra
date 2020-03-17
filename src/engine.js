@@ -49,7 +49,7 @@ export const initState = () => ({
  * @param {Player} player the player to check
  */
 const checkGaz = state => player => {
-  if (state.board.card.type !== "gaz") return;
+  if (!state.board.card || state.board.card.type !== "gaz") return;
   if (
     state.board.tiles.some(
       tile => isCellEqual(tile)(player) && tile.type === "gaz"
