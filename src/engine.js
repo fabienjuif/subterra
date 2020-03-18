@@ -23,6 +23,7 @@ const rotate = old => howMany => {
 const debug = state => console.log(JSON.parse(JSON.stringify(state)));
 
 export const initState = () => ({
+  gameOver: false,
   decks: {
     tiles: {
       length: 10
@@ -56,6 +57,10 @@ const checkGaz = state => player => {
     )
   ) {
     player.health = Math.max(0, player.health - 2);
+  }
+
+  if (player.health <= 0) {
+    selectNextPlayer(state)
   }
 };
 
@@ -109,14 +114,22 @@ const getCurrentPlayer = state => {
  * @param {State} state
  */
 const selectNextPlayer = state => {
-  const [player, playerIndex] = getCurrentPlayer(state);
+  let [player, playerIndex] = getCurrentPlayer(state);
 
+  // if all players are dead this is game over
+  if (state.players.filter(({ health }) => health > 0).length === 0) {
+    state.gameOver = true
+    return;
+  }
+
+  // current player is not anymore and we find a new one
   player.current = false;
-
   if (playerIndex + 1 >= state.players.length) {
     newTurn(state);
   } else {
-    state.players[playerIndex + 1].current = true;
+    player = state.players[playerIndex + 1]
+    player.current = true;
+    if (player.health <= 0) selectNextPlayer(state)
   }
 };
 
@@ -148,7 +161,10 @@ const decrementActionPoint = state => {
  * @param {State} state
  */
 const findAndSetActions = state => {
+  state.actions = []
+  
   const [player] = getCurrentPlayer(state);
+  if (player.health <= 0) return;
 
   const playerTile = state.board.tiles.find(isCellEqual(player));
   const cells = getWrappingCells(state.board.tiles);
