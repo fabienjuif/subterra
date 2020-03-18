@@ -81,6 +81,7 @@ export const newTurn = state => {
 
   state.turn += 1;
   state.players.forEach(checkGaz(state));
+  if (state.players[0].health <= 0) selectNextPlayer(state)
 };
 
 /**
