@@ -50,7 +50,7 @@ export const initState = () => ({
  *
  * @param {State} state
  */
-const createLog = state => infos => {
+export const createLog = state => infos => {
   state.logs.push({ ...infos, id: uuid(), timestamp: new Date() });
 };
 
@@ -121,7 +121,7 @@ const movePlayer = (state, player) => {
  *
  * @param {State} state
  */
-const getCurrentPlayer = state => {
+export const getCurrentPlayer = state => {
   const playerIndex = state.players.findIndex(({ current }) => current);
   const player = state.players[playerIndex];
 
