@@ -4,6 +4,7 @@ import { useImmerReducer } from "use-immer";
 import Grid from "./components/grid";
 import Player from "./components/ui/player";
 import CardsDeck from "./components/cardsDeck";
+import Logs from "./components/logs";
 import { getWrappingCells, isCellEqual } from "./utils/tiles";
 import { game, initState } from "./engine";
 import classes from "./app.module.scss";
@@ -65,6 +66,7 @@ function App() {
         </div>
         {/* FIXME: <button onClick={toNextPlayer}>Next player</button> */}
       </div>
+      <Logs logs={state.logs} />
     </div>
   );
 }

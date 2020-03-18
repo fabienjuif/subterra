@@ -1,4 +1,5 @@
 import { roll, roll6, getRandomInArray } from "./utils/dices";
+import { v4 as uuid } from "uuid";
 import cardsData from "./utils/cards";
 import tilesData, {
   canMoveFromTo,
@@ -24,6 +25,7 @@ const debug = state => console.log(JSON.parse(JSON.stringify(state)));
 
 export const initState = () => ({
   gameOver: false,
+  logs: [],
   decks: {
     tiles: {
       length: 10
@@ -44,6 +46,15 @@ export const initState = () => ({
 });
 
 /**
+ * Create a log entry and set the timestamp to it.
+ *
+ * @param {State} state
+ */
+const createLog = state => infos => {
+  state.logs.push({ ...infos, id: uuid(), timestamp: new Date() });
+};
+
+/**
  * If the current card is gaz: check if player is in gaz, and in which case remove them 2 HP.
  *
  * @param {State} state
@@ -56,11 +67,19 @@ const checkGaz = state => player => {
       tile => isCellEqual(tile)(player) && tile.type === "gaz"
     )
   ) {
+    createLog(state)({
+      code: "hit_gaz",
+      player: player
+    });
     player.health = Math.max(0, player.health - 2);
   }
 
   if (player.health <= 0) {
-    selectNextPlayer(state)
+    createLog(state)({
+      code: "dead",
+      player: player
+    });
+    selectNextPlayer(state);
   }
 };
 
@@ -81,7 +100,7 @@ export const newTurn = state => {
 
   state.turn += 1;
   state.players.forEach(checkGaz(state));
-  if (state.players[0].health <= 0) selectNextPlayer(state)
+  if (state.players[0].health <= 0) selectNextPlayer(state);
 };
 
 /**
@@ -93,7 +112,8 @@ export const newTurn = state => {
 const movePlayer = (state, player) => {
   player.x = state.action.cell.x;
   player.y = state.action.cell.y;
-  checkGaz(state)(player)
+
+  checkGaz(state)(player);
 };
 
 /**
@@ -119,7 +139,7 @@ const selectNextPlayer = state => {
 
   // if all players are dead this is game over
   if (state.players.filter(({ health }) => health > 0).length === 0) {
-    state.gameOver = true
+    state.gameOver = true;
     return;
   }
 
@@ -128,10 +148,11 @@ const selectNextPlayer = state => {
   if (playerIndex + 1 >= state.players.length) {
     newTurn(state);
   } else {
-    player = state.players[playerIndex + 1]
+    player = state.players[playerIndex + 1];
     player.current = true;
-    if (player.health <= 0) selectNextPlayer(state)
+    if (player.health <= 0) selectNextPlayer(state);
   }
+  createLog(state)({ code: "new_player", player });
 };
 
 /**
@@ -149,6 +170,9 @@ const decrementActionPoint = state => {
   if (player.actionPoints === 0) {
     if (roll6() < 4) {
       player.health -= 1;
+      createLog(state)({ code: "surpass_fail", player });
+    } else {
+      createLog(state)({ code: "surpass_ok", player });
     }
     selectNextPlayer(state);
   } else {
@@ -162,8 +186,8 @@ const decrementActionPoint = state => {
  * @param {State} state
  */
 const findAndSetActions = state => {
-  state.actions = []
-  
+  state.actions = [];
+
   const [player] = getCurrentPlayer(state);
   if (player.health <= 0) return;
 
@@ -185,6 +209,11 @@ export const game = (state, action = {}) => {
 
   if (type === "ON_ACTION") {
     state.action = payload;
+
+    createLog(state)({
+      ...state.action,
+      player,
+    });
 
     if (state.action.code !== "move") {
       let nextTile = getRandomInArray(Object.values(tilesData).slice(2));
