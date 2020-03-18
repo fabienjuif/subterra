@@ -1,12 +1,14 @@
-import React from "react";
-import cn from "classnames";
-import classes from "./player.module.scss";
-import gameClasses from '../player.module.scss';
+import React from 'react'
+import cn from 'classnames'
+import classes from './player.module.scss'
+import gameClasses from '../player.module.scss'
 
 const Player = ({ actionPoints, health, name, archetype, current }) => {
   return (
     <table
-      className={cn("player", classes.player, gameClasses[archetype], { [classes.current]: current })}
+      className={cn('player', classes.player, gameClasses[archetype], {
+        [classes.current]: current,
+      })}
     >
       <tbody>
         <tr>
@@ -27,7 +29,7 @@ const Player = ({ actionPoints, health, name, archetype, current }) => {
         </tr>
       </tbody>
     </table>
-  );
-};
+  )
+}
 
-export default Player;
+export default Player

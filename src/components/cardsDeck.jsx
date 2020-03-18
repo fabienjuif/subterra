@@ -1,5 +1,5 @@
-import React from "react";
-import Card from "./card";
+import React from 'react'
+import Card from './card'
 
 const CardsDeck = ({ size, card }) => {
   return (
@@ -10,11 +10,11 @@ const CardsDeck = ({ size, card }) => {
         text={
           card
             ? undefined
-            : "First card will be revealed after the first turn ends"
+            : 'First card will be revealed after the first turn ends'
         }
       />
     </div>
-  );
-};
+  )
+}
 
-export default CardsDeck;
+export default CardsDeck

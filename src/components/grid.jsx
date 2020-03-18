@@ -1,29 +1,29 @@
-import React, { useState, useEffect } from "react";
-import cn from "classnames";
-import { getCellsBounds, isCellEqual } from "../utils/tiles";
-import Cell from "./cell";
-import classes from "./grid.module.scss";
+import React, { useState, useEffect } from 'react'
+import cn from 'classnames'
+import { getCellsBounds, isCellEqual } from '../utils/tiles'
+import Cell from './cell'
+import classes from './grid.module.scss'
 
 const Grid = ({ cells, onAction, players, nextTile }) => {
-  const [translateX, setTranslateX] = useState(0);
-  const [translateY, setTranslateY] = useState(0);
+  const [translateX, setTranslateX] = useState(0)
+  const [translateY, setTranslateY] = useState(0)
 
   useEffect(() => {
-    const { left, top } = getCellsBounds(cells);
+    const { left, top } = getCellsBounds(cells)
 
-    setTranslateX(left * -1);
-    setTranslateY(top * -1);
-  }, [cells]);
+    setTranslateX(left * -1)
+    setTranslateY(top * -1)
+  }, [cells])
 
   return (
     <div
-      className={cn("grid", classes.grid)}
+      className={cn('grid', classes.grid)}
       style={{
-        transform: `translate(${translateX * 4}em, ${translateY * 4}em)`
+        transform: `translate(${translateX * 4}em, ${translateY * 4}em)`,
       }}
     >
       {cells.map(
-        cell =>
+        (cell) =>
           (!nextTile || !isCellEqual(cell)(nextTile)) && (
             <Cell
               key={`${cell.x}:${cell.y}`}
@@ -31,7 +31,7 @@ const Grid = ({ cells, onAction, players, nextTile }) => {
               onAction={onAction}
               players={players.filter(isCellEqual(cell))}
             />
-          )
+          ),
       )}
 
       {nextTile && (
@@ -39,12 +39,12 @@ const Grid = ({ cells, onAction, players, nextTile }) => {
           {...nextTile}
           tile={nextTile}
           empty={false}
-          actions={[{ code: "done" }, { code: "rotate" }]}
+          actions={[{ code: 'done' }, { code: 'rotate' }]}
           onAction={onAction}
         />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Grid;
+export default Grid
