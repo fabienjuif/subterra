@@ -169,5 +169,12 @@ export default {
     type: 'gaz',
     left: true,
     bottom: true,
+  },
+  5: {
+    id: 5,
+    type: 'gaz',
+    left: true,
+    right: true,
+    bottom: true,
   }
 };
