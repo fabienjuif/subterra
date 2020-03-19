@@ -92,7 +92,7 @@ export const newTurn = (state) => {
   state.players[0].current = true
   state.players.forEach((player) => (player.actionPoints = 2))
   if (state.decks.cards.length > 0) {
-    state.board.card = getRandomInArray(Object.values(cardsData).slice(1))
+    state.board.card = getRandomInArray(cardsData.slice(1))
     state.decks.cards.length -= 1
   } else {
     state.board.card = cardsData[0]
