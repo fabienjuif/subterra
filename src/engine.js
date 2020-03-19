@@ -54,6 +54,56 @@ export const createLog = (state) => (infos) => {
   state.logs.push({ ...infos, id: uuid(), timestamp: new Date() })
 }
 
+createLogEvent = (infos) => {
+  {
+    ;(type = 'logs'),
+      (payload = { ...infos, id: uuid(), timestamp: new Date() })
+  }
+}
+
+const findPlayerTile = (state, player) => {
+  state.board.tiles.some((tile) => {
+    if (isCellEqual(tile)(player)) return tile
+  })
+}
+
+const processEvent = (state, event) => {
+  switch (event.type) {
+    case 'newcard':
+      return {
+        ...state,
+        players: state.players.map((player) => {
+          let playerTile = findPlayerTile(state, player)
+
+          if (playerTile.type === state.board.cart.type) {
+            processEvent(
+              state,
+              createLogEvent({
+                code: 'hit_' + state.board.card.type,
+                player: player,
+              }),
+            )
+            processDamage(state)(player, state.board.card.damage)
+          } else {
+            player
+          }
+        }),
+      }
+    case 'logs':
+      return { ...state, logs: state.logs.push(event.payload) }
+    default:
+      return state
+  }
+}
+
+const processDamage = (state) => (player, damage) => {
+  if (player.health <= damage) {
+    processEvent(state, createLogEvent({ code: 'dead', player: player }))
+  }
+
+  return { ...player, health: Math.max(0, player.health - damage) }
+}
+
 /**
  * If the current card is gaz: check if player is in gaz, and in which case remove them 2 HP.
  *
@@ -90,16 +140,18 @@ const checkGaz = (state) => (player) => {
  */
 export const newTurn = (state) => {
   state.players[0].current = true
-  state.players.forEach((player) => (player.actionPoints = 2))
+  state.players.forEach((_.actionPoints = 2))
+
   if (state.decks.cards.length > 0) {
     state.board.card = getRandomInArray(Object.values(cardsData).slice(1))
     state.decks.cards.length -= 1
   } else {
+    // Replace by EndGameEvent
     state.board.card = cardsData[0]
   }
 
   state.turn += 1
-  state.players.forEach(checkGaz(state))
+  processEvent(state, 'newcard')
   if (state.players[0].health <= 0) selectNextPlayer(state)
 }
 
