@@ -139,7 +139,7 @@ export const findActionsOnCell = (playerCell) => (cell) => {
   return actions
 }
 
-const cards = [
+const tiles = [
   {
     id: 0,
     type: 'start',
@@ -548,4 +548,4 @@ const cards = [
   },
 ]
 
-export default cards
+export default tiles
