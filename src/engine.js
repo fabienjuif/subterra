@@ -54,12 +54,10 @@ export const createLog = (state) => (infos) => {
   state.logs.push({ ...infos, id: uuid(), timestamp: new Date() })
 }
 
-createLogEvent = (infos) => {
-  {
-    ;(type = 'logs'),
-      (payload = { ...infos, id: uuid(), timestamp: new Date() })
-  }
-}
+const createLogEvent = (infos) => ({
+  type: 'logs',
+  payload: { ...infos, id: uuid(), timestamp: new Date() },
+})
 
 const findPlayerTile = (state, player) => {
   state.board.tiles.some((tile) => {
