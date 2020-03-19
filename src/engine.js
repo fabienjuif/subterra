@@ -216,7 +216,7 @@ export const game = (state, action = {}) => {
     })
 
     if (state.action.code !== 'move') {
-      let nextTile = getRandomInArray(Object.values(tilesData).slice(2))
+      let nextTile = getRandomInArray(tilesData.slice(2))
       if (
         state.decks.tiles.length <= 6 &&
         state.decks.tiles.length === roll(state.decks.tiles.length)
