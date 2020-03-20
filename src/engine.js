@@ -59,11 +59,8 @@ const createLogEvent = (infos) => ({
   payload: { ...infos, id: uuid(), timestamp: new Date() },
 })
 
-const findPlayerTile = (state, player) => {
-  state.board.tiles.some((tile) => {
-    if (isCellEqual(tile)(player)) return tile
-  })
-}
+const findPlayerTile = (state, player) =>
+  state.board.tiles.find(isCellEqual(player))
 
 const processEvent = (state, event) => {
   switch (event.type) {
