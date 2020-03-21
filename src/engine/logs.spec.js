@@ -2,11 +2,9 @@ import createStore from '@myrtille/mutate'
 import { push } from './logs'
 
 describe('logs', () => {
-  describe('pushLog', () => {
+  describe('push', () => {
     it('should add a log', () => {
-      const store = createStore({
-        logs: [],
-      })
+      const store = createStore({ logs: [] })
 
       push(store, { payload: { message: 'oupsy' } })
 

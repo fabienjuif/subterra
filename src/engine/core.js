@@ -25,3 +25,7 @@ export default (state = initState()) => {
   listeners.forEach((args) => store.addListener(...args))
   return store
 }
+
+export const reset = (store, action) => {
+  store.setState(initState())
+}

@@ -1,5 +1,5 @@
 import createStore from '@myrtille/mutate'
-import { damage } from './players'
+import * as players from './players'
 
 describe('players', () => {
   describe('damage', () => {
@@ -17,7 +17,7 @@ describe('players', () => {
         ],
       })
 
-      damage(store, { payload: { name: 'Hatsu', damage: 2 } })
+      players.damage(store, { payload: { name: 'Hatsu', damage: 2 } })
       expect(store.getState()).toEqual({
         players: [
           {
@@ -30,6 +30,42 @@ describe('players', () => {
           },
         ],
       })
+    })
+  })
+
+  describe('checkDamageFromCard', () => {
+    it('should send a @player>damage action for each player on a tile with the same type as the card', () => {
+      const store = createStore({
+        board: {
+          card: { type: 'gaz', damage: 2 },
+          tiles: [
+            { type: 'start', x: 0, y: 0 },
+            { type: 'gaz', x: 1, y: 1 },
+          ],
+        },
+        players: [
+          { name: 'Sutat', x: 0, y: 0 },
+          { name: 'Hatsu', x: 1, y: 1 },
+        ],
+        events: [],
+      })
+      store.addListener(
+        () => true,
+        (str, act) => {
+          str.mutate((state) => {
+            state.events.push(act)
+          })
+        },
+      )
+
+      players.checkDamageFromCard(store, {})
+
+      expect(store.getState().events).toEqual([
+        {
+          type: '@player>damage',
+          payload: { player: { name: 'Hatsu', damageType: 'gaz', damage: 2 } },
+        },
+      ])
     })
   })
 })
