@@ -1,8 +1,8 @@
 import React from 'react'
 
-const Logs = ({ logs }) => {
+const Logs = ({ logs, className }) => {
   return (
-    <div>
+    <div className={className}>
       <h3>Logs</h3>
       {[...logs].reverse().map((log) => (
         <div key={log.id}>

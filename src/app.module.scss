@@ -1,14 +1,30 @@
 .app {
-  display: flex;
+  display: grid;
+  grid-template-areas:
+    'players board turn      logs'
+    'players board tilesDeck logs'
+    'players board cardsDeck logs'
+    'players board .         logs'
+    '.       board .         logs';
 }
 
-.grid {
+.board {
+  grid-area: board;
   position: relative;
   width: 30em;
   height: 30em;
 }
 
+.turn {
+  grid-area: turn;
+}
+
+.tilesDeck {
+  grid-area: tilesDeck;
+}
+
 .players {
+  grid-area: players;
   display: flex;
   flex-direction: column;
 
@@ -17,12 +33,16 @@
   }
 }
 
-
-.cards {
+.cardsDeck {
+  grid-area: cardsDeck;
   display: flex;
   align-items: center;
 
   & > *:first-child {
     margin-right: 2em;
   }
+}
+
+.logs {
+  grid-area: logs;
 }

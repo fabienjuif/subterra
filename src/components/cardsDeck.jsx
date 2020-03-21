@@ -1,9 +1,9 @@
 import React from 'react'
 import Card from './card'
 
-const CardsDeck = ({ size, card }) => {
+const CardsDeck = ({ size, card, className }) => {
   return (
-    <div>
+    <div className={className}>
       <div>Remaining cards: {size}</div>
       <Card
         {...card}

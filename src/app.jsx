@@ -45,12 +45,12 @@ function App() {
 
   return (
     <div className={cn('app', classes.app)}>
-      <div className={cn('ui-players', classes.players)}>
+      <div className={cn('players', classes.players)}>
         {state.players.map((player) => (
           <Player key={player.id} {...player} />
         ))}
       </div>
-      <div className={cn('ui-grid', classes.grid)}>
+      <div className={cn('board', classes.board)}>
         <Grid
           onAction={onAction}
           cells={cells}
@@ -58,15 +58,16 @@ function App() {
           nextTile={state.board.tile}
         />
       </div>
-      <div>
-        <div>turn: {state.turn}</div>
-        <div>tiles: {state.decks.tiles.length}</div>
-        <div className={cn('ui-cards', classes.cards)}>
-          <CardsDeck size={state.decks.cards.length} card={state.board.card} />
-        </div>
-        {/* FIXME: <button onClick={toNextPlayer}>Next player</button> */}
+      <div className={cn('turn', classes.turn)}>turn: {state.turn}</div>
+      <div className={cn('tiles-deck', classes.tilesDeck)}>
+        tiles: {state.decks.tiles.length}
       </div>
-      <Logs logs={state.logs} />
+      <CardsDeck
+        className={cn('cards-deck', classes.cardsDeck)}
+        size={state.decks.cards.length}
+        card={state.board.card}
+      />
+      <Logs className={cn('logs', classes.logs)} logs={state.logs} />
     </div>
   )
 }
