@@ -70,7 +70,7 @@ const processEvent = (state, event) => {
         players: state.players.map((player) => {
           let playerTile = findPlayerTile(state, player)
 
-          if (playerTile.type === state.board.cart.type) {
+          if (playerTile.type === state.board.card.type) {
             processEvent(
               state,
               createLogEvent({
@@ -103,7 +103,7 @@ const processDamage = (state) => (player, damage) => {
  * If the current card is gaz: check if player is in gaz, and in which case remove them 2 HP.
  *
  * @param {State} state
- * @param {Player} player the player to check
+ * @param {Playenar} player the player to check
  */
 const checkGaz = (state) => (player) => {
   if (!state.board.card || state.board.card.type !== 'gaz') return
