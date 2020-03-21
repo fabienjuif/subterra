@@ -6,13 +6,14 @@
     'players board cardsDeck logs'
     'players board .         logs'
     '.       board .         logs';
+  grid-template-columns: auto 1fr auto auto;
 }
 
 .board {
   grid-area: board;
   position: relative;
-  width: 30em;
-  height: 30em;
+  height: calc(100vh - 4em);
+  margin: 2em;
 }
 
 .turn {

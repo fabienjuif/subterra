@@ -5,6 +5,7 @@ import Grid from './components/grid'
 import Player from './components/ui/player'
 import CardsDeck from './components/cardsDeck'
 import Logs from './components/logs'
+import MovableGrid from './components/movableGrid'
 import { getWrappingCells, isCellEqual } from './utils/tiles'
 import { game, initState } from './engine'
 import classes from './app.module.scss'
@@ -50,14 +51,14 @@ function App() {
           <Player key={player.id} {...player} />
         ))}
       </div>
-      <div className={cn('board', classes.board)}>
+      <MovableGrid className={cn('board', classes.board)}>
         <Grid
           onAction={onAction}
           cells={cells}
           players={state.players}
           nextTile={state.board.tile}
         />
-      </div>
+      </MovableGrid>
       <div className={cn('turn', classes.turn)}>turn: {state.turn}</div>
       <div className={cn('tiles-deck', classes.tilesDeck)}>
         tiles: {state.decks.tiles.length}
