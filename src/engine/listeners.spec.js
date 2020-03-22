@@ -2,7 +2,6 @@ import createEngine from './core'
 import * as players from './players'
 import * as logs from './logs'
 import * as cards from './cards'
-import * as core from './core'
 
 jest.mock('./players')
 jest.mock('./logs')
@@ -32,16 +31,6 @@ describe('listeners', () => {
       expect(logs.push.mock.calls[0][1]).toEqual({
         payload: { code: 'hit_gaz', player: { name: 'Hatsu' } },
       })
-    })
-  })
-
-  describe('@core>reset', () => {
-    it('should call core.reset', () => {
-      const engine = createEngine({})
-
-      engine.dispatch('@core>reset')
-
-      expect(core.reset).toHaveBeenCalledTimes(1)
     })
   })
 

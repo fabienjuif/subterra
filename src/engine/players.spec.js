@@ -49,23 +49,21 @@ describe('players', () => {
         ],
         events: [],
       })
-      store.addListener(
-        () => true,
-        (str, act) => {
-          str.mutate((state) => {
-            state.events.push(act)
-          })
-        },
-      )
+
+      // mocking dispatch
+      store.dispatch = jest.fn()
 
       players.checkDamageFromCard(store, {})
 
-      expect(store.getState().events).toEqual([
-        {
-          type: '@player>damage',
-          payload: { player: { name: 'Hatsu', damageType: 'gaz', damage: 2 } },
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@player>damage',
+        payload: {
+          player: { name: 'Hatsu', x: 1, y: 1 },
+          damageType: 'gaz',
+          damage: 2,
         },
-      ])
+      })
     })
   })
 })
