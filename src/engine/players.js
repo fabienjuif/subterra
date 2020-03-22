@@ -3,7 +3,7 @@ import { isCellEqual } from '../utils/tiles'
 export const damage = (store, action) => {
   store.mutate((state) => {
     const player = state.players.find(
-      ({ name }) => name === action.payload.name,
+      ({ name }) => name === action.payload.player.name,
     )
     player.health -= action.payload.damage
   })
@@ -21,4 +21,12 @@ export const checkDamageFromCard = (store, _) => {
       })
     }
   })
+}
+
+export const checkDeathFromDamage = (store, action) => {
+  const player = store.getState().players.find((p) => p.name === action.payload.player.name)
+
+  if (player.health <= 0) {
+    store.dispatch({ type: '@player>death', payload: { player: player } })
+  }
 }

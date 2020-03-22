@@ -14,6 +14,7 @@ export default [
         },
       }),
   ],
+  ['@players>damage', players.checkDeathFromDamage],
   ['@cards>pick', cards.pick],
   ['@cards>pick', players.checkDamageFromCard],
 ]

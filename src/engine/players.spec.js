@@ -3,7 +3,7 @@ import * as players from './players'
 
 describe('players', () => {
   describe('damage', () => {
-    it('should damge player', () => {
+    it('should damage player', () => {
       const store = createStore({
         players: [
           {
@@ -17,7 +17,9 @@ describe('players', () => {
         ],
       })
 
-      players.damage(store, { payload: { name: 'Hatsu', damage: 2 } })
+      players.damage(store, {
+        payload: { player: { name: 'Hatsu' }, damage: 2 },
+      })
       expect(store.getState()).toEqual({
         players: [
           {
@@ -50,7 +52,6 @@ describe('players', () => {
         events: [],
       })
 
-      // mocking dispatch
       store.dispatch = jest.fn()
 
       players.checkDamageFromCard(store, {})
@@ -62,8 +63,39 @@ describe('players', () => {
           player: { name: 'Hatsu', x: 1, y: 1 },
           damageType: 'gaz',
           damage: 2,
-        },
+        }
       })
     })
   })
+
+  describe('checkDeathFromDamage', () => {
+    it('should send a @player>death action for each player with health <= 0', () => {
+      const store = createStore({
+        players: [
+          { name: 'Hatsu', health: -1 },
+          { name: 'Soe', health: 0 },
+          { name: 'Sutat', health: 1 },
+        ],
+        events: [],
+      })
+
+      store.dispatch = jest.fn()
+
+      store.getState().players.forEach((player) => {
+        players.checkDeathFromDamage(store, { payload: { player: player } })
+      })
+      
+
+      expect(store.dispatch).toHaveBeenCalledTimes(2)
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@player>death',
+        payload: { player: { name: 'Hatsu', health: -1 } }
+      })
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@player>death',
+        payload: { player: { name: 'Soe', health: 0 } }
+      })
+    })
+  })
+
 })

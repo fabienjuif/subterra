@@ -13,7 +13,7 @@ describe('listeners', () => {
   })
 
   describe('@players>damage', () => {
-    it('should call player.damage and logs.push', () => {
+    it('should call player.damage, logs.push and players.checkDeathFromDamage', () => {
       const engine = createEngine({})
 
       engine.dispatch({
@@ -31,6 +31,7 @@ describe('listeners', () => {
       expect(logs.push.mock.calls[0][1]).toEqual({
         payload: { code: 'hit_gaz', player: { name: 'Hatsu' } },
       })
+      expect(players.checkDeathFromDamage).toHaveBeenCalledTimes(1)
     })
   })
 
