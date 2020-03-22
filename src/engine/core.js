@@ -2,7 +2,7 @@ import createStore from '@myrtille/mutate'
 import listeners from './listeners'
 import tilesData from '../utils/tiles'
 
-const initState = () => ({
+export const initState = () => ({
   gameOver: false,
   logs: [],
   decks: {
@@ -21,11 +21,14 @@ const initState = () => ({
 })
 
 export default (state = initState()) => {
-  const store = createStore(state)
-  listeners.forEach((args) => store.addListener(...args))
-  return store
-}
+  // creating store
+  let store = createStore(state)
 
-export const reset = (store, action) => {
-  store.setState(initState())
+  // adding all game listeners
+  listeners.forEach((args) => store.addListener(...args))
+
+  // adding utility
+  store.reset = () => store.setState(state)
+
+  return store
 }

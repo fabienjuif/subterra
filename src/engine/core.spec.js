@@ -1,30 +1,29 @@
-import * as core from './core'
-import createStore from '@myrtille/mutate'
-import tilesData from '../utils/tiles'
+import createEngine, { initState } from './core'
 
 describe('core', () => {
   describe('reset', () => {
-    it('should initialise the state', () => {
-      const store = createStore({})
+    it('should initialize the state with the given data', () => {
+      const engine = createEngine({})
 
-      core.reset(store, {})
-      expect(store.getState()).toEqual({
-        gameOver: false,
-        logs: [],
-        decks: {
-          tiles: { length: 10 },
-          cards: { length: 10 },
-        },
-        turn: 0,
-        players: [],
-        action: {},
-        actions: [],
-        board: {
-          card: undefined,
-          tile: undefined,
-          tiles: [{ ...tilesData[0], x: 0, y: 0 }],
-        },
-      })
+      expect(engine.getState()).toEqual({})
+      engine.setState({ new: 'state' })
+      expect(engine.getState()).toEqual({ new: 'state' })
+
+      engine.reset()
+
+      expect(engine.getState()).toEqual({})
+    })
+
+    it('should initialize the state with default engine data', () => {
+      const engine = createEngine()
+
+      expect(engine.getState()).toEqual(initState())
+      engine.setState({ new: 'state' })
+      expect(engine.getState()).toEqual({ new: 'state' })
+
+      engine.reset()
+
+      expect(engine.getState()).toEqual(initState())
     })
   })
 })
