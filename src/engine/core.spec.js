@@ -33,18 +33,27 @@ describe('core', () => {
         data: { actions: [] },
       })
 
-      saveAction(engine, 'action')
-      expect(engine.getState().data.actions).toEqual(['action'])
+      engine.dispatch('action')
+      expect(engine.getState().data.actions).toEqual([{ type: 'action' }])
     })
-    it('should save an action with his payload', () => {
+
+    it('should save an action with its payload', () => {
       const engine = createEngine({
         data: { actions: [] },
       })
 
-      saveAction(engine, { type: 'action', payload: { core: 'test' } })
+      engine.dispatch({ type: 'action', payload: { core: 'test' } })
       expect(engine.getState().data.actions).toEqual([
         { type: 'action', payload: { core: 'test' } },
       ])
+    })
+
+    it('should not save actions if the state does not have an array to store them', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('action')
+
+      expect(engine.getState()).toEqual({})
     })
   })
 })

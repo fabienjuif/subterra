@@ -22,7 +22,10 @@ export const initState = () => ({
   },
 })
 
-export const saveAction = (store, action) => {
+const saveAction = (store, action) => {
+  const { actions } = store.getState().data || {}
+  if (actions === null || actions === undefined) return
+
   store.mutate((state) => {
     state.data.actions.push(action)
   })
@@ -34,6 +37,9 @@ export default (state = initState()) => {
 
   // adding all game listeners
   listeners.forEach((args) => store.addListener(...args))
+
+  // adding an action listener to save them all
+  store.addListener(saveAction)
 
   // adding utility
   store.reset = () => store.setState(state)

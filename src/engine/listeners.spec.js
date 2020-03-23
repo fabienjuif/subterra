@@ -40,15 +40,4 @@ describe('listeners', () => {
       expect(players.checkDamageFromCard).toHaveBeenCalledTimes(1)
     })
   })
-
-  describe('all actions', () => {
-    it('should call core.saveAction', () => {
-      const engine = createEngine({})
-
-      engine.dispatch('@players>damage')
-      engine.dispatch('@cards>pick')
-
-      expect(core.saveAction).toHaveBeenCalledTimes(2)
-    })
-  })
 })
