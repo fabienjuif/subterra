@@ -1,152 +1,45 @@
+const EndCard = { type: 'end', damage: 9 }
+const WaterCard = { type: 'water', damage: 2, duration: 1 }
+const WaterCard2 = { type: 'water', damage: 2, duration: 2 }
+const GazCard = { type: 'gaz', damage: 2, duration: 1 }
+const GazCard2 = { type: 'gaz', damage: 2, duration: 2 }
+const LandslideCard = { type: 'landslide', damage: 3, duration: 1 }
+const LandslideCard2 = { type: 'landslide', damage: 3, duration: 2 }
+const ShakeCard = { type: 'shake', damage: 1, duration: 1 }
+const HorrorCard = { type: 'enemy', damage: 0, duration: 1 }
+const HorrorCard2 = { type: 'enemy', damage: 0, duration: 2 }
+
 const cards = [
-  {
-    id: 0,
-    type: 'end',
-  },
-  {
-    id: 1,
-    type: 'gaz',
-    duration: 1,
-  },
-  {
-    id: 2,
-    type: 'landslide',
-    duration: 2,
-  },
-  {
-    id: 3,
-    type: 'enemy',
-    duration: 1,
-  },
-  {
-    id: 4,
-    type: 'shake',
-    duration: 1,
-  },
-  {
-    id: 5,
-    type: 'gaz',
-    duration: 1,
-  },
-  {
-    id: 6,
-    type: 'water',
-    duration: 1,
-  },
-  {
-    id: 7,
-    type: 'enemy',
-    duration: 1,
-  },
-  {
-    id: 8,
-    type: 'landslide',
-    duration: 1,
-  },
-  {
-    id: 9,
-    type: 'water',
-    duration: 1,
-  },
-  {
-    id: 10,
-    type: 'enemy',
-    duration: 1,
-  },
-  {
-    id: 11,
-    type: 'water',
-    duration: 2,
-  },
-  {
-    id: 12,
-    type: 'landslide',
-    duration: 1,
-  },
-  {
-    id: 13,
-    type: 'water',
-    duration: 1,
-  },
-  {
-    id: 14,
-    type: 'shake',
-    duration: 1,
-  },
-  {
-    id: 15,
-    type: 'enemy',
-    duration: 2,
-  },
-  {
-    id: 16,
-    type: 'shake',
-    duration: 2,
-  },
-  {
-    id: 17,
-    type: 'shake',
-    duration: 1,
-  },
-  {
-    id: 18,
-    type: 'shake',
-    duration: 1,
-  },
-  {
-    id: 19,
-    type: 'gaz',
-    duration: 1,
-  },
-  {
-    id: 20,
-    type: 'gaz',
-    duration: 2,
-  },
-  {
-    id: 21,
-    type: 'landslide',
-    duration: 1,
-  },
-  {
-    id: 22,
-    type: 'water',
-    duration: 1,
-  },
-  {
-    id: 23,
-    type: 'landslide',
-    duration: 1,
-  },
-  {
-    id: 24,
-    type: 'shake',
-    duration: 1,
-  },
-  {
-    id: 25,
-    type: 'landslide',
-    duration: 1,
-  },
-  {
-    id: 26,
-    type: 'enemy',
-    duration: 1,
-  },
-  {
-    id: 27,
-    type: 'water',
-    duration: 1,
-  },
-  {
-    id: 28,
-    type: 'gaz',
-    duration: 1,
-  },
-  {
-    id: 29,
-    type: 'enemy',
-    duration: 1,
-  },
+  EndCard,
+  GazCard,
+  LandslideCard2,
+  ShakeCard,
+  ShakeCard,
+  GazCard,
+  WaterCard,
+  HorrorCard,
+  LandslideCard,
+  WaterCard,
+  HorrorCard,
+  WaterCard2,
+  LandslideCard,
+  WaterCard,
+  ShakeCard,
+  HorrorCard2,
+  ShakeCard,
+  ShakeCard,
+  ShakeCard,
+  GazCard,
+  GazCard2,
+  LandslideCard,
+  WaterCard,
+  LandslideCard,
+  ShakeCard,
+  LandslideCard,
+  HorrorCard,
+  WaterCard,
+  GazCard,
+  HorrorCard,
 ]
+
 export default cards
