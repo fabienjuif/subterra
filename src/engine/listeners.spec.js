@@ -1,10 +1,10 @@
-import createEngine, { saveAction } from './core'
+import createEngine, * as core from './core'
 import * as players from './players'
 import * as cards from './cards'
 
 jest.mock('./players')
 jest.mock('./cards')
-jest.fn(saveAction)
+core.saveAction = jest.fn()
 
 describe('listeners', () => {
   beforeEach(() => {
@@ -48,7 +48,7 @@ describe('listeners', () => {
       engine.dispatch('@players>damage')
       engine.dispatch('@cards>pick')
 
-      expect(saveAction).toHaveBeenCalledTimes(2)
+      expect(core.saveAction).toHaveBeenCalledTimes(2)
     })
   })
 })
