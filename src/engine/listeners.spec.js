@@ -1,11 +1,10 @@
-import createEngine from './core'
+import createEngine, { saveAction } from './core'
 import * as players from './players'
-import * as logs from './logs'
 import * as cards from './cards'
 
 jest.mock('./players')
-jest.mock('./logs')
 jest.mock('./cards')
+jest.fn(saveAction)
 
 describe('listeners', () => {
   beforeEach(() => {
@@ -13,7 +12,7 @@ describe('listeners', () => {
   })
 
   describe('@players>damage', () => {
-    it('should call player.damage, logs.push and players.checkDeathFromDamage', () => {
+    it('should call player.damage and players.checkDeathFromDamage', () => {
       const engine = createEngine({})
 
       engine.dispatch({
@@ -27,10 +26,6 @@ describe('listeners', () => {
       })
 
       expect(players.damage).toHaveBeenCalledTimes(1)
-      expect(logs.push).toHaveBeenCalledTimes(1)
-      expect(logs.push.mock.calls[0][1]).toEqual({
-        payload: { code: 'hit_gaz', player: { name: 'Hatsu' } },
-      })
       expect(players.checkDeathFromDamage).toHaveBeenCalledTimes(1)
     })
   })
@@ -43,6 +38,17 @@ describe('listeners', () => {
 
       expect(cards.pick).toHaveBeenCalledTimes(1)
       expect(players.checkDamageFromCard).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('all actions', () => {
+    it('should call core.saveAction', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@players>damage')
+      engine.dispatch('@cards>pick')
+
+      expect(saveAction).toHaveBeenCalledTimes(2)
     })
   })
 })

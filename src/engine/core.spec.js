@@ -1,4 +1,4 @@
-import createEngine, { initState } from './core'
+import createEngine, { initState, saveAction } from './core'
 
 describe('core', () => {
   describe('reset', () => {
@@ -24,6 +24,27 @@ describe('core', () => {
       engine.reset()
 
       expect(engine.getState()).toEqual(initState())
+    })
+  })
+
+  describe('saveAction', () => {
+    it('should save an action without payload', () => {
+      const engine = createEngine({
+        data: { actions: [] },
+      })
+
+      saveAction(engine, 'action')
+      expect(engine.getState().data.actions).toEqual(['action'])
+    })
+    it('should save an action with his payload', () => {
+      const engine = createEngine({
+        data: { actions: [] },
+      })
+
+      saveAction(engine, { type: 'action', payload: { core: 'test' } })
+      expect(engine.getState().data.actions).toEqual([
+        { type: 'action', payload: { core: 'test' } },
+      ])
     })
   })
 })

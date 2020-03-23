@@ -4,7 +4,6 @@ import tilesData from '../utils/tiles'
 
 export const initState = () => ({
   gameOver: false,
-  logs: [],
   decks: {
     tiles: { length: 10 },
     cards: { length: 10 },
@@ -18,7 +17,16 @@ export const initState = () => ({
     tile: undefined,
     tiles: [{ ...tilesData[0], x: 0, y: 0 }],
   },
+  data: {
+    actions: [],
+  },
 })
+
+export const saveAction = (store, action) => {
+  store.mutate((state) => {
+    state.data.actions.push(action)
+  })
+}
 
 export default (state = initState()) => {
   // creating store
