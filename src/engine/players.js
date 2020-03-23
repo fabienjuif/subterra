@@ -11,10 +11,10 @@ export const damage = (store, action) => {
 
 export const checkDamageFromCard = (store, _) => {
   const state = store.getState()
-  const card = state.board.card
+  const card = state.activeCard
 
   state.players.forEach((player) => {
-    if (state.board.tiles.find(isCellEqual(player)).type === card.type) {
+    if (state.grid.find(isCellEqual(player)).type === card.type) {
       store.dispatch({
         type: '@player>damage',
         payload: { player: player, damageType: card.type, damage: card.damage },
@@ -24,7 +24,9 @@ export const checkDamageFromCard = (store, _) => {
 }
 
 export const checkDeathFromDamage = (store, action) => {
-  const player = store.getState().players.find((p) => p.name === action.payload.player.name)
+  const player = store
+    .getState()
+    .players.find((p) => p.name === action.payload.player.name)
 
   if (player.health <= 0) {
     store.dispatch({ type: '@player>death', payload: { player: player } })

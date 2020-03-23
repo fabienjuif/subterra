@@ -30,20 +30,20 @@ describe('core', () => {
   describe('saveAction', () => {
     it('should save an action without payload', () => {
       const engine = createEngine({
-        data: { actions: [] },
+        technical: { actions: [] },
       })
 
       engine.dispatch('action')
-      expect(engine.getState().data.actions).toEqual([{ type: 'action' }])
+      expect(engine.getState().technical.actions).toEqual([{ type: 'action' }])
     })
 
     it('should save an action with its payload', () => {
       const engine = createEngine({
-        data: { actions: [] },
+        technical: { actions: [] },
       })
 
       engine.dispatch({ type: 'action', payload: { core: 'test' } })
-      expect(engine.getState().data.actions).toEqual([
+      expect(engine.getState().technical.actions).toEqual([
         { type: 'action', payload: { core: 'test' } },
       ])
     })

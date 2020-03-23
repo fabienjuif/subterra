@@ -38,18 +38,15 @@ describe('players', () => {
   describe('checkDamageFromCard', () => {
     it('should send a @player>damage action for each player on a tile with the same type as the card', () => {
       const store = createStore({
-        board: {
-          card: { type: 'gaz', damage: 2 },
-          tiles: [
-            { type: 'start', x: 0, y: 0 },
-            { type: 'gaz', x: 1, y: 1 },
-          ],
-        },
+        activeCard: { type: 'gaz', damage: 2 },
+        grid: [
+          { type: 'start', x: 0, y: 0 },
+          { type: 'gaz', x: 1, y: 1 },
+        ],
         players: [
           { name: 'Sutat', x: 0, y: 0 },
           { name: 'Hatsu', x: 1, y: 1 },
         ],
-        events: [],
       })
 
       store.dispatch = jest.fn()
@@ -63,7 +60,7 @@ describe('players', () => {
           player: { name: 'Hatsu', x: 1, y: 1 },
           damageType: 'gaz',
           damage: 2,
-        }
+        },
       })
     })
   })
@@ -84,18 +81,16 @@ describe('players', () => {
       store.getState().players.forEach((player) => {
         players.checkDeathFromDamage(store, { payload: { player: player } })
       })
-      
 
       expect(store.dispatch).toHaveBeenCalledTimes(2)
       expect(store.dispatch).toHaveBeenCalledWith({
         type: '@player>death',
-        payload: { player: { name: 'Hatsu', health: -1 } }
+        payload: { player: { name: 'Hatsu', health: -1 } },
       })
       expect(store.dispatch).toHaveBeenCalledWith({
         type: '@player>death',
-        payload: { player: { name: 'Soe', health: 0 } }
+        payload: { player: { name: 'Soe', health: 0 } },
       })
     })
   })
-
 })

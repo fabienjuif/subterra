@@ -4,31 +4,39 @@ import tilesData from '../utils/tiles'
 
 export const initState = () => ({
   gameOver: false,
-  decks: {
-    tiles: { length: 10 },
-    cards: { length: 10 },
-  },
-  turn: 0,
   players: [],
-  action: {}, // action the player is currently doing
-  actions: [], // known possible actions for the current player
-  board: {
-    card: undefined, // current active card
+  enemies: [],
+  deckTiles: { length: 10 }, // should be an array in a futur iteration
+  deckCards: { length: 10 }, // should be an array in a futur iteration
+  activeCard: {}, // should be an array in a futur iteration
+  grid: [
+    {
+      ...tilesData[0],
+      x: 0,
+      y: 0,
+      status: [
+        /* gaz, water, landslide, etc */
+      ],
+    },
+  ],
+  playerActions: {
     tile: undefined,
-    tiles: [{ ...tilesData[0], x: 0, y: 0 }],
+    current: {}, // action the player is currently doing
+    possibilities: [], // known possible actions for the current player
   },
-  data: {
+  technical: {
     actions: [],
   },
 })
 
 const saveAction = (store, action) => {
-  const { actions } = store.getState().data || {}
-  if (actions === null || actions === undefined) return
+  const { actions } = store.getState().technical || {}
 
-  store.mutate((state) => {
-    state.data.actions.push(action)
-  })
+  if (actions) {
+    store.mutate((_) => {
+      actions.push(action)
+    })
+  }
 }
 
 export default (state = initState()) => {
