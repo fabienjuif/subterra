@@ -32,11 +32,11 @@ export const initState = () => ({
 const saveAction = (store, action) => {
   const { actions } = store.getState().technical || {}
 
-  if (actions) {
-    store.mutate((_) => {
-      actions.push(action)
-    })
-  }
+  if (!actions) return
+
+  store.mutate((state) => {
+    state.technical.actions.push(action)
+  })
 }
 
 export default (state = initState()) => {

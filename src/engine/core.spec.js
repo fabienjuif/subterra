@@ -1,4 +1,4 @@
-import createEngine, { initState, saveAction } from './core'
+import createEngine, { initState } from './core'
 
 describe('core', () => {
   describe('reset', () => {

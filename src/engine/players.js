@@ -5,7 +5,7 @@ export const damage = (store, action) => {
     const player = state.players.find(
       ({ name }) => name === action.payload.player.name,
     )
-    player.health -= action.payload.damage
+    player.health = Math.max(0, player.health - action.payload.damage)
   })
 }
 
