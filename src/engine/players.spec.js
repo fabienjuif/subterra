@@ -93,4 +93,47 @@ describe('players', () => {
       })
     })
   })
+
+  describe('init', () => {
+    it('should init players', () => {
+      const store = createStore({
+        players: [],
+      })
+
+      players.init(store, {})
+
+      expect(store.getState()).toEqual({
+        players: [
+          {
+            id: 0,
+            x: 0,
+            y: 0,
+            health: 3,
+            name: 'Sutat',
+            archetype: 'explorer',
+            actionPoints: 2,
+            current: true,
+          },
+          {
+            id: 1,
+            x: 0,
+            y: 0,
+            health: 3,
+            name: 'Tripa',
+            archetype: 'chef',
+            actionPoints: 2,
+          },
+          {
+            id: 2,
+            x: 0,
+            y: 0,
+            health: 5,
+            name: 'SoE',
+            archetype: 'miner',
+            actionPoints: 2,
+          },
+        ],
+      })
+    })
+  })
 })

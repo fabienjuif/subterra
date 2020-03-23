@@ -6,7 +6,8 @@ const Logs = ({ logs, className }) => {
       <h3>Logs</h3>
       {[...logs].reverse().map((log) => (
         <div key={log.id}>
-          {log.code} - {log.player.name}
+          {log.code}
+          {log.player && ` - ${log.player.name}`}
         </div>
       ))}
     </div>

@@ -11,6 +11,14 @@ describe('listeners', () => {
     jest.clearAllMocks()
   })
 
+  describe('@players>init', () => {
+    it('should call player.init', () => {
+      const engine = createEngine({})
+      engine.dispatch('@players>init')
+      expect(players.init).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('@players>damage', () => {
     it('should call player.damage and players.checkDeathFromDamage', () => {
       const engine = createEngine({})

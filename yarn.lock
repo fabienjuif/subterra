@@ -1179,6 +1179,13 @@
     "@myrtille/core" "^0.8.0"
     immer "^6.0.2"
 
+"@myrtille/react@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@myrtille/react/-/react-0.8.0.tgz#83d12f070a473001d1c4027891ffb113a71543ea"
+  integrity sha512-NcuMCZVZkRNH5IQRJTC6SEqFPixTAKP1CbLl+syzjvfy8KGwHzo31blwpkteCxt/VP84UBgXdwJc+4stNZc6jA==
+  dependencies:
+    "@myrtille/util" "^0.8.0"
+
 "@myrtille/util@^0.8.0":
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/@myrtille/util/-/util-0.8.0.tgz#944bd52c214df59e8eb552a4b2ba9b90a6fc978e"
