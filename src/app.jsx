@@ -5,6 +5,7 @@ import Grid from './components/grid'
 import Player from './components/ui/player'
 import CardsDeck from './components/cardsDeck'
 import Logs from './components/logs'
+import MovableGrid from './components/movableGrid'
 import { getWrappingCells, isCellEqual } from './utils/tiles'
 import { game, initState } from './engine'
 import classes from './app.module.scss'
@@ -45,28 +46,29 @@ function App() {
 
   return (
     <div className={cn('app', classes.app)}>
-      <div className={cn('ui-players', classes.players)}>
+      <div className={cn('players', classes.players)}>
         {state.players.map((player) => (
           <Player key={player.id} {...player} />
         ))}
       </div>
-      <div className={cn('ui-grid', classes.grid)}>
+      <MovableGrid className={cn('board', classes.board)}>
         <Grid
           onAction={onAction}
           cells={cells}
           players={state.players}
           nextTile={state.board.tile}
         />
+      </MovableGrid>
+      <div className={cn('turn', classes.turn)}>turn: {state.turn}</div>
+      <div className={cn('tiles-deck', classes.tilesDeck)}>
+        tiles: {state.decks.tiles.length}
       </div>
-      <div>
-        <div>turn: {state.turn}</div>
-        <div>tiles: {state.decks.tiles.length}</div>
-        <div className={cn('ui-cards', classes.cards)}>
-          <CardsDeck size={state.decks.cards.length} card={state.board.card} />
-        </div>
-        {/* FIXME: <button onClick={toNextPlayer}>Next player</button> */}
-      </div>
-      <Logs logs={state.logs} />
+      <CardsDeck
+        className={cn('cards-deck', classes.cardsDeck)}
+        size={state.decks.cards.length}
+        card={state.board.card}
+      />
+      <Logs className={cn('logs', classes.logs)} logs={state.logs} />
     </div>
   )
 }

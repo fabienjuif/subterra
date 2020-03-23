@@ -138,7 +138,7 @@ export const newTurn = (state) => {
   state.players.forEach((_.actionPoints = 2))
 
   if (state.decks.cards.length > 0) {
-    state.board.card = getRandomInArray(Object.values(cardsData).slice(1))
+    state.board.card = getRandomInArray(cardsData.slice(1))
     state.decks.cards.length -= 1
   } else {
     // Replace by EndGameEvent
@@ -263,7 +263,7 @@ export const game = (state, action = {}) => {
     })
 
     if (state.action.code !== 'move') {
-      let nextTile = getRandomInArray(Object.values(tilesData).slice(2))
+      let nextTile = getRandomInArray(tilesData.slice(2))
       if (
         state.decks.tiles.length <= 6 &&
         state.decks.tiles.length === roll(state.decks.tiles.length)
