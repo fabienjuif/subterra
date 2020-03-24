@@ -1,5 +1,43 @@
 import { isCellEqual } from '../utils/tiles'
 
+export const pass = (store, action) => {
+  const previousState = store.getState()
+  const firstPlayerIndex = previousState.players.findIndex(({ first }) => first)
+  const currentPlayerIndex = previousState.players.findIndex(
+    ({ current }) => current,
+  )
+
+  const getNextIndex = (current) => {
+    const next = current + 1
+    if (next >= previousState.players.length) {
+      return 0
+    }
+    return next
+  }
+
+  const nextCurrentPlayerIndex = getNextIndex(currentPlayerIndex)
+
+  const turnEnd = firstPlayerIndex === nextCurrentPlayerIndex
+
+  store.mutate((state) => {
+    state.players[currentPlayerIndex].current = false
+
+    if (turnEnd) {
+      state.players.forEach((player, index) => {
+        player.actionPoints = 2
+      })
+
+      state.players[getNextIndex(nextCurrentPlayerIndex)].current = true
+      state.players[getNextIndex(firstPlayerIndex)].first = true
+      state.players[firstPlayerIndex].first = false
+    } else {
+      state.players[nextCurrentPlayerIndex].current = true
+    }
+  })
+
+  if (turnEnd) store.dispatch('@cards>pick')
+}
+
 export const damage = (store, action) => {
   store.mutate((state) => {
     const player = state.players.find(
@@ -45,6 +83,7 @@ export const init = (store, action) => {
         archetype: 'explorer',
         actionPoints: 2,
         current: true,
+        first: true,
       },
       {
         id: 1,

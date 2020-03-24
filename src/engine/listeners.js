@@ -6,6 +6,7 @@ export default [
   ['@players>init', players.init],
   ['@cards>init', cards.init],
   // game going on
+  ['@players>pass', players.pass],
   ['@players>damage', players.damage],
   ['@players>damage', players.checkDeathFromDamage],
   ['@cards>pick', cards.pick],

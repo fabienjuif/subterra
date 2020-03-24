@@ -68,6 +68,7 @@ function App() {
   return (
     <div className={cn('app', classes.app)}>
       <div className={cn('players', classes.players)}>
+        <button onClick={() => dispatch('@players>pass')}>pass</button>
         {state.players.map((player) => (
           <Player key={player.id} {...player} />
         ))}
