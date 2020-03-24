@@ -31,10 +31,13 @@ function App() {
 
     // this is for debug purpose
     dispatch('@cards>pick')
-    dispatch({
-      type: '@players>damage',
-      payload: { player: { name: 'Sutat' }, damage: 2 },
-    })
+    dispatch('@cards>pick')
+    dispatch('@cards>pick')
+    dispatch('@cards>pick')
+    // dispatch({
+    //   type: '@players>damage',
+    //   payload: { player: { name: 'Sutat' }, damage: 2 },
+    // })
   }, [dispatch])
 
   useEffect(() => {

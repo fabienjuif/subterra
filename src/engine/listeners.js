@@ -9,5 +9,4 @@ export default [
   ['@players>damage', players.damage],
   ['@players>damage', players.checkDeathFromDamage],
   ['@cards>pick', cards.pick],
-  ['@cards>pick', players.checkDamageFromCard],
 ]
