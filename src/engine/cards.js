@@ -1,13 +1,13 @@
-import cardsData from '../utils/cards'
-import { getRandomInArray } from '../utils/dices'
+export const init = (store, action) => {
+  store.mutate((state) => {
+    state.deckCards = action.payload
+  })
+}
 
 export const pick = (store, action) => {
   store.mutate((state) => {
     if (state.deckCards.length > 0) {
-      state.activeCard = getRandomInArray(cardsData.slice(1))
-      state.deckCards.length -= 1
-    } else {
-      state.activeCard = cardsData[0]
+      state.activeCard = state.deckCards.shift()
     }
   })
 }

@@ -1,4 +1,4 @@
-const EndCard = { type: 'end', damage: 9 }
+const EndCard = { type: 'end' }
 const WaterCard = { type: 'water', damage: 2, duration: 1 }
 const WaterCard2 = { type: 'water', damage: 2, duration: 2 }
 const GazCard = { type: 'gaz', damage: 2, duration: 1 }
