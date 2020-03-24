@@ -92,7 +92,7 @@ function App() {
       />
       <Logs
         className={cn('logs', classes.logs)}
-        logs={state.technical.actions}
+        actions={state.technical.actions}
       />
     </div>
   )
