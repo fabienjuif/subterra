@@ -1164,32 +1164,32 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@myrtille/core@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@myrtille/core/-/core-0.8.0.tgz#665b075be15770152f6eb575afa26708abf985f1"
-  integrity sha512-LfS04Linf143j8Jq/DVvhwy99ukkonVqMb6/kvYYqdudclUv0tzScEcoMpnxVX+Ae59D5nze8jCFSL2m9NyPOg==
+"@myrtille/core@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@myrtille/core/-/core-0.8.1.tgz#e11dbe61d719a41b2247e8c5c3af78613ec0f7f2"
+  integrity sha512-MNhuLOXGhbMltrlAmnZbeQq3SQk76GXitAgqRD2OoTlnlLHsPr2zI1PqovFclHbLb2IARRjUEBbRhpA2SOrELg==
   dependencies:
-    "@myrtille/util" "^0.8.0"
+    "@myrtille/util" "^0.8.1"
 
-"@myrtille/mutate@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@myrtille/mutate/-/mutate-0.8.0.tgz#03e3d2ef4135f38d8b1c7bd06d02e8c0971a1607"
-  integrity sha512-qp7lkCONX4E2qtyzsfcEgQXQd04E/xSlLMefU+/hRZ/ZgPWdd+DC1UFrq2ZXhamotc29aV67c6mHNDNVumun6A==
+"@myrtille/mutate@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@myrtille/mutate/-/mutate-0.8.1.tgz#7d5b407e5baa2d8046256747828619445d6dd5d3"
+  integrity sha512-7/WiQSahCdmWxh6zF/any5Xncz5I3z26JKTJ8p6Hp5cDGAlFtsDlk2imeb6xKsP1buM4XL+MWE3Xk58Z9FJtPA==
   dependencies:
-    "@myrtille/core" "^0.8.0"
+    "@myrtille/core" "^0.8.1"
     immer "^6.0.2"
 
-"@myrtille/react@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@myrtille/react/-/react-0.8.0.tgz#83d12f070a473001d1c4027891ffb113a71543ea"
-  integrity sha512-NcuMCZVZkRNH5IQRJTC6SEqFPixTAKP1CbLl+syzjvfy8KGwHzo31blwpkteCxt/VP84UBgXdwJc+4stNZc6jA==
+"@myrtille/react@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@myrtille/react/-/react-0.8.1.tgz#10c627e0627c9789c489942b035f5d004d9097ad"
+  integrity sha512-WSRvx2fP8uaK4gIMNHeVnbWY9Qv0Et8ZWe9W3YqYalnJbnvaYpN9hNS6EeCf9nMGB/Di2aqNYg/EJ46l74Nnzw==
   dependencies:
-    "@myrtille/util" "^0.8.0"
+    "@myrtille/util" "^0.8.1"
 
-"@myrtille/util@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@myrtille/util/-/util-0.8.0.tgz#944bd52c214df59e8eb552a4b2ba9b90a6fc978e"
-  integrity sha512-cuBgaBfTjSJMbiBm6rx2Or6daC9cYf6pn3gmTrjcKGljIbGvLR/nVNz4nVBxd0h8IYZtnHnVGkCWsQCRXWhvUQ==
+"@myrtille/util@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@myrtille/util/-/util-0.8.1.tgz#3e27d6b285dbd2d3f1904a1ccb57f852e7e758d4"
+  integrity sha512-eW3K+HiLgry1GWeKQIzbREfZGDAcAOE2X8ORromffowWRNYOuKLgV/aEsyIeutMPbhVpBvB2eP4MhoMyQ0kwRA==
 
 "@nodelib/fs.stat@^1.1.2":
   version "1.1.3"
