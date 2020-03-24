@@ -1,15 +1,20 @@
 import React from 'react'
 
-const Logs = ({ logs, className }) => {
+const Logs = ({ actions, className }) => {
   return (
     <div className={className}>
       <h3>Logs</h3>
-      {[...logs].reverse().map((log) => (
-        <div key={log.id}>
-          {log.code}
-          {log.player && ` - ${log.player.name}`}
-        </div>
-      ))}
+      {[...actions]
+        .filter(({ type }) => !type.startsWith('@@react'))
+        .reverse()
+        .map((action) => (
+          <div key={action.id}>
+            {action.type}
+            {action.payload &&
+              action.payload.player &&
+              ` - ${action.payload.player.name}`}
+          </div>
+        ))}
     </div>
   )
 }
