@@ -7,7 +7,7 @@ export const initState = () => ({
   players: [],
   enemies: [],
   deckTiles: { length: 10 }, // should be an array in a futur iteration
-  deckCards: { length: 10 }, // should be an array in a futur iteration
+  deckCards: [],
   activeCard: {}, // should be an array in a futur iteration
   grid: [
     {

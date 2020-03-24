@@ -8,6 +8,8 @@ import CardsDeck from './components/cardsDeck'
 import Logs from './components/logs'
 import MovableGrid from './components/movableGrid'
 import { getWrappingCells, isCellEqual } from './utils/tiles'
+import { getRandomInArray } from './utils/dices'
+import cards from './utils/cards'
 import classes from './app.module.scss'
 
 function App() {
@@ -16,6 +18,15 @@ function App() {
   const [cells, setCells] = useState([])
 
   useEffect(() => {
+    dispatch({
+      type: '@cards>init',
+      payload: [
+        ...Array.from({ length: 10 }).map(() =>
+          getRandomInArray(cards.slice(1)),
+        ),
+        cards[0],
+      ],
+    })
     dispatch('@players>init')
 
     // this is for debug purpose
