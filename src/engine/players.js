@@ -27,8 +27,9 @@ export const pass = (store, action) => {
         player.actionPoints = 2
       })
 
-      state.players[getNextIndex(nextCurrentPlayerIndex)].current = true
-      state.players[getNextIndex(firstPlayerIndex)].first = true
+      const nextFirstPlayerIndex = getNextIndex(firstPlayerIndex)
+      state.players[nextFirstPlayerIndex].current = true
+      state.players[nextFirstPlayerIndex].first = true
       state.players[firstPlayerIndex].first = false
     } else {
       state.players[nextCurrentPlayerIndex].current = true
