@@ -1,14 +1,6 @@
-import { roll6 } from '../utils/dices'
-
 export const init = (store, action) => {
   store.mutate((state) => {
     state.deckCards = action.payload
-
-    // FIXME: this is a tryout to run 5000 dices to see time it takes
-    // console.time('roll!!!')
-    // state.dices = Array.from({ length: 5000 }).map(roll6)
-    // console.timeEnd('roll!!!')
-    // it took 4ms on my computer :)
   })
 }
 
