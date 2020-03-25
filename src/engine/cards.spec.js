@@ -41,5 +41,81 @@ describe('cards', () => {
       expect(store.getState().activeCard.type).toBe('end')
       expect(store.getState().deckCards).toEqual([])
     })
+
+    it('should calls @cards>shake if the next card is a shaking card', () => {
+      const store = createStore({
+        deckCards: [{ type: 'shake' }],
+      })
+
+      store.dispatch = jest.fn()
+
+      cards.pick(store, {})
+
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith('@cards>shake')
+    })
+  })
+
+  describe('shake', () => {
+    it('should roll dices for each players', () => {
+      const store = createStore({
+        activeCard: { type: 'shake' },
+        players: [
+          {
+            name: 'Hatsu',
+          },
+          {
+            name: 'SoE',
+          },
+        ],
+      })
+
+      store.dispatch = jest.fn()
+
+      const stateBefore = store.getState()
+
+      cards.shake(store, {})
+
+      expect(stateBefore).toEqual(store.getState())
+      expect(store.dispatch).toHaveBeenCalledTimes(2)
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@dices>roll',
+        payload: {
+          min: 4,
+          player: 'Hatsu',
+          actionOnFail: {
+            type: '@players>damage',
+            payload: {
+              damage: 1,
+              damageFrom: {
+                card: { type: 'shake' },
+              },
+              player: {
+                name: 'Hatsu',
+              },
+            },
+          },
+        },
+      })
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@dices>roll',
+        payload: {
+          min: 4,
+          player: 'SoE',
+          actionOnFail: {
+            type: '@players>damage',
+            payload: {
+              damage: 1,
+              damageFrom: {
+                card: { type: 'shake' },
+              },
+              player: {
+                name: 'SoE',
+              },
+            },
+          },
+        },
+      })
+    })
   })
 })

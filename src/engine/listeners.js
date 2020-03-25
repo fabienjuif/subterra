@@ -1,5 +1,6 @@
-import * as players from './players'
 import * as cards from './cards'
+import * as dices from './dices'
+import * as players from './players'
 
 export default [
   // initializations
@@ -10,5 +11,9 @@ export default [
   ['@players>damage', players.damage],
   ['@players>damage', players.checkDeathFromDamage],
   ['@cards>pick', cards.pick],
-  ['@cards>pick', players.checkDamageFromCard],
+  ['@cards>shake', cards.shake],
+  // "random"
+  ['@dices>init', dices.init],
+  ['@dices>roll', dices.roll],
+  ['@dices>rolled', dices.checkAndDispatch],
 ]

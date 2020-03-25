@@ -8,6 +8,7 @@ export const initState = () => ({
   enemies: [],
   deckTiles: { length: 10 }, // should be an array in a futur iteration
   deckCards: [],
+  dices: [],
   activeCard: {}, // should be an array in a futur iteration
   grid: [
     {
