@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import cn from 'classnames'
 import { provider, useStateAt, useDispatch } from '@myrtille/react'
 import { createEngine } from './engine'
@@ -8,7 +8,7 @@ import CardsDeck from './components/cardsDeck'
 import Logs from './components/logs'
 import MovableGrid from './components/movableGrid'
 import { getWrappingCells, isCellEqual } from './utils/tiles'
-import { getRandomInArray } from './utils/dices'
+import { getRandomInArray, roll6 } from './utils/dices'
 import cards from './utils/cards'
 import classes from './app.module.scss'
 
@@ -26,6 +26,10 @@ function App() {
         ),
         cards[0],
       ],
+    })
+    dispatch({
+      type: '@dices>init',
+      payload: Array.from({ length: 5000 }).map(() => roll6()),
     })
     dispatch('@players>init')
 
@@ -53,19 +57,6 @@ function App() {
     setCells(cells)
   }, [state.grid, state.playerActions.possibilities])
 
-  const onAction = useCallback(
-    (action) => {
-      if (action.code === 'done') {
-        dispatch({ type: 'ON_DONE' })
-      } else if (action.code === 'rotate') {
-        dispatch({ type: 'ON_ROTATE_TILE' })
-      } else {
-        dispatch({ type: 'ON_ACTION', payload: action })
-      }
-    },
-    [dispatch],
-  )
-
   if (state.players.length === 0) return null
 
   return (
@@ -77,7 +68,7 @@ function App() {
       </div>
       <MovableGrid className={cn('board', classes.board)}>
         <Grid
-          onAction={onAction}
+          onAction={dispatch}
           cells={cells}
           players={state.players}
           nextTile={state.playerActions.tile}

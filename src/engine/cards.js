@@ -21,33 +21,30 @@ export const pick = (store, action) => {
 
   const nextState = store.getState()
   if (nextState.activeCard.type === 'shake') {
-    nextState.players.forEach((player) => {
-      // FIXME: how to make this action replayable?
-      //    maybe by rolling something very high in advance ?
-      //    like ((players * cards + players * tiles) * 10) dices? ((6 * 20) + (6 * 64)) * 10 === 5040 dices!!!)
-      const roll = roll6()
-
-      // only for tracing purpose
-      store.dispatch({
-        type: '@players>roll',
-        payload: {
-          roll,
-          player: player.name,
-        },
-      })
-
-      if (roll > 3) return
-
-      store.dispatch({
-        type: '@players>damage',
-        payload: {
-          damage: 1,
-          damageFrom: {
-            card: nextState.activeCard,
-          },
-          player, // TODO: only send player name
-        },
-      })
-    })
+    store.dispatch('@cards>shake')
   }
+}
+
+export const shake = (store, action) => {
+  const previousState = store.getState()
+
+  previousState.players.forEach((player) => {
+    store.dispatch({
+      type: '@dices>roll',
+      payload: {
+        min: 4,
+        player: player.name,
+        actionOnFail: {
+          type: '@players>damage',
+          payload: {
+            damage: 1,
+            damageFrom: {
+              card: previousState.activeCard,
+            },
+            player, // TODO: only send player name
+          },
+        },
+      },
+    })
+  })
 }
