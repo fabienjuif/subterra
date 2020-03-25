@@ -12,8 +12,17 @@ export default [
   ['@players>damage', players.checkDeathFromDamage],
   ['@cards>pick', cards.pick],
   ['@cards>shake', cards.shake],
+  [
+    ({ type, payload = {} }) =>
+      type === '@dices>rolled' && payload.what === '@cards>landslide',
+    cards.landslide,
+  ],
   // "random"
   ['@dices>init', dices.init],
   ['@dices>roll', dices.roll],
-  ['@dices>rolled', dices.checkAndDispatch],
+  [
+    ({ type, payload = {} }) =>
+      type === '@dices>rolled' && payload.min !== undefined,
+    dices.checkAndDispatch,
+  ],
 ]
