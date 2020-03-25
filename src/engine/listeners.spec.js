@@ -40,6 +40,16 @@ describe('listeners', () => {
     })
   })
 
+  describe('@players>pass', () => {
+    it('should call player.pass', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@players>pass')
+
+      expect(players.pass).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('@cards>init', () => {
     it('should call cards.init', () => {
       const engine = createEngine({})
