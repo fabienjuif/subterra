@@ -22,7 +22,7 @@ describe('listeners', () => {
   })
 
   describe('@players>damage', () => {
-    it('should call player.damage and players.checkDeathFromDamage', () => {
+    it('should call player.damage', () => {
       const engine = createEngine({})
 
       engine.dispatch({
@@ -36,17 +36,26 @@ describe('listeners', () => {
       })
 
       expect(players.damage).toHaveBeenCalledTimes(1)
-      expect(players.checkDeathFromDamage).toHaveBeenCalledTimes(1)
     })
   })
 
   describe('@players>pass', () => {
-    it('should call player.pass', () => {
+    it('should call players.pass', () => {
       const engine = createEngine({})
 
       engine.dispatch('@players>pass')
 
       expect(players.pass).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('@players>move', () => {
+    it('should call players.move', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@players>move')
+
+      expect(players.move).toHaveBeenCalledTimes(1)
     })
   })
 

@@ -9,7 +9,7 @@ export default [
   // game going on
   ['@players>pass', players.pass],
   ['@players>damage', players.damage],
-  ['@players>damage', players.checkDeathFromDamage],
+  ['@players>move', players.move],
   ['@cards>pick', cards.pick],
   ['@cards>shake', cards.shake],
   // "random"

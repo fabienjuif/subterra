@@ -37,22 +37,53 @@ export const pass = (store, action) => {
   if (turnEnd) store.dispatch('@cards>pick')
 }
 
+export const move = (store, action) => {
+  store.mutate((state) => {
+    const player = state.players.find(
+      ({ name }) => name === action.payload.playerName,
+    )
+
+    checkExcess(store, player, action.payload.cost)
+
+    player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
+    player.x = action.payload.x
+    player.y = action.payload.y
+  })
+}
+
+const checkExcess = (store, player, actionCost) => {
+  if (player.actionPoints < actionCost) {
+    store.dispatch({
+      type: '@dices>roll',
+      payload: {
+        min: 4,
+        actionOnFail: {
+          type: '@players>damage',
+          payload: { damage: 1, from: 'excess', playerName: player.name },
+        },
+      },
+    })
+  }
+}
+
 export const damage = (store, action) => {
   store.mutate((state) => {
     const player = state.players.find(
-      ({ name }) => name === action.payload.player.name,
+      ({ name }) => name === action.payload.playerName,
     )
+
+    checkDeath(store, player, action.payload.damage)
+
     player.health = Math.max(0, player.health - action.payload.damage)
   })
 }
 
-export const checkDeathFromDamage = (store, action) => {
-  const player = store
-    .getState()
-    .players.find((p) => p.name === action.payload.player.name)
-
-  if (player.health <= 0) {
-    store.dispatch({ type: '@player>death', payload: { player: player } })
+const checkDeath = (store, player, damage) => {
+  if (player.health <= damage) {
+    store.dispatch({
+      type: '@player>death',
+      payload: { playerName: player.name },
+    })
   }
 }
 

@@ -25,16 +25,9 @@ export const shake = (store, action) => {
       type: '@dices>roll',
       payload: {
         min: 4,
-        player: player.name,
         actionOnFail: {
           type: '@players>damage',
-          payload: {
-            damage: 1,
-            damageFrom: {
-              card: previousState.activeCard,
-            },
-            player, // TODO: only send player name
-          },
+          payload: { damage: 1, from: 'shake', playerName: player.name },
         },
       },
     })
