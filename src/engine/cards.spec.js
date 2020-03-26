@@ -253,17 +253,13 @@ describe('cards', () => {
           type: '@players>damage',
           payload: {
             damage: 2,
-            damageFrom: {
+            from: {
               card: {
                 type: 'landslide',
                 damage: 2,
               },
             },
-            player: {
-              name: 'Hatsu',
-              x: 0,
-              y: 2,
-            },
+            playerName: 'Hatsu',
           },
         })
       })

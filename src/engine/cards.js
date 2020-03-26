@@ -77,10 +77,10 @@ export const landslide = (store, action) => {
           type: '@players>damage',
           payload: {
             damage: activeCard.damage,
-            damageFrom: {
+            from: {
               card: activeCard,
             },
-            player: original(player), // TODO: only send player name
+            playerName: player.name,
           },
         })
       })
