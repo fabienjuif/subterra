@@ -2,6 +2,7 @@ import createEngine, * as core from './core'
 import * as players from './players'
 import * as cards from './cards'
 import * as dices from './dices'
+import { roll } from './actions'
 
 jest.mock('./players')
 jest.mock('./cards')
@@ -123,33 +124,19 @@ describe('listeners', () => {
     it('should call dices.checkAndDispatch', () => {
       const engine = createEngine({})
 
-      engine.dispatch({ type: '@dices>rolled', payload: { min: 2 } })
+      engine.dispatch('@dices>rolled')
 
       expect(dices.checkAndDispatch).toHaveBeenCalledTimes(1)
     })
+  })
 
-    it('should NOT call dices.checkAndDispatch', () => {
-      const engine = createEngine({})
-
-      engine.dispatch({
-        type: '@dices>rolled',
-        payload: { something: 'but not min' },
-      })
-
-      expect(dices.checkAndDispatch).toHaveBeenCalledTimes(0)
-    })
-
+  describe('@cards>landslide', () => {
     it('should call cards.landslide', () => {
       const engine = createEngine({})
 
-      engine.dispatch({
-        type: '@dices>roll',
-        payload: {
-          what: '@cards>landslide',
-        },
-      })
+      engine.dispatch('@cards>landslide')
 
-      expect(cards.landslide).toHaveBeenCalledTimes(0)
+      expect(cards.landslide).toHaveBeenCalledTimes(1)
     })
   })
 })

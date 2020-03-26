@@ -11,20 +11,12 @@ export default [
   ['@players>damage', players.damage],
   ['@cards>pick', cards.pick],
   ['@cards>shake', cards.shake],
+  ['@cards>landslide', cards.landslide],
   ['@cards>water', cards.processMarkerCard],
   ['@cards>gaz', cards.processMarkerCard],
   ['@cards>enemy', cards.processMarkerCard],
-  [
-    ({ type, payload = {} }) =>
-      type === '@dices>rolled' && payload.what === '@cards>landslide',
-    cards.landslide,
-  ],
   // "random"
   ['@dices>init', dices.init],
   ['@dices>roll', dices.roll],
-  [
-    ({ type, payload = {} }) =>
-      type === '@dices>rolled' && payload.min !== undefined,
-    dices.checkAndDispatch,
-  ],
+  ['@dices>rolled', dices.checkAndDispatch],
 ]
