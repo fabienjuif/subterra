@@ -36,6 +36,7 @@ export const shake = (store, action) => {
       type: '@dices>roll',
       payload: {
         min: 4,
+        playerName: player.name,
         actionOnFail: {
           type: '@players>damage',
           payload: {
