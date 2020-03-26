@@ -40,20 +40,17 @@ export const pass = (store, action) => {
 export const damage = (store, action) => {
   store.mutate((state) => {
     const player = state.players.find(
-      ({ name }) => name === action.payload.player.name,
+      ({ name }) => name === action.payload.playerName,
     )
     player.health = Math.max(0, player.health - action.payload.damage)
+
+    if (player.health <= 0) {
+      store.dispatch({
+        type: '@players>death',
+        payload: { playerName: action.payload.playerName },
+      })
+    }
   })
-}
-
-export const checkDeathFromDamage = (store, action) => {
-  const player = store
-    .getState()
-    .players.find((p) => p.name === action.payload.player.name)
-
-  if (player.health <= 0) {
-    store.dispatch({ type: '@player>death', payload: { player: player } })
-  }
 }
 
 export const init = (store, action) => {
