@@ -6,8 +6,8 @@ const GazCard2 = { type: 'gaz', damage: 2, duration: 2 }
 const LandslideCard = { type: 'landslide', damage: 3, duration: 1 }
 const LandslideCard2 = { type: 'landslide', damage: 3, duration: 2 }
 const ShakeCard = { type: 'shake', damage: 1, duration: 1 }
-const HorrorCard = { type: 'enemy', damage: 0, duration: 1 }
-const HorrorCard2 = { type: 'enemy', damage: 0, duration: 2 }
+const HorrorCard = { type: 'enemy', damage: 3, duration: 1 }
+const HorrorCard2 = { type: 'enemy', damage: 3, duration: 2 }
 
 const cards = [
   EndCard,
