@@ -1,5 +1,17 @@
+import { createPatch } from 'diff'
 import { createEngine } from './index'
-import cards from '../utils/cards'
+import cards, {
+  EndCard,
+  GazCard,
+  WaterCard,
+  ShakeCard,
+  HorrorCard,
+} from '../utils/cards'
+
+expect.addSnapshotSerializer({
+  test: () => true,
+  print: (str) => str,
+})
 
 describe('engine without mock', () => {
   it('should be replayable', () => {
@@ -21,5 +33,33 @@ describe('engine without mock', () => {
     const firstState = play().getState()
     expect(play().getState()).toEqual(firstState)
     expect(play().getState()).toEqual(firstState)
+  })
+
+  it('should connection behaviours to actions', () => {
+    const engine = createEngine()
+
+    const dispatchAndSnap = (action) => {
+      const previousState = engine.getState()
+      engine.dispatch(action)
+      const afterState = engine.getState()
+
+      expect(
+        createPatch(
+          typeof action === 'object' ? action.type : action,
+          JSON.stringify(previousState, null, 2),
+          JSON.stringify(afterState, null, 2),
+        ),
+      ).toMatchSnapshot()
+    }
+
+    dispatchAndSnap({
+      type: '@cards>init',
+      payload: [ShakeCard, GazCard, WaterCard, HorrorCard, EndCard],
+    })
+    dispatchAndSnap('@players>init')
+    dispatchAndSnap({ type: '@dices>init', payload: [2, 3, 4, 5] })
+    dispatchAndSnap('@cards>pick')
+
+    // TODO: complete this after we can discover and move (or explore)
   })
 })
