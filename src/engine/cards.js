@@ -110,11 +110,10 @@ export const processMarkerCard = (store, action) => {
           type: '@players>damage',
           payload: {
             damage: card.damage,
-            damageFrom: {
-              // TODO: only send the "from: 'card'"
+            from: {
               card,
             },
-            player: original(player), // TODO: only send player name
+            playerName: player.name,
           },
         })
       })

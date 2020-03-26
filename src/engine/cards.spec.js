@@ -401,17 +401,13 @@ describe('cards', () => {
         type: '@players>damage',
         payload: {
           damage: 1,
-          damageFrom: {
+          from: {
             card: {
               type: 'marker',
               damage: 1,
             },
           },
-          player: {
-            name: 'Hatsu',
-            x: 0,
-            y: 2,
-          },
+          playerName: 'Hatsu',
         },
       })
     })
