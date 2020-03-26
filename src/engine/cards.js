@@ -16,7 +16,7 @@ export const pick = (store, action) => {
 
   const nextState = store.getState()
   const { type: cardType } = nextState.activeCard
-  if (['shake', 'water'].includes(cardType)) {
+  if (['shake', 'water', 'gaz', 'enemy'].includes(cardType)) {
     store.dispatch(`@cards>${cardType}`)
   } else if (nextState.activeCard.type === 'landslide') {
     store.dispatch(roll.then({ type: '@cards>landslide' }))
@@ -69,8 +69,8 @@ export const landslide = (store, action) => {
   })
 }
 
-export const water = (store, action) => {
-  const { activeCard } = store.getState()
+export const processMarkerCard = (store, action) => {
+  const { card } = action.payload
 
   // find all tiles that have water type and put a status on it
   // if it do not already exists
@@ -79,17 +79,17 @@ export const water = (store, action) => {
     state.grid.forEach((tile) => {
       const { type, status } = tile
 
-      if (type !== 'water') return
-      if (status.includes('water')) return
+      if (type !== card.type) return
+      if (status.includes(card.type)) return
 
-      tile.status.push('water')
+      tile.status.push(card.type)
 
       state.players.forEach((player) => {
         if (!isCellEqual(player)(tile)) return
 
         store.dispatch(
-          players.damage(player, activeCard.damage, {
-            card: activeCard,
+          players.damage(player, card.damage, {
+            card,
           }),
         )
       })

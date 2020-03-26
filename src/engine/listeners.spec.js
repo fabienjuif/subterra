@@ -71,12 +71,32 @@ describe('listeners', () => {
   })
 
   describe('@cards>water', () => {
-    it('should call cards.water', () => {
+    it('should call cards.processMarkerCard', () => {
       const engine = createEngine({})
 
       engine.dispatch('@cards>water')
 
-      expect(cards.water).toHaveBeenCalledTimes(1)
+      expect(cards.processMarkerCard).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('@cards>gaz', () => {
+    it('should call cards.processMarkerCard', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@cards>gaz')
+
+      expect(cards.processMarkerCard).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('@cards>enemy', () => {
+    it('should call cards.processMarkerCard', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@cards>enemy')
+
+      expect(cards.processMarkerCard).toHaveBeenCalledTimes(1)
     })
   })
 
