@@ -76,7 +76,7 @@ export const landslide = (store, action) => {
           type: '@players>damage',
           payload: {
             damage: activeCard.damage,
-            from: activeCard.type,
+            from: { card: activeCard },
             playerName: player.name,
           },
         })

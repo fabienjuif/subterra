@@ -251,7 +251,11 @@ describe('cards', () => {
         expect(store.dispatch).toHaveBeenCalledTimes(1)
         expect(store.dispatch).toHaveBeenCalledWith({
           type: '@players>damage',
-          payload: { damage: 2, from: 'landslide', playerName: 'Hatsu' },
+          payload: {
+            damage: 2,
+            from: { card: { type: 'landslide', damage: 2 } },
+            playerName: 'Hatsu',
+          },
         })
       })
     })
