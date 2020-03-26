@@ -111,9 +111,33 @@ describe('listeners', () => {
     it('should call dices.checkAndDispatch', () => {
       const engine = createEngine({})
 
-      engine.dispatch('@dices>rolled')
+      engine.dispatch({ type: '@dices>rolled', payload: { min: 2 } })
 
       expect(dices.checkAndDispatch).toHaveBeenCalledTimes(1)
+    })
+
+    it('should NOT call dices.checkAndDispatch', () => {
+      const engine = createEngine({})
+
+      engine.dispatch({
+        type: '@dices>rolled',
+        payload: { something: 'but not min' },
+      })
+
+      expect(dices.checkAndDispatch).toHaveBeenCalledTimes(0)
+    })
+
+    it('should call cards.landslide', () => {
+      const engine = createEngine({})
+
+      engine.dispatch({
+        type: '@dices>roll',
+        payload: {
+          what: '@cards>landslide',
+        },
+      })
+
+      expect(cards.landslide).toHaveBeenCalledTimes(0)
     })
   })
 })

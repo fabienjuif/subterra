@@ -54,12 +54,30 @@ describe('cards', () => {
       expect(store.dispatch).toHaveBeenCalledTimes(1)
       expect(store.dispatch).toHaveBeenCalledWith('@cards>shake')
     })
+
+    it('should roll a dice for the card landslide', () => {
+      const store = createStore({
+        deckCards: [{ type: 'landslide' }],
+      })
+
+      store.dispatch = jest.fn()
+
+      cards.pick(store, {})
+
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@dices>roll',
+        payload: {
+          what: '@cards>landslide',
+        },
+      })
+    })
   })
 
   describe('shake', () => {
     it('should roll dices for each players', () => {
       const store = createStore({
-        activeCard: { type: 'shake' },
+        activeCard: { type: 'shake', damage: 1 },
         players: [
           {
             name: 'Hatsu',
@@ -97,6 +115,130 @@ describe('cards', () => {
             payload: { damage: 1, from: 'shake', playerName: 'SoE' },
           },
         },
+      })
+    })
+
+    describe('landslide', () => {
+      it('should set the status landslide on tile that dont already have it', () => {
+        const store = createStore({
+          players: [],
+          grid: [
+            {
+              status: [],
+              dices: [2, 3],
+              type: 'water',
+            },
+            {
+              status: ['landslide'],
+              dices: [2, 3],
+              type: 'landslide',
+            },
+            {
+              status: ['enemy'],
+              dices: [2, 3],
+              type: 'landslide',
+            },
+            {
+              dices: [3, 4],
+              status: [],
+              type: 'landslide',
+            },
+          ],
+        })
+
+        cards.landslide(store, { payload: { value: 2 } })
+
+        expect(store.getState()).toEqual({
+          players: [],
+          grid: [
+            {
+              status: [],
+              dices: [2, 3],
+              type: 'water',
+            },
+            {
+              status: ['landslide'],
+              dices: [2, 3],
+              type: 'landslide',
+            },
+            {
+              status: ['enemy', 'landslide'], // new marker
+              dices: [2, 3],
+              type: 'landslide',
+            },
+            {
+              dices: [3, 4],
+              status: [],
+              type: 'landslide',
+            },
+          ],
+        })
+      })
+
+      it('should damage players on a new landslide tile', () => {
+        const store = createStore({
+          activeCard: {
+            type: 'landslide',
+            damage: 2,
+          },
+          players: [
+            {
+              name: 'Hatsu',
+              x: 0,
+              y: 2,
+            },
+            {
+              name: 'SoE',
+              x: 2,
+              y: 3,
+            },
+          ],
+          grid: [
+            {
+              type: 'landslide',
+              dices: [1, 2],
+              status: [],
+              x: 0,
+              y: 2,
+            },
+          ],
+        })
+        store.dispatch = jest.fn()
+
+        cards.landslide(store, { payload: { value: 1 } })
+
+        expect(store.getState()).toEqual({
+          activeCard: {
+            type: 'landslide',
+            damage: 2,
+          },
+          players: [
+            {
+              name: 'Hatsu',
+              x: 0,
+              y: 2,
+            },
+            {
+              name: 'SoE',
+              x: 2,
+              y: 3,
+            },
+          ],
+          grid: [
+            {
+              type: 'landslide',
+              dices: [1, 2],
+              status: ['landslide'],
+              x: 0,
+              y: 2,
+            },
+          ],
+        })
+        expect(store.dispatch).toHaveBeenCalledTimes(1)
+        expect(store.dispatch).toHaveBeenCalledWith({
+          type: '@players>damage',
+          payload: { damage: 2, from: 'landslide', playerName: 'Hatsu' },
+        })
       })
     })
   })
