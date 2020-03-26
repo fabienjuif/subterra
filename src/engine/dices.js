@@ -20,6 +20,17 @@ export const roll = (store, action) => {
 }
 
 export const checkAndDispatch = (store, action) => {
+  if (action.payload.min === undefined) {
+    store.dispatch({
+      ...action.payload.nextAction,
+      payload: {
+        ...action.payload.nextAction.payload,
+        rolled: action.payload.value,
+      },
+    })
+    return
+  }
+
   if (action.payload.value < action.payload.min) {
     if (action.payload.actionOnFail) {
       store.dispatch(action.payload.actionOnFail)
