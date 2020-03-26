@@ -1,13 +1,13 @@
-const EndCard = { type: 'end' }
-const WaterCard = { type: 'water', damage: 2, duration: 1 }
-const WaterCard2 = { type: 'water', damage: 2, duration: 2 }
-const GazCard = { type: 'gaz', damage: 2, duration: 1 }
-const GazCard2 = { type: 'gaz', damage: 2, duration: 2 }
-const LandslideCard = { type: 'landslide', damage: 3, duration: 1 }
-const LandslideCard2 = { type: 'landslide', damage: 3, duration: 2 }
-const ShakeCard = { type: 'shake', damage: 1, duration: 1 }
-const HorrorCard = { type: 'enemy', damage: 3, duration: 1 }
-const HorrorCard2 = { type: 'enemy', damage: 3, duration: 2 }
+export const EndCard = { type: 'end' }
+export const WaterCard = { type: 'water', damage: 2, duration: 1 }
+export const WaterCard2 = { type: 'water', damage: 2, duration: 2 }
+export const GazCard = { type: 'gaz', damage: 2, duration: 1 }
+export const GazCard2 = { type: 'gaz', damage: 2, duration: 2 }
+export const LandslideCard = { type: 'landslide', damage: 3, duration: 1 }
+export const LandslideCard2 = { type: 'landslide', damage: 3, duration: 2 }
+export const ShakeCard = { type: 'shake', damage: 1, duration: 1 }
+export const HorrorCard = { type: 'enemy', damage: 3, duration: 1 }
+export const HorrorCard2 = { type: 'enemy', damage: 3, duration: 2 }
 
 const cards = [
   EndCard,
