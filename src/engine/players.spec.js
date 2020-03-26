@@ -141,7 +141,7 @@ describe('players', () => {
       })
 
       players.damage(store, {
-        payload: { player: { name: 'Hatsu' }, damage: 2 },
+        payload: { playerName: 'Hatsu', damage: 2 },
       })
       expect(store.getState()).toEqual({
         players: [
@@ -156,33 +156,28 @@ describe('players', () => {
         ],
       })
     })
-  })
 
-  describe('checkDeathFromDamage', () => {
-    it('should send a @player>death action for each player with health <= 0', () => {
+    it('should kill player if it has no health remaining', () => {
       const store = createStore({
         players: [
-          { name: 'Hatsu', health: -1 },
-          { name: 'Soe', health: 0 },
-          { name: 'Sutat', health: 1 },
+          {
+            name: 'SoE',
+            health: 1,
+          },
         ],
-        events: [],
       })
-
       store.dispatch = jest.fn()
 
-      store.getState().players.forEach((player) => {
-        players.checkDeathFromDamage(store, { payload: { player: player } })
+      players.damage(store, {
+        payload: { playerName: 'SoE', damage: 2 },
       })
 
-      expect(store.dispatch).toHaveBeenCalledTimes(2)
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
       expect(store.dispatch).toHaveBeenCalledWith({
-        type: '@player>death',
-        payload: { player: { name: 'Hatsu', health: -1 } },
-      })
-      expect(store.dispatch).toHaveBeenCalledWith({
-        type: '@player>death',
-        payload: { player: { name: 'Soe', health: 0 } },
+        type: '@players>death',
+        payload: {
+          playerName: 'SoE',
+        },
       })
     })
   })

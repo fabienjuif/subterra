@@ -100,17 +100,15 @@ describe('cards', () => {
         type: '@dices>roll',
         payload: {
           min: 4,
-          player: 'Hatsu',
+          playerName: 'Hatsu',
           actionOnFail: {
             type: '@players>damage',
             payload: {
               damage: 1,
-              damageFrom: {
+              from: {
                 card: { type: 'shake', damage: 1 },
               },
-              player: {
-                name: 'Hatsu',
-              },
+              playerName: 'Hatsu',
             },
           },
         },
@@ -119,17 +117,15 @@ describe('cards', () => {
         type: '@dices>roll',
         payload: {
           min: 4,
-          player: 'SoE',
+          playerName: 'SoE',
           actionOnFail: {
             type: '@players>damage',
             payload: {
               damage: 1,
-              damageFrom: {
+              from: {
                 card: { type: 'shake', damage: 1 },
               },
-              player: {
-                name: 'SoE',
-              },
+              playerName: 'SoE',
             },
           },
         },
