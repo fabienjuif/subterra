@@ -213,22 +213,28 @@ describe('players', () => {
       expect(store.dispatch).toHaveBeenCalledTimes(0)
     })
 
-    it('should dispatch @players>death when the damaged player has no more health', () => {
+    it('should kill player if it has no health remaining', () => {
       const store = createStore({
-        players: [{ name: 'Hatsu', health: 1 }],
+        players: [
+          {
+            name: 'SoE',
+            health: 1,
+          },
+        ],
       })
-
       store.dispatch = jest.fn()
 
-      players.damage(store, { payload: { playerName: 'Hatsu', damage: 2 } })
-
-      expect(store.getState()).toEqual({
-        players: [{ name: 'Hatsu', health: 0 }],
+      players.damage(store, {
+        payload: { playerName: 'SoE', damage: 2 },
       })
+
+      expect(store.getState().players).toEqual([{ name: 'SoE', health: 0 }])
       expect(store.dispatch).toHaveBeenCalledTimes(1)
       expect(store.dispatch).toHaveBeenCalledWith({
-        type: '@player>death',
-        payload: { playerName: 'Hatsu' },
+        type: '@players>death',
+        payload: {
+          playerName: 'SoE',
+        },
       })
     })
   })

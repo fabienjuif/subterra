@@ -41,7 +41,9 @@ export const shake = (store, action) => {
           type: '@players>damage',
           payload: {
             damage: previousState.activeCard.damage,
-            from: previousState.activeCard.type,
+            from: {
+              card: previousState.activeCard,
+            },
             playerName: player.name,
           },
         },

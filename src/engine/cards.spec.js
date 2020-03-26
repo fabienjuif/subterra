@@ -103,7 +103,13 @@ describe('cards', () => {
           playerName: 'Hatsu',
           actionOnFail: {
             type: '@players>damage',
-            payload: { damage: 1, from: 'shake', playerName: 'Hatsu' },
+            payload: {
+              damage: 1,
+              from: {
+                card: { type: 'shake', damage: 1 },
+              },
+              playerName: 'Hatsu',
+            },
           },
         },
       })
@@ -114,7 +120,13 @@ describe('cards', () => {
           playerName: 'SoE',
           actionOnFail: {
             type: '@players>damage',
-            payload: { damage: 1, from: 'shake', playerName: 'SoE' },
+            payload: {
+              damage: 1,
+              from: {
+                card: { type: 'shake', damage: 1 },
+              },
+              playerName: 'SoE',
+            },
           },
         },
       })

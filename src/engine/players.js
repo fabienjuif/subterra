@@ -73,7 +73,7 @@ export const damage = (store, action) => {
 
   if (player.health <= action.payload.damage) {
     store.dispatch({
-      type: '@player>death',
+      type: '@players>death',
       payload: { playerName: player.name },
     })
   }
