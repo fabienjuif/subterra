@@ -22,21 +22,12 @@ describe('listeners', () => {
   })
 
   describe('@players>damage', () => {
-    it('should call player.damage and players.checkDeathFromDamage', () => {
+    it('should call player.damage', () => {
       const engine = createEngine({})
 
-      engine.dispatch({
-        type: '@players>damage',
-        payload: {
-          damageType: 'gaz',
-          player: {
-            name: 'Hatsu',
-          },
-        },
-      })
+      engine.dispatch('@players>damage')
 
       expect(players.damage).toHaveBeenCalledTimes(1)
-      expect(players.checkDeathFromDamage).toHaveBeenCalledTimes(1)
     })
   })
 
