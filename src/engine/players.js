@@ -38,13 +38,13 @@ export const pass = (store, action) => {
 }
 
 export const move = (store, action) => {
+  const player = store
+    .getState()
+    .players.find(({ name }) => name === action.payload.playerName)
+
+  checkExcess(store, player, action.payload.cost)
+
   store.mutate((state) => {
-    const player = state.players.find(
-      ({ name }) => name === action.payload.playerName,
-    )
-
-    checkExcess(store, player, action.payload.cost)
-
     player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
     player.x = action.payload.x
     player.y = action.payload.y
@@ -67,24 +67,20 @@ const checkExcess = (store, player, actionCost) => {
 }
 
 export const damage = (store, action) => {
-  store.mutate((state) => {
-    const player = state.players.find(
-      ({ name }) => name === action.payload.playerName,
-    )
+  const player = store
+    .getState()
+    .players.find(({ name }) => name === action.payload.playerName)
 
-    checkDeath(store, player, action.payload.damage)
-
-    player.health = Math.max(0, player.health - action.payload.damage)
-  })
-}
-
-const checkDeath = (store, player, damage) => {
-  if (player.health <= damage) {
+  if (player.health <= action.payload.damage) {
     store.dispatch({
       type: '@player>death',
       payload: { playerName: player.name },
     })
   }
+
+  store.mutate((state) => {
+    player.health = Math.max(0, player.health - action.payload.damage)
+  })
 }
 
 export const init = (store, action) => {
