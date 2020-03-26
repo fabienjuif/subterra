@@ -35,7 +35,7 @@ describe('engine without mock', () => {
     expect(play().getState()).toEqual(firstState)
   })
 
-  it('should connection behaviours to actions', () => {
+  it('should connect behaviours to actions', () => {
     const engine = createEngine()
 
     const dispatchAndSnap = (action) => {
