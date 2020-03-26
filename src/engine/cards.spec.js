@@ -53,7 +53,14 @@ describe('cards', () => {
       cards.pick(store, {})
 
       expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith('@cards>shake')
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@cards>shake',
+        payload: {
+          card: {
+            type: 'shake',
+          },
+        },
+      })
     })
 
     it('should roll a dice for the card landslide', () => {
@@ -81,7 +88,10 @@ describe('cards', () => {
       cards.pick(store, {})
 
       expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith('@cards>water')
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@cards>water',
+        payload: { card: { type: 'water' } },
+      })
     })
 
     it('should calls @cards>gaz if the next card is a gaz card', () => {
@@ -94,7 +104,14 @@ describe('cards', () => {
       cards.pick(store, {})
 
       expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith('@cards>gaz')
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@cards>gaz',
+        payload: {
+          card: {
+            type: 'gaz',
+          },
+        },
+      })
     })
 
     it('should calls @cards>enemy if the next card is a enemy card', () => {
@@ -107,7 +124,14 @@ describe('cards', () => {
       cards.pick(store, {})
 
       expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith('@cards>enemy')
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@cards>enemy',
+        payload: {
+          card: {
+            type: 'enemy',
+          },
+        },
+      })
     })
   })
 

@@ -17,7 +17,10 @@ export const pick = (store, action) => {
   const nextState = store.getState()
   const { type: cardType } = nextState.activeCard
   if (['shake', 'water', 'gaz', 'enemy'].includes(cardType)) {
-    store.dispatch(`@cards>${cardType}`)
+    store.dispatch({
+      type: `@cards>${cardType}`,
+      payload: { card: nextState.activeCard },
+    })
   } else if (nextState.activeCard.type === 'landslide') {
     store.dispatch(roll.then({ type: '@cards>landslide' }))
   }
