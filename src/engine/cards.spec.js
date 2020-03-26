@@ -1,6 +1,7 @@
 import createStore from '@myrtille/mutate'
-import * as cards from './cards'
 import cardData from '../utils/cards'
+import { players, roll } from './actions'
+import * as cards from './cards'
 
 describe('cards', () => {
   describe('init', () => {
@@ -65,12 +66,9 @@ describe('cards', () => {
       cards.pick(store, {})
 
       expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith({
-        type: '@dices>roll',
-        payload: {
-          what: '@cards>landslide',
-        },
-      })
+      expect(store.dispatch).toHaveBeenCalledWith(
+        roll.then({ type: '@cards>landslide' }),
+      )
     })
   })
 
@@ -96,40 +94,24 @@ describe('cards', () => {
 
       expect(stateBefore).toEqual(store.getState())
       expect(store.dispatch).toHaveBeenCalledTimes(2)
-      expect(store.dispatch).toHaveBeenCalledWith({
-        type: '@dices>roll',
-        payload: {
-          min: 4,
-          playerName: 'Hatsu',
-          actionOnFail: {
-            type: '@players>damage',
-            payload: {
-              damage: 1,
-              from: {
-                card: { type: 'shake', damage: 1 },
-              },
-              playerName: 'Hatsu',
-            },
-          },
-        },
-      })
-      expect(store.dispatch).toHaveBeenCalledWith({
-        type: '@dices>roll',
-        payload: {
-          min: 4,
-          playerName: 'SoE',
-          actionOnFail: {
-            type: '@players>damage',
-            payload: {
-              damage: 1,
-              from: {
-                card: { type: 'shake', damage: 1 },
-              },
-              playerName: 'SoE',
-            },
-          },
-        },
-      })
+      expect(store.dispatch).toHaveBeenCalledWith(
+        roll.failThen(
+          4,
+          { name: 'Hatsu' },
+          players.damage({ name: 'Hatsu' }, 1, {
+            card: { type: 'shake', damage: 1 },
+          }),
+        ),
+      )
+      expect(store.dispatch).toHaveBeenCalledWith(
+        roll.failThen(
+          4,
+          { name: 'SoE' },
+          players.damage({ name: 'SoE' }, 1, {
+            card: { type: 'shake', damage: 1 },
+          }),
+        ),
+      )
     })
 
     describe('landslide', () => {
@@ -160,7 +142,7 @@ describe('cards', () => {
           ],
         })
 
-        cards.landslide(store, { payload: { value: 2 } })
+        cards.landslide(store, { payload: { rolled: 2 } })
 
         expect(store.getState()).toEqual({
           players: [],
@@ -219,7 +201,7 @@ describe('cards', () => {
         })
         store.dispatch = jest.fn()
 
-        cards.landslide(store, { payload: { value: 1 } })
+        cards.landslide(store, { payload: { rolled: 1 } })
 
         expect(store.getState()).toEqual({
           activeCard: {
@@ -249,19 +231,11 @@ describe('cards', () => {
           ],
         })
         expect(store.dispatch).toHaveBeenCalledTimes(1)
-        expect(store.dispatch).toHaveBeenCalledWith({
-          type: '@players>damage',
-          payload: {
-            damage: 2,
-            from: {
-              card: {
-                type: 'landslide',
-                damage: 2,
-              },
-            },
-            playerName: 'Hatsu',
-          },
-        })
+        expect(store.dispatch).toHaveBeenCalledWith(
+          players.damage({ name: 'Hatsu' }, 2, {
+            card: { type: 'landslide', damage: 2 },
+          }),
+        )
       })
     })
   })
@@ -375,23 +349,11 @@ describe('cards', () => {
         ],
       })
       expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith({
-        type: '@players>damage',
-        payload: {
-          damage: 1,
-          damageFrom: {
-            card: {
-              type: 'water',
-              damage: 1,
-            },
-          },
-          player: {
-            name: 'Hatsu',
-            x: 0,
-            y: 2,
-          },
-        },
-      })
+      expect(store.dispatch).toHaveBeenCalledWith(
+        players.damage({ name: 'Hatsu' }, 1, {
+          card: { type: 'water', damage: 1 },
+        }),
+      )
     })
   })
 })
