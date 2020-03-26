@@ -273,4 +273,133 @@ describe('cards', () => {
       })
     })
   })
+
+  describe('water', () => {
+    it('should set the status water on tile that dont already have it', () => {
+      const store = createStore({
+        players: [],
+        grid: [
+          {
+            status: [],
+            dices: [2, 3],
+            type: 'landslide',
+          },
+          {
+            status: ['water'],
+            type: 'water',
+          },
+          {
+            status: ['enemy'],
+            type: 'water',
+          },
+          {
+            status: [],
+            type: 'water',
+          },
+        ],
+      })
+
+      cards.water(store, {})
+
+      expect(store.getState()).toEqual({
+        players: [],
+        grid: [
+          {
+            status: [],
+            dices: [2, 3],
+            type: 'landslide',
+          },
+          {
+            status: ['water'],
+            type: 'water',
+          },
+          {
+            status: ['enemy', 'water'],
+            type: 'water',
+          },
+          {
+            status: ['water'],
+            type: 'water',
+          },
+        ],
+      })
+    })
+
+    it('should damage players on a new water tile', () => {
+      const store = createStore({
+        activeCard: {
+          type: 'water',
+          damage: 1,
+        },
+        players: [
+          {
+            name: 'Hatsu',
+            x: 0,
+            y: 2,
+          },
+          {
+            name: 'SoE',
+            x: 2,
+            y: 3,
+          },
+        ],
+        grid: [
+          {
+            type: 'water',
+            status: [],
+            x: 0,
+            y: 2,
+          },
+        ],
+      })
+      store.dispatch = jest.fn()
+
+      cards.water(store, { payload: { value: 1 } })
+
+      expect(store.getState()).toEqual({
+        activeCard: {
+          type: 'water',
+          damage: 1,
+        },
+        players: [
+          {
+            name: 'Hatsu',
+            x: 0,
+            y: 2,
+          },
+          {
+            name: 'SoE',
+            x: 2,
+            y: 3,
+          },
+        ],
+        grid: [
+          {
+            type: 'water',
+            status: ['water'],
+            x: 0,
+            y: 2,
+          },
+        ],
+      })
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@players>damage',
+        payload: {
+          damage: 1,
+          damageFrom: {
+            card: {
+              type: 'water',
+              damage: 1,
+            },
+          },
+          player: {
+            name: 'Hatsu',
+            x: 0,
+            y: 2,
+          },
+        },
+      })
+    })
+  })
 })

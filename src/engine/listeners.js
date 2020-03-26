@@ -12,6 +12,7 @@ export default [
   ['@players>damage', players.checkDeathFromDamage],
   ['@cards>pick', cards.pick],
   ['@cards>shake', cards.shake],
+  ['@cards>water', cards.water],
   [
     ({ type, payload = {} }) =>
       type === '@dices>rolled' && payload.what === '@cards>landslide',
