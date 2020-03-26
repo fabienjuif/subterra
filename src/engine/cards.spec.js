@@ -72,6 +72,32 @@ describe('cards', () => {
         },
       })
     })
+
+    it('should calls @cards>water if the next card is a water card', () => {
+      const store = createStore({
+        deckCards: [{ type: 'water' }],
+      })
+
+      store.dispatch = jest.fn()
+
+      cards.pick(store, {})
+
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith('@cards>water')
+    })
+
+    it('should calls @cards>gaz if the next card is a gaz card', () => {
+      const store = createStore({
+        deckCards: [{ type: 'gaz' }],
+      })
+
+      store.dispatch = jest.fn()
+
+      cards.pick(store, {})
+
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith('@cards>gaz')
+    })
   })
 
   describe('shake', () => {
@@ -274,8 +300,8 @@ describe('cards', () => {
     })
   })
 
-  describe('water', () => {
-    it('should set the status water on tile that dont already have it', () => {
+  describe('processMarkerCard', () => {
+    it('should set the status "marker" on tile that dont already have it', () => {
       const store = createStore({
         players: [],
         grid: [
@@ -285,21 +311,23 @@ describe('cards', () => {
             type: 'landslide',
           },
           {
-            status: ['water'],
-            type: 'water',
+            status: ['marker'],
+            type: 'marker',
           },
           {
             status: ['enemy'],
-            type: 'water',
+            type: 'marker',
           },
           {
             status: [],
-            type: 'water',
+            type: 'marker',
           },
         ],
       })
 
-      cards.water(store, {})
+      cards.processMarkerCard(store, {
+        payload: { card: { type: 'marker', damage: 1 } },
+      })
 
       expect(store.getState()).toEqual({
         players: [],
@@ -310,27 +338,23 @@ describe('cards', () => {
             type: 'landslide',
           },
           {
-            status: ['water'],
-            type: 'water',
+            status: ['marker'],
+            type: 'marker',
           },
           {
-            status: ['enemy', 'water'],
-            type: 'water',
+            status: ['enemy', 'marker'],
+            type: 'marker',
           },
           {
-            status: ['water'],
-            type: 'water',
+            status: ['marker'],
+            type: 'marker',
           },
         ],
       })
     })
 
-    it('should damage players on a new water tile', () => {
+    it('should damage players on a new marker tile', () => {
       const store = createStore({
-        activeCard: {
-          type: 'water',
-          damage: 1,
-        },
         players: [
           {
             name: 'Hatsu',
@@ -345,7 +369,7 @@ describe('cards', () => {
         ],
         grid: [
           {
-            type: 'water',
+            type: 'marker',
             status: [],
             x: 0,
             y: 2,
@@ -354,13 +378,11 @@ describe('cards', () => {
       })
       store.dispatch = jest.fn()
 
-      cards.water(store, { payload: { value: 1 } })
+      cards.processMarkerCard(store, {
+        payload: { card: { type: 'marker', damage: 1 } },
+      })
 
       expect(store.getState()).toEqual({
-        activeCard: {
-          type: 'water',
-          damage: 1,
-        },
         players: [
           {
             name: 'Hatsu',
@@ -375,8 +397,8 @@ describe('cards', () => {
         ],
         grid: [
           {
-            type: 'water',
-            status: ['water'],
+            type: 'marker',
+            status: ['marker'],
             x: 0,
             y: 2,
           },
@@ -389,7 +411,7 @@ describe('cards', () => {
           damage: 1,
           damageFrom: {
             card: {
-              type: 'water',
+              type: 'marker',
               damage: 1,
             },
           },

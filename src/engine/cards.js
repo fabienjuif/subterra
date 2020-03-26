@@ -16,7 +16,7 @@ export const pick = (store, action) => {
 
   const nextState = store.getState()
   const { type: cardType } = nextState.activeCard
-  if (['shake', 'water'].includes(cardType)) {
+  if (['shake', 'water', 'gaz'].includes(cardType)) {
     store.dispatch(`@cards>${cardType}`)
   } else if (cardType === 'landslide') {
     // roll a dice then do the action
@@ -88,8 +88,8 @@ export const landslide = (store, action) => {
   })
 }
 
-export const water = (store, action) => {
-  const { activeCard } = store.getState()
+export const processMarkerCard = (store, action) => {
+  const { card } = action.payload
 
   // find all tiles that have water type and put a status on it
   // if it do not already exists
@@ -98,10 +98,10 @@ export const water = (store, action) => {
     state.grid.forEach((tile) => {
       const { type, status } = tile
 
-      if (type !== 'water') return
-      if (status.includes('water')) return
+      if (type !== card.type) return
+      if (status.includes(card.type)) return
 
-      tile.status.push('water')
+      tile.status.push(card.type)
 
       state.players.forEach((player) => {
         if (!isCellEqual(player)(tile)) return
@@ -109,10 +109,10 @@ export const water = (store, action) => {
         store.dispatch({
           type: '@players>damage',
           payload: {
-            damage: activeCard.damage,
+            damage: card.damage,
             damageFrom: {
               // TODO: only send the "from: 'card'"
-              card: activeCard,
+              card,
             },
             player: original(player), // TODO: only send player name
           },
