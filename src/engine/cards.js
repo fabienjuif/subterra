@@ -16,7 +16,7 @@ export const pick = (store, action) => {
 
   const nextState = store.getState()
   const { type: cardType } = nextState.activeCard
-  if (['shake', 'water', 'gaz'].includes(cardType)) {
+  if (['shake', 'water', 'gaz', 'enemy'].includes(cardType)) {
     store.dispatch(`@cards>${cardType}`)
   } else if (cardType === 'landslide') {
     // roll a dice then do the action

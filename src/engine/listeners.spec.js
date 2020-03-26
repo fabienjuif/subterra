@@ -98,6 +98,16 @@ describe('listeners', () => {
     })
   })
 
+  describe('@cards>enemy', () => {
+    it('should call cards.processMarkerCard', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@cards>enemy')
+
+      expect(cards.processMarkerCard).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('@dices>init', () => {
     it('should call dices.init', () => {
       const engine = createEngine({})

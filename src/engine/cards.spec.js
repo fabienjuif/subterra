@@ -98,6 +98,19 @@ describe('cards', () => {
       expect(store.dispatch).toHaveBeenCalledTimes(1)
       expect(store.dispatch).toHaveBeenCalledWith('@cards>gaz')
     })
+
+    it('should calls @cards>enemy if the next card is a enemy card', () => {
+      const store = createStore({
+        deckCards: [{ type: 'enemy' }],
+      })
+
+      store.dispatch = jest.fn()
+
+      cards.pick(store, {})
+
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith('@cards>enemy')
+    })
   })
 
   describe('shake', () => {

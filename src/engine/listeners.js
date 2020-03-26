@@ -14,6 +14,7 @@ export default [
   ['@cards>shake', cards.shake],
   ['@cards>water', cards.processMarkerCard],
   ['@cards>gaz', cards.processMarkerCard],
+  ['@cards>enemy', cards.processMarkerCard],
   [
     ({ type, payload = {} }) =>
       type === '@dices>rolled' && payload.what === '@cards>landslide',
