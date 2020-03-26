@@ -67,19 +67,18 @@ const checkExcess = (store, player, actionCost) => {
 }
 
 export const damage = (store, action) => {
-  const player = store
-    .getState()
-    .players.find(({ name }) => name === action.payload.playerName)
-
-  if (player.health <= action.payload.damage) {
-    store.dispatch({
-      type: '@players>death',
-      payload: { playerName: player.name },
-    })
-  }
-
   store.mutate((state) => {
+    const player = state.players.find(
+      ({ name }) => name === action.payload.playerName,
+    )
     player.health = Math.max(0, player.health - action.payload.damage)
+
+    if (player.health <= 0) {
+      store.dispatch({
+        type: '@players>death',
+        payload: { playerName: action.payload.playerName },
+      })
+    }
   })
 }
 
