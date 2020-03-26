@@ -1,4 +1,4 @@
-import { original } from 'immer'
+import { players, roll } from './actions'
 import { isCellEqual } from '../utils/tiles'
 
 export const init = (store, action) => {
@@ -18,13 +18,7 @@ export const pick = (store, action) => {
   if (nextState.activeCard.type === 'shake') {
     store.dispatch('@cards>shake')
   } else if (nextState.activeCard.type === 'landslide') {
-    // roll a dice then do the action
-    store.dispatch({
-      type: '@dices>roll',
-      payload: {
-        what: '@cards>landslide',
-      },
-    })
+    store.dispatch(roll.then({ type: '@cards>landslide' }))
   }
 }
 
@@ -32,23 +26,15 @@ export const shake = (store, action) => {
   const previousState = store.getState()
 
   previousState.players.forEach((player) => {
-    store.dispatch({
-      type: '@dices>roll',
-      payload: {
-        min: 4,
-        playerName: player.name,
-        actionOnFail: {
-          type: '@players>damage',
-          payload: {
-            damage: previousState.activeCard.damage,
-            from: {
-              card: previousState.activeCard,
-            },
-            playerName: player.name,
-          },
-        },
-      },
-    })
+    store.dispatch(
+      roll.failThen(
+        4,
+        player,
+        players.damage(player, previousState.activeCard.damage, {
+          card: previousState.activeCard,
+        }),
+      ),
+    )
   })
 }
 
@@ -65,21 +51,18 @@ export const landslide = (store, action) => {
 
       if (type !== 'landslide') return
       if (status.includes('landslide')) return
-      if (!dices.includes(action.payload.value)) return
+      if (!dices.includes(action.payload.rolled)) return
 
       tile.status.push('landslide')
 
       state.players.forEach((player) => {
         if (!isCellEqual(player)(tile)) return
 
-        store.dispatch({
-          type: '@players>damage',
-          payload: {
-            damage: activeCard.damage,
-            from: { card: activeCard },
-            playerName: player.name,
-          },
-        })
+        store.dispatch(
+          players.damage(player, activeCard.damage, {
+            card: activeCard,
+          }),
+        )
       })
     })
   })

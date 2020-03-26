@@ -12,17 +12,9 @@ export default [
   ['@players>move', players.move],
   ['@cards>pick', cards.pick],
   ['@cards>shake', cards.shake],
-  [
-    ({ type, payload = {} }) =>
-      type === '@dices>rolled' && payload.what === '@cards>landslide',
-    cards.landslide,
-  ],
+  ['@cards>landslide', cards.landslide],
   // "random"
   ['@dices>init', dices.init],
   ['@dices>roll', dices.roll],
-  [
-    ({ type, payload = {} }) =>
-      type === '@dices>rolled' && payload.min !== undefined,
-    dices.checkAndDispatch,
-  ],
+  ['@dices>rolled', dices.checkAndDispatch],
 ]
