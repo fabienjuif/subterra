@@ -9,7 +9,6 @@ export default [
   // game going on
   ['@players>pass', players.pass],
   ['@players>damage', players.damage],
-  ['@players>damage', players.checkDeathFromDamage],
   ['@cards>pick', cards.pick],
   ['@cards>shake', cards.shake],
   ['@cards>water', cards.processMarkerCard],

@@ -37,15 +37,15 @@ export const shake = (store, action) => {
       type: '@dices>roll',
       payload: {
         min: 4,
-        player: player.name,
+        playerName: player.name,
         actionOnFail: {
           type: '@players>damage',
           payload: {
             damage: previousState.activeCard.damage,
-            damageFrom: {
+            from: {
               card: previousState.activeCard,
             },
-            player, // TODO: only send player name
+            playerName: player.name,
           },
         },
       },
@@ -77,10 +77,10 @@ export const landslide = (store, action) => {
           type: '@players>damage',
           payload: {
             damage: activeCard.damage,
-            damageFrom: {
+            from: {
               card: activeCard,
             },
-            player: original(player), // TODO: only send player name
+            playerName: player.name,
           },
         })
       })
@@ -110,11 +110,10 @@ export const processMarkerCard = (store, action) => {
           type: '@players>damage',
           payload: {
             damage: card.damage,
-            damageFrom: {
-              // TODO: only send the "from: 'card'"
+            from: {
               card,
             },
-            player: original(player), // TODO: only send player name
+            playerName: player.name,
           },
         })
       })
