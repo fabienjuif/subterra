@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`engine without mock should connection behaviours to actions 1`] = `
+exports[`engine without mock should connect behaviours to actions 1`] = `
 Index: @cards>init
 ===================================================================
 --- @cards>init
@@ -82,7 +82,7 @@ Index: @cards>init
 
 `;
 
-exports[`engine without mock should connection behaviours to actions 2`] = `
+exports[`engine without mock should connect behaviours to actions 2`] = `
 Index: @players>init
 ===================================================================
 --- @players>init
@@ -142,7 +142,7 @@ Index: @players>init
 
 `;
 
-exports[`engine without mock should connection behaviours to actions 3`] = `
+exports[`engine without mock should connect behaviours to actions 3`] = `
 Index: @dices>init
 ===================================================================
 --- @dices>init
@@ -185,7 +185,7 @@ Index: @dices>init
 
 `;
 
-exports[`engine without mock should connection behaviours to actions 4`] = `
+exports[`engine without mock should connect behaviours to actions 4`] = `
 Index: @cards>pick
 ===================================================================
 --- @cards>pick
