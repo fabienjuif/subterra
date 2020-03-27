@@ -127,19 +127,25 @@ describe('players', () => {
 
   describe('move', () => {
     it('should move player when the action is a known possibilities', () => {
-      const action = {
-        type: '@players>move',
-        payload: { playerName: 'Hatsu', cost: 1, x: 1, y: -1 },
-      }
       const store = createStore({
         players: [
           { name: 'Hatsu', actionPoints: 1, x: 0, y: 0 },
           { name: 'SoE', actionPoints: 2, x: 0, y: 0 },
         ],
-        playerActions: { possibilities: [action] },
+        playerActions: {
+          possibilities: [
+            {
+              type: '@players>move',
+              payload: { playerName: 'Hatsu', cost: 1, x: 1, y: -1 },
+            },
+          ],
+        },
       })
 
-      players.move(store, action)
+      players.move(store, {
+        type: '@players>move',
+        payload: { playerName: 'Hatsu', cost: 1, x: 1, y: -1 },
+      })
 
       expect(store.getState().players).toEqual([
         { name: 'Hatsu', actionPoints: 0, x: 1, y: -1 },

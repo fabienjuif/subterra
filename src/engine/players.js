@@ -39,12 +39,7 @@ export const pass = (store, action) => {
 
 export const move = (store, action) => {
   store.mutate((state) => {
-    if (
-      !state.playerActions.possibilities.some(
-        (possibility) => action === possibility,
-      )
-    )
-      return
+    if (!state.playerActions.possibilities.some(isEquals(action))) return
 
     const player = state.players.find(
       ({ name }) => name === action.payload.playerName,
@@ -54,6 +49,22 @@ export const move = (store, action) => {
     player.x = action.payload.x
     player.y = action.payload.y
   })
+}
+
+// Replace by Lodash ??
+export const isEquals = (obj1) => (obj2) => {
+  const keys1 = Object.keys(obj1)
+  const keys2 = Object.keys(obj2)
+
+  if (keys1.length !== keys2.length) return false
+
+  keys1.forEach((key) => {
+    if (typeof obj1[key] === 'object' && !isEquals(obj1[key])(obj2[key]))
+      return false
+    if (obj1[key] !== obj2[key]) return false
+  })
+
+  return true
 }
 
 export const damage = (store, action) => {
