@@ -86,7 +86,6 @@ function App() {
           nextTile={state.playerActions.tile}
         />
       </MovableGrid>
-      <div className={cn('turn', classes.turn)}>turn: {state.turn}</div>
       <div className={cn('tiles-deck', classes.tilesDeck)}>
         tiles: {state.deckTiles.length}
       </div>
