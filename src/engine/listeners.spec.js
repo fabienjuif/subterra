@@ -2,7 +2,6 @@ import createEngine, * as core from './core'
 import * as players from './players'
 import * as cards from './cards'
 import * as dices from './dices'
-import { roll } from './actions'
 
 jest.mock('./players')
 jest.mock('./cards')
@@ -107,6 +106,16 @@ describe('listeners', () => {
       engine.dispatch('@cards>enemy')
 
       expect(cards.processMarkerCard).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('@cards>end', () => {
+    it('should call cards.end', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@cards>end')
+
+      expect(cards.end).toHaveBeenCalledTimes(1)
     })
   })
 

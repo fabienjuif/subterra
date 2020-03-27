@@ -71,36 +71,13 @@ export const damage = (store, action) => {
 
 export const init = (store, action) => {
   store.mutate((state) => {
-    state.players = [
-      {
-        id: 0,
-        x: 0,
-        y: 0,
-        health: 3,
-        name: 'Sutat',
-        archetype: 'explorer',
-        actionPoints: 2,
-        current: true,
-        first: true,
-      },
-      {
-        id: 1,
-        x: 0,
-        y: 0,
-        health: 3,
-        name: 'Tripa',
-        archetype: 'chef',
-        actionPoints: 2,
-      },
-      {
-        id: 2,
-        x: 0,
-        y: 0,
-        health: 5,
-        name: 'SoE',
-        archetype: 'miner',
-        actionPoints: 2,
-      },
-    ]
+    state.players = action.payload.map((player) => ({
+      ...player,
+      x: 0,
+      y: 0,
+      actionPoints: 2,
+    }))
+    state.players[0].current = true
+    state.players[0].first = true
   })
 }

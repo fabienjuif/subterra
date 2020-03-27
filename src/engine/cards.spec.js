@@ -30,17 +30,27 @@ describe('cards', () => {
       expect(store.getState().deckCards).toEqual([cardData[3], cardData[0]])
     })
 
-    it('should not pick a card if the deck is empty', () => {
+    it('should not pick a card if the deck is empty but it should dispatch it', () => {
       const store = createStore({
         activeCard: cardData[0],
         deckCards: [],
       })
+      store.dispatch = jest.fn()
 
       cards.pick(store, {})
 
       expect(store.getState().activeCard).toBeDefined()
       expect(store.getState().activeCard.type).toBe('end')
       expect(store.getState().deckCards).toEqual([])
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@cards>end',
+        payload: {
+          card: {
+            type: 'end',
+          },
+        },
+      })
     })
 
     it('should calls @cards>shake if the next card is a shaking card', () => {
@@ -129,6 +139,26 @@ describe('cards', () => {
         payload: {
           card: {
             type: 'enemy',
+          },
+        },
+      })
+    })
+
+    it('should calls @cards>end if the next card is an ending card', () => {
+      const store = createStore({
+        deckCards: [{ type: 'end' }],
+      })
+
+      store.dispatch = jest.fn()
+
+      cards.pick(store, {})
+
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@cards>end',
+        payload: {
+          card: {
+            type: 'end',
           },
         },
       })
@@ -412,6 +442,70 @@ describe('cards', () => {
         players.damage({ name: 'Hatsu' }, 1, {
           card: { type: 'marker', damage: 1 },
         }),
+      )
+    })
+  })
+
+  describe('end', () => {
+    it('should dispatch a roll and with a fail > damage for each player alive', () => {
+      const store = createStore({
+        players: [
+          {
+            name: 'Hatsu',
+            health: 2,
+          },
+          {
+            name: 'SoE',
+            health: 0,
+          },
+          {
+            name: 'Tripa',
+            health: 1,
+          },
+        ],
+      })
+      store.dispatch = jest.fn()
+
+      cards.end(store, { payload: { card: { type: 'end' } } })
+
+      expect(store.getState()).toEqual({
+        players: [
+          {
+            name: 'Hatsu',
+            health: 2,
+          },
+          {
+            name: 'SoE',
+            health: 0,
+          },
+          {
+            name: 'Tripa',
+            health: 1,
+          },
+        ],
+      })
+      expect(store.dispatch).toHaveBeenCalledTimes(2)
+      expect(store.dispatch).toHaveBeenCalledWith(
+        roll.failThen(
+          3,
+          { name: 'Hatsu' },
+          players.damage({ name: 'Hatsu' }, 1000, {
+            from: {
+              card: { type: 'end' },
+            },
+          }),
+        ),
+      )
+      expect(store.dispatch).toHaveBeenCalledWith(
+        roll.failThen(
+          3,
+          { name: 'Tripa' },
+          players.damage({ name: 'Tripa' }, 1000, {
+            from: {
+              card: { type: 'end' },
+            },
+          }),
+        ),
       )
     })
   })

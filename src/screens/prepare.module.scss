@@ -1,0 +1,13 @@
+.players {
+  .body {
+    display: flex;
+
+    & > div:first-child {
+      margin-right: 4em;
+    }
+
+    .archetype {
+      cursor: pointer;
+    }
+  }
+}

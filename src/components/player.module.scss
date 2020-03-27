@@ -10,10 +10,30 @@
   margin: 0.2em;
 }
 
-.explorer {
+.medic {
+  background-color: white;
+  border: 1px solid black;
+}
+
+.geologist {
+  background-color: brown;
+  border: 1px solid black;
+}
+
+.scoot {
   background-color: black;
   border: 1px solid white;
   color: white;
+}
+
+.diver {
+  background-color: yellow;
+  border: 1px solid black;
+}
+
+.bodyguard {
+  background-color: red;
+  border: 1px solid black;
 }
 
 .chef {
@@ -21,7 +41,14 @@
   border: 1px solid black;
 }
 
-.miner {
-  background-color: brown;
+.engineer {
+  background-color: blue;
   border: 1px solid black;
+  color: white;
+}
+
+.climber {
+  background-color: purple;
+  border: 1px solid black;
+  color: white;
 }
