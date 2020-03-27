@@ -245,7 +245,7 @@ Index: @cards>pick
      {
        "id": 0,
        "type": "start",
-@@ -124,8 +120,171 @@
+@@ -124,8 +120,178 @@
            3,
            4,
            5
@@ -255,7 +255,14 @@ Index: @cards>pick
 +        "type": "@cards>pick"
 +      },
 +      {
-+        "type": "@cards>shake"
++        "type": "@cards>shake",
++        "payload": {
++          "card": {
++            "type": "shake",
++            "damage": 1,
++            "duration": 1
++          }
++        }
 +      },
 +      {
 +        "type": "@dices>roll",
