@@ -53,7 +53,14 @@ describe('cards', () => {
       cards.pick(store, {})
 
       expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith('@cards>shake')
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@cards>shake',
+        payload: {
+          card: {
+            type: 'shake',
+          },
+        },
+      })
     })
 
     it('should roll a dice for the card landslide', () => {
@@ -69,6 +76,62 @@ describe('cards', () => {
       expect(store.dispatch).toHaveBeenCalledWith(
         roll.then({ type: '@cards>landslide' }),
       )
+    })
+
+    it('should calls @cards>water if the next card is a water card', () => {
+      const store = createStore({
+        deckCards: [{ type: 'water' }],
+      })
+
+      store.dispatch = jest.fn()
+
+      cards.pick(store, {})
+
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@cards>water',
+        payload: { card: { type: 'water' } },
+      })
+    })
+
+    it('should calls @cards>gaz if the next card is a gaz card', () => {
+      const store = createStore({
+        deckCards: [{ type: 'gaz' }],
+      })
+
+      store.dispatch = jest.fn()
+
+      cards.pick(store, {})
+
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@cards>gaz',
+        payload: {
+          card: {
+            type: 'gaz',
+          },
+        },
+      })
+    })
+
+    it('should calls @cards>enemy if the next card is a enemy card', () => {
+      const store = createStore({
+        deckCards: [{ type: 'enemy' }],
+      })
+
+      store.dispatch = jest.fn()
+
+      cards.pick(store, {})
+
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@cards>enemy',
+        payload: {
+          card: {
+            type: 'enemy',
+          },
+        },
+      })
     })
   })
 
@@ -237,6 +300,119 @@ describe('cards', () => {
           }),
         )
       })
+    })
+  })
+
+  describe('processMarkerCard', () => {
+    it('should set the status "marker" on tile that dont already have it', () => {
+      const store = createStore({
+        players: [],
+        grid: [
+          {
+            status: [],
+            dices: [2, 3],
+            type: 'landslide',
+          },
+          {
+            status: ['marker'],
+            type: 'marker',
+          },
+          {
+            status: ['enemy'],
+            type: 'marker',
+          },
+          {
+            status: [],
+            type: 'marker',
+          },
+        ],
+      })
+
+      cards.processMarkerCard(store, {
+        payload: { card: { type: 'marker', damage: 1 } },
+      })
+
+      expect(store.getState()).toEqual({
+        players: [],
+        grid: [
+          {
+            status: [],
+            dices: [2, 3],
+            type: 'landslide',
+          },
+          {
+            status: ['marker'],
+            type: 'marker',
+          },
+          {
+            status: ['enemy', 'marker'],
+            type: 'marker',
+          },
+          {
+            status: ['marker'],
+            type: 'marker',
+          },
+        ],
+      })
+    })
+
+    it('should damage players on a new marker tile', () => {
+      const store = createStore({
+        players: [
+          {
+            name: 'Hatsu',
+            x: 0,
+            y: 2,
+          },
+          {
+            name: 'SoE',
+            x: 2,
+            y: 3,
+          },
+        ],
+        grid: [
+          {
+            type: 'marker',
+            status: [],
+            x: 0,
+            y: 2,
+          },
+        ],
+      })
+      store.dispatch = jest.fn()
+
+      cards.processMarkerCard(store, {
+        payload: { card: { type: 'marker', damage: 1 } },
+      })
+
+      expect(store.getState()).toEqual({
+        players: [
+          {
+            name: 'Hatsu',
+            x: 0,
+            y: 2,
+          },
+          {
+            name: 'SoE',
+            x: 2,
+            y: 3,
+          },
+        ],
+        grid: [
+          {
+            type: 'marker',
+            status: ['marker'],
+            x: 0,
+            y: 2,
+          },
+        ],
+      })
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith(
+        players.damage({ name: 'Hatsu' }, 1, {
+          card: { type: 'marker', damage: 1 },
+        }),
+      )
     })
   })
 })

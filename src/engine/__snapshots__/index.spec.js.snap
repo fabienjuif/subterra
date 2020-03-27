@@ -1,0 +1,429 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`engine without mock should connect behaviours to actions 1`] = `
+Index: @cards>init
+===================================================================
+--- @cards>init
++++ @cards>init
+@@ -4,9 +4,33 @@
+   "enemies": [],
+   "deckTiles": {
+     "length": 10
+   },
+-  "deckCards": [],
++  "deckCards": [
++    {
++      "type": "shake",
++      "damage": 1,
++      "duration": 1
++    },
++    {
++      "type": "gaz",
++      "damage": 2,
++      "duration": 1
++    },
++    {
++      "type": "water",
++      "damage": 2,
++      "duration": 1
++    },
++    {
++      "type": "enemy",
++      "damage": 3,
++      "duration": 1
++    },
++    {
++      "type": "end"
++    }
++  ],
+   "dices": [],
+   "activeCard": {},
+   "grid": [
+     {
+@@ -25,7 +49,36 @@
+     "current": {},
+     "possibilities": []
+   },
+   "technical": {
+-    "actions": []
++    "actions": [
++      {
++        "type": "@cards>init",
++        "payload": [
++          {
++            "type": "shake",
++            "damage": 1,
++            "duration": 1
++          },
++          {
++            "type": "gaz",
++            "damage": 2,
++            "duration": 1
++          },
++          {
++            "type": "water",
++            "damage": 2,
++            "duration": 1
++          },
++          {
++            "type": "enemy",
++            "damage": 3,
++            "duration": 1
++          },
++          {
++            "type": "end"
++          }
++        ]
++      }
++    ]
+   }
+ }
+\\ No newline at end of file
+
+`;
+
+exports[`engine without mock should connect behaviours to actions 2`] = `
+Index: @players>init
+===================================================================
+--- @players>init
++++ @players>init
+@@ -1,7 +1,37 @@
+ {
+   "gameOver": false,
+-  "players": [],
++  "players": [
++    {
++      "id": 0,
++      "x": 0,
++      "y": 0,
++      "health": 3,
++      "name": "Sutat",
++      "archetype": "explorer",
++      "actionPoints": 2,
++      "current": true,
++      "first": true
++    },
++    {
++      "id": 1,
++      "x": 0,
++      "y": 0,
++      "health": 3,
++      "name": "Tripa",
++      "archetype": "chef",
++      "actionPoints": 2
++    },
++    {
++      "id": 2,
++      "x": 0,
++      "y": 0,
++      "health": 5,
++      "name": "SoE",
++      "archetype": "miner",
++      "actionPoints": 2
++    }
++  ],
+   "enemies": [],
+   "deckTiles": {
+     "length": 10
+   },
+@@ -77,8 +107,11 @@
+           {
+             "type": "end"
+           }
+         ]
++      },
++      {
++        "type": "@players>init"
+       }
+     ]
+   }
+ }
+\\ No newline at end of file
+
+`;
+
+exports[`engine without mock should connect behaviours to actions 3`] = `
+Index: @dices>init
+===================================================================
+--- @dices>init
++++ @dices>init
+@@ -59,9 +59,14 @@
+     {
+       "type": "end"
+     }
+   ],
+-  "dices": [],
++  "dices": [
++    2,
++    3,
++    4,
++    5
++  ],
+   "activeCard": {},
+   "grid": [
+     {
+       "id": 0,
+@@ -110,8 +115,17 @@
+         ]
+       },
+       {
+         "type": "@players>init"
++      },
++      {
++        "type": "@dices>init",
++        "payload": [
++          2,
++          3,
++          4,
++          5
++        ]
+       }
+     ]
+   }
+ }
+\\ No newline at end of file
+
+`;
+
+exports[`engine without mock should connect behaviours to actions 4`] = `
+Index: @cards>pick
+===================================================================
+--- @cards>pick
++++ @cards>pick
+@@ -15,18 +15,18 @@
+     {
+       "id": 1,
+       "x": 0,
+       "y": 0,
+-      "health": 3,
++      "health": 2,
+       "name": "Tripa",
+       "archetype": "chef",
+       "actionPoints": 2
+     },
+     {
+       "id": 2,
+       "x": 0,
+       "y": 0,
+-      "health": 5,
++      "health": 4,
+       "name": "SoE",
+       "archetype": "miner",
+       "actionPoints": 2
+     }
+@@ -36,13 +36,8 @@
+     "length": 10
+   },
+   "deckCards": [
+     {
+-      "type": "shake",
+-      "damage": 1,
+-      "duration": 1
+-    },
+-    {
+       "type": "gaz",
+       "damage": 2,
+       "duration": 1
+     },
+@@ -60,14 +55,15 @@
+       "type": "end"
+     }
+   ],
+   "dices": [
+-    2,
+-    3,
+-    4,
+     5
+   ],
+-  "activeCard": {},
++  "activeCard": {
++    "type": "shake",
++    "damage": 1,
++    "duration": 1
++  },
+   "grid": [
+     {
+       "id": 0,
+       "type": "start",
+@@ -124,8 +120,178 @@
+           3,
+           4,
+           5
+         ]
++      },
++      {
++        "type": "@cards>pick"
++      },
++      {
++        "type": "@cards>shake",
++        "payload": {
++          "card": {
++            "type": "shake",
++            "damage": 1,
++            "duration": 1
++          }
++        }
++      },
++      {
++        "type": "@dices>roll",
++        "payload": {
++          "min": 4,
++          "playerName": "SoE",
++          "actionOnFail": {
++            "type": "@players>damage",
++            "payload": {
++              "damage": 1,
++              "from": {
++                "card": {
++                  "type": "shake",
++                  "damage": 1,
++                  "duration": 1
++                }
++              },
++              "playerName": "SoE"
++            }
++          }
++        }
++      },
++      {
++        "type": "@dices>rolled",
++        "payload": {
++          "min": 4,
++          "playerName": "SoE",
++          "actionOnFail": {
++            "type": "@players>damage",
++            "payload": {
++              "damage": 1,
++              "from": {
++                "card": {
++                  "type": "shake",
++                  "damage": 1,
++                  "duration": 1
++                }
++              },
++              "playerName": "SoE"
++            }
++          },
++          "value": 2
++        }
++      },
++      {
++        "type": "@players>damage",
++        "payload": {
++          "damage": 1,
++          "from": {
++            "card": {
++              "type": "shake",
++              "damage": 1,
++              "duration": 1
++            }
++          },
++          "playerName": "SoE"
++        }
++      },
++      {
++        "type": "@dices>roll",
++        "payload": {
++          "min": 4,
++          "playerName": "Tripa",
++          "actionOnFail": {
++            "type": "@players>damage",
++            "payload": {
++              "damage": 1,
++              "from": {
++                "card": {
++                  "type": "shake",
++                  "damage": 1,
++                  "duration": 1
++                }
++              },
++              "playerName": "Tripa"
++            }
++          }
++        }
++      },
++      {
++        "type": "@dices>rolled",
++        "payload": {
++          "min": 4,
++          "playerName": "Tripa",
++          "actionOnFail": {
++            "type": "@players>damage",
++            "payload": {
++              "damage": 1,
++              "from": {
++                "card": {
++                  "type": "shake",
++                  "damage": 1,
++                  "duration": 1
++                }
++              },
++              "playerName": "Tripa"
++            }
++          },
++          "value": 3
++        }
++      },
++      {
++        "type": "@players>damage",
++        "payload": {
++          "damage": 1,
++          "from": {
++            "card": {
++              "type": "shake",
++              "damage": 1,
++              "duration": 1
++            }
++          },
++          "playerName": "Tripa"
++        }
++      },
++      {
++        "type": "@dices>roll",
++        "payload": {
++          "min": 4,
++          "playerName": "Sutat",
++          "actionOnFail": {
++            "type": "@players>damage",
++            "payload": {
++              "damage": 1,
++              "from": {
++                "card": {
++                  "type": "shake",
++                  "damage": 1,
++                  "duration": 1
++                }
++              },
++              "playerName": "Sutat"
++            }
++          }
++        }
++      },
++      {
++        "type": "@dices>rolled",
++        "payload": {
++          "min": 4,
++          "playerName": "Sutat",
++          "actionOnFail": {
++            "type": "@players>damage",
++            "payload": {
++              "damage": 1,
++              "from": {
++                "card": {
++                  "type": "shake",
++                  "damage": 1,
++                  "duration": 1
++                }
++              },
++              "playerName": "Sutat"
++            }
++          },
++          "value": 4
++        }
+       }
+     ]
+   }
+ }
+\\ No newline at end of file
+
+`;

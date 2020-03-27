@@ -13,6 +13,9 @@ export default [
   ['@cards>pick', cards.pick],
   ['@cards>shake', cards.shake],
   ['@cards>landslide', cards.landslide],
+  ['@cards>water', cards.processMarkerCard],
+  ['@cards>gaz', cards.processMarkerCard],
+  ['@cards>enemy', cards.processMarkerCard],
   // "random"
   ['@dices>init', dices.init],
   ['@dices>roll', dices.roll],
