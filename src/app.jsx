@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import cn from 'classnames'
+import { motion } from 'framer-motion'
 import { provider, useStateAt, useDispatch } from '@myrtille/react'
 import { createEngine } from './engine'
 import Grid from './components/grid'
@@ -16,6 +17,7 @@ function App() {
   const state = useStateAt()
   const dispatch = useDispatch()
   const [cells, setCells] = useState([])
+  const [players, setPlayers] = useState([])
 
   useEffect(() => {
     dispatch({
@@ -53,14 +55,27 @@ function App() {
     setCells(cells)
   }, [state.grid, state.playerActions.possibilities])
 
-  if (state.players.length === 0) return null
+  useEffect(() => {
+    if (state.players.length <= 0) return
+
+    const firstPlayerIndex = state.players.findIndex(({ first }) => first)
+
+    setPlayers([
+      ...state.players.slice(firstPlayerIndex),
+      ...state.players.slice(0, firstPlayerIndex),
+    ])
+  }, [state.players])
+
+  if (state.players.length <= 0) return null
 
   return (
     <div className={cn('app', classes.app)}>
       <div className={cn('players', classes.players)}>
         <button onClick={() => dispatch('@players>pass')}>pass</button>
-        {state.players.map((player) => (
-          <Player key={player.id} {...player} />
+        {players.map((player) => (
+          <motion.div positionTransition key={player.id}>
+            <Player {...player} />
+          </motion.div>
         ))}
       </div>
       <MovableGrid className={cn('board', classes.board)}>
