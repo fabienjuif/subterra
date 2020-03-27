@@ -148,33 +148,6 @@ describe('players', () => {
       })
       expect(store.dispatch).toHaveBeenCalledTimes(0)
     })
-
-    it('should dispatch @dices>roll with @players>damage on fail when the player has not enough action points', () => {
-      const store = createStore({
-        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
-      })
-
-      store.dispatch = jest.fn()
-
-      players.move(store, {
-        payload: { playerName: 'Hatsu', cost: 2, x: 1, y: -1 },
-      })
-
-      expect(store.getState()).toEqual({
-        players: [{ name: 'Hatsu', actionPoints: 0, x: 1, y: -1 }],
-      })
-      expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith({
-        type: '@dices>roll',
-        payload: {
-          min: 4,
-          actionOnFail: {
-            type: '@players>damage',
-            payload: { damage: 1, from: 'excess', playerName: 'Hatsu' },
-          },
-        },
-      })
-    })
   })
 
   describe('damage', () => {

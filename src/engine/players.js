@@ -42,28 +42,11 @@ export const move = (store, action) => {
     .getState()
     .players.find(({ name }) => name === action.payload.playerName)
 
-  checkExcess(store, player, action.payload.cost)
-
   store.mutate((state) => {
     player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
     player.x = action.payload.x
     player.y = action.payload.y
   })
-}
-
-const checkExcess = (store, player, actionCost) => {
-  if (player.actionPoints < actionCost) {
-    store.dispatch({
-      type: '@dices>roll',
-      payload: {
-        min: 4,
-        actionOnFail: {
-          type: '@players>damage',
-          payload: { damage: 1, from: 'excess', playerName: player.name },
-        },
-      },
-    })
-  }
 }
 
 export const damage = (store, action) => {

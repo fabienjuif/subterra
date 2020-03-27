@@ -1,10 +1,12 @@
 import * as cards from './cards'
 import * as dices from './dices'
 import * as players from './players'
+import * as mock from './mock'
 
 export default [
   // initializations
   ['@players>init', players.init],
+  ['@mock>init', mock.init],
   ['@cards>init', cards.init],
   // game going on
   ['@players>pass', players.pass],

@@ -32,6 +32,7 @@ function App() {
       payload: Array.from({ length: 5000 }).map(() => roll6()),
     })
     dispatch('@players>init')
+    dispatch('@mock>init')
 
     // this is for debug purpose
     dispatch('@cards>pick')
