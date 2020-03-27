@@ -184,41 +184,39 @@ describe('players', () => {
 
   describe('init', () => {
     it('should init players', () => {
-      const store = createStore({
-        players: [],
-      })
+      const store = createStore({})
 
-      players.init(store, {})
+      players.init(store, {
+        payload: [
+          { type: 'explorer', name: 'Sutat' },
+          { type: 'chef', name: 'Tripa' },
+          { type: 'miner', name: 'SoE' },
+        ],
+      })
 
       expect(store.getState()).toEqual({
         players: [
           {
-            id: 0,
             x: 0,
             y: 0,
-            health: 3,
             name: 'Sutat',
-            archetype: 'explorer',
+            type: 'explorer',
             actionPoints: 2,
             current: true,
             first: true,
           },
           {
-            id: 1,
             x: 0,
             y: 0,
-            health: 3,
             name: 'Tripa',
-            archetype: 'chef',
+            type: 'chef',
             actionPoints: 2,
           },
           {
-            id: 2,
             x: 0,
             y: 0,
-            health: 5,
             name: 'SoE',
-            archetype: 'miner',
+            type: 'miner',
             actionPoints: 2,
           },
         ],
