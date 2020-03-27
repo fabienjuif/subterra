@@ -9,6 +9,7 @@ export default [
   // game going on
   ['@players>pass', players.pass],
   ['@players>damage', players.damage],
+  ['@players>move', players.move],
   ['@cards>pick', cards.pick],
   ['@cards>shake', cards.shake],
   ['@cards>landslide', cards.landslide],

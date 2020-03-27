@@ -1,3 +1,5 @@
+import { isActionEquals } from './actions'
+
 export const pass = (store, action) => {
   const previousState = store.getState()
   const firstPlayerIndex = previousState.players.findIndex(({ first }) => first)
@@ -35,6 +37,20 @@ export const pass = (store, action) => {
   })
 
   if (turnEnd) store.dispatch('@cards>pick')
+}
+
+export const move = (store, action) => {
+  store.mutate((state) => {
+    if (!state.playerActions.possibilities.some(isActionEquals(action))) return
+
+    const player = state.players.find(
+      ({ name }) => name === action.payload.playerName,
+    )
+
+    player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
+    player.x = action.payload.x
+    player.y = action.payload.y
+  })
 }
 
 export const damage = (store, action) => {

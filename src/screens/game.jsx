@@ -26,7 +26,7 @@ const Game = () => {
     cells = cells.map((cell) => ({
       ...cell,
       actions: state.playerActions.possibilities.filter((action) =>
-        isCellEqual(action.cell)(cell),
+        isCellEqual(action.payload)(cell),
       ),
     }))
 

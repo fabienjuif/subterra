@@ -32,12 +32,22 @@ describe('listeners', () => {
   })
 
   describe('@players>pass', () => {
-    it('should call player.pass', () => {
+    it('should call players.pass', () => {
       const engine = createEngine({})
 
       engine.dispatch('@players>pass')
 
       expect(players.pass).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('@players>move', () => {
+    it('should call players.move', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@players>move')
+
+      expect(players.move).toHaveBeenCalledTimes(1)
     })
   })
 
