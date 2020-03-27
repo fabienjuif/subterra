@@ -87,38 +87,137 @@ Index: @players>init
 ===================================================================
 --- @players>init
 +++ @players>init
-@@ -1,7 +1,37 @@
+@@ -1,7 +1,136 @@
  {
    "gameOver": false,
 -  "players": [],
 +  "players": [
 +    {
-+      "id": 0,
++      "type": "medic",
++      "health": 3,
++      "strength": 6,
++      "skills": [
++        {
++          "type": "heal",
++          "perGame": null,
++          "perTurn": null,
++          "cost": 1
++        },
++        {
++          "type": "sprint",
++          "perGame": null,
++          "perTurn": null,
++          "cost": 1
++        }
++      ],
++      "archetype": {
++        "type": "medic",
++        "health": 3,
++        "strength": 6,
++        "skills": [
++          {
++            "type": "heal",
++            "perGame": null,
++            "perTurn": null,
++            "cost": 1
++          },
++          {
++            "type": "sprint",
++            "perGame": null,
++            "perTurn": null,
++            "cost": 1
++          }
++        ]
++      },
++      "name": "xXx-medic-xXx",
 +      "x": 0,
 +      "y": 0,
-+      "health": 3,
-+      "name": "Sutat",
-+      "archetype": "explorer",
 +      "actionPoints": 2,
 +      "current": true,
 +      "first": true
 +    },
 +    {
-+      "id": 1,
++      "type": "geologist",
++      "health": 3,
++      "strength": 3,
++      "skills": [
++        {
++          "type": "intuition",
++          "perGame": null,
++          "perTurn": null,
++          "cost": 0
++        },
++        {
++          "type": "clear",
++          "perGame": null,
++          "perTurn": null,
++          "cost": 1
++        }
++      ],
++      "archetype": {
++        "type": "geologist",
++        "health": 3,
++        "strength": 3,
++        "skills": [
++          {
++            "type": "intuition",
++            "perGame": null,
++            "perTurn": null,
++            "cost": 0
++          },
++          {
++            "type": "clear",
++            "perGame": null,
++            "perTurn": null,
++            "cost": 1
++          }
++        ]
++      },
++      "name": "xXx-geologist-xXx",
 +      "x": 0,
 +      "y": 0,
-+      "health": 3,
-+      "name": "Tripa",
-+      "archetype": "chef",
 +      "actionPoints": 2
 +    },
 +    {
-+      "id": 2,
++      "type": "scoot",
++      "health": 3,
++      "strength": 2,
++      "skills": [
++        {
++          "type": "guide",
++          "cost": 0,
++          "perGame": 3,
++          "perTurn": null
++        },
++        {
++          "type": "furtivity",
++          "cost": 0,
++          "perGame": null,
++          "perTurn": null
++        }
++      ],
++      "archetype": {
++        "type": "scoot",
++        "health": 3,
++        "strength": 2,
++        "skills": [
++          {
++            "type": "guide",
++            "cost": 0,
++            "perGame": 3,
++            "perTurn": null
++          },
++          {
++            "type": "furtivity",
++            "cost": 0,
++            "perGame": null,
++            "perTurn": null
++          }
++        ]
++      },
++      "name": "xXx-scoot-xXx",
 +      "x": 0,
 +      "y": 0,
-+      "health": 5,
-+      "name": "SoE",
-+      "archetype": "miner",
 +      "actionPoints": 2
 +    }
 +  ],
@@ -126,14 +225,133 @@ Index: @players>init
    "deckTiles": {
      "length": 10
    },
-@@ -77,8 +107,11 @@
+@@ -77,8 +206,130 @@
            {
              "type": "end"
            }
          ]
 +      },
 +      {
-+        "type": "@players>init"
++        "type": "@players>init",
++        "payload": [
++          {
++            "type": "medic",
++            "health": 3,
++            "strength": 6,
++            "skills": [
++              {
++                "type": "heal",
++                "perGame": null,
++                "perTurn": null,
++                "cost": 1
++              },
++              {
++                "type": "sprint",
++                "perGame": null,
++                "perTurn": null,
++                "cost": 1
++              }
++            ],
++            "archetype": {
++              "type": "medic",
++              "health": 3,
++              "strength": 6,
++              "skills": [
++                {
++                  "type": "heal",
++                  "perGame": null,
++                  "perTurn": null,
++                  "cost": 1
++                },
++                {
++                  "type": "sprint",
++                  "perGame": null,
++                  "perTurn": null,
++                  "cost": 1
++                }
++              ]
++            },
++            "name": "xXx-medic-xXx"
++          },
++          {
++            "type": "geologist",
++            "health": 3,
++            "strength": 3,
++            "skills": [
++              {
++                "type": "intuition",
++                "perGame": null,
++                "perTurn": null,
++                "cost": 0
++              },
++              {
++                "type": "clear",
++                "perGame": null,
++                "perTurn": null,
++                "cost": 1
++              }
++            ],
++            "archetype": {
++              "type": "geologist",
++              "health": 3,
++              "strength": 3,
++              "skills": [
++                {
++                  "type": "intuition",
++                  "perGame": null,
++                  "perTurn": null,
++                  "cost": 0
++                },
++                {
++                  "type": "clear",
++                  "perGame": null,
++                  "perTurn": null,
++                  "cost": 1
++                }
++              ]
++            },
++            "name": "xXx-geologist-xXx"
++          },
++          {
++            "type": "scoot",
++            "health": 3,
++            "strength": 2,
++            "skills": [
++              {
++                "type": "guide",
++                "cost": 0,
++                "perGame": 3,
++                "perTurn": null
++              },
++              {
++                "type": "furtivity",
++                "cost": 0,
++                "perGame": null,
++                "perTurn": null
++              }
++            ],
++            "archetype": {
++              "type": "scoot",
++              "health": 3,
++              "strength": 2,
++              "skills": [
++                {
++                  "type": "guide",
++                  "cost": 0,
++                  "perGame": 3,
++                  "perTurn": null
++                },
++                {
++                  "type": "furtivity",
++                  "cost": 0,
++                  "perGame": null,
++                  "perTurn": null
++                }
++              ]
++            },
++            "name": "xXx-scoot-xXx"
++          }
++        ]
        }
      ]
    }
@@ -147,7 +365,7 @@ Index: @dices>init
 ===================================================================
 --- @dices>init
 +++ @dices>init
-@@ -59,9 +59,14 @@
+@@ -158,9 +158,14 @@
      {
        "type": "end"
      }
@@ -163,11 +381,11 @@ Index: @dices>init
    "grid": [
      {
        "id": 0,
-@@ -110,8 +115,17 @@
+@@ -328,8 +333,17 @@
+             },
+             "name": "xXx-scoot-xXx"
+           }
          ]
-       },
-       {
-         "type": "@players>init"
 +      },
 +      {
 +        "type": "@dices>init",
@@ -190,28 +408,29 @@ Index: @cards>pick
 ===================================================================
 --- @cards>pick
 +++ @cards>pick
-@@ -15,18 +15,18 @@
+@@ -46,9 +46,9 @@
+       "first": true
+     },
      {
-       "id": 1,
-       "x": 0,
-       "y": 0,
+       "type": "geologist",
 -      "health": 3,
 +      "health": 2,
-       "name": "Tripa",
-       "archetype": "chef",
+       "strength": 3,
+       "skills": [
+         {
+           "type": "intuition",
+@@ -88,9 +88,9 @@
        "actionPoints": 2
      },
      {
-       "id": 2,
-       "x": 0,
-       "y": 0,
--      "health": 5,
-+      "health": 4,
-       "name": "SoE",
-       "archetype": "miner",
-       "actionPoints": 2
-     }
-@@ -36,13 +36,8 @@
+       "type": "scoot",
+-      "health": 3,
++      "health": 2,
+       "strength": 2,
+       "skills": [
+         {
+           "type": "guide",
+@@ -135,13 +135,8 @@
      "length": 10
    },
    "deckCards": [
@@ -225,7 +444,7 @@ Index: @cards>pick
        "damage": 2,
        "duration": 1
      },
-@@ -60,14 +55,15 @@
+@@ -159,14 +154,15 @@
        "type": "end"
      }
    ],
@@ -245,7 +464,7 @@ Index: @cards>pick
      {
        "id": 0,
        "type": "start",
-@@ -124,8 +120,178 @@
+@@ -342,8 +338,178 @@
            3,
            4,
            5
@@ -268,7 +487,7 @@ Index: @cards>pick
 +        "type": "@dices>roll",
 +        "payload": {
 +          "min": 4,
-+          "playerName": "SoE",
++          "playerName": "xXx-scoot-xXx",
 +          "actionOnFail": {
 +            "type": "@players>damage",
 +            "payload": {
@@ -280,7 +499,7 @@ Index: @cards>pick
 +                  "duration": 1
 +                }
 +              },
-+              "playerName": "SoE"
++              "playerName": "xXx-scoot-xXx"
 +            }
 +          }
 +        }
@@ -289,7 +508,7 @@ Index: @cards>pick
 +        "type": "@dices>rolled",
 +        "payload": {
 +          "min": 4,
-+          "playerName": "SoE",
++          "playerName": "xXx-scoot-xXx",
 +          "actionOnFail": {
 +            "type": "@players>damage",
 +            "payload": {
@@ -301,7 +520,7 @@ Index: @cards>pick
 +                  "duration": 1
 +                }
 +              },
-+              "playerName": "SoE"
++              "playerName": "xXx-scoot-xXx"
 +            }
 +          },
 +          "value": 2
@@ -318,14 +537,14 @@ Index: @cards>pick
 +              "duration": 1
 +            }
 +          },
-+          "playerName": "SoE"
++          "playerName": "xXx-scoot-xXx"
 +        }
 +      },
 +      {
 +        "type": "@dices>roll",
 +        "payload": {
 +          "min": 4,
-+          "playerName": "Tripa",
++          "playerName": "xXx-geologist-xXx",
 +          "actionOnFail": {
 +            "type": "@players>damage",
 +            "payload": {
@@ -337,7 +556,7 @@ Index: @cards>pick
 +                  "duration": 1
 +                }
 +              },
-+              "playerName": "Tripa"
++              "playerName": "xXx-geologist-xXx"
 +            }
 +          }
 +        }
@@ -346,7 +565,7 @@ Index: @cards>pick
 +        "type": "@dices>rolled",
 +        "payload": {
 +          "min": 4,
-+          "playerName": "Tripa",
++          "playerName": "xXx-geologist-xXx",
 +          "actionOnFail": {
 +            "type": "@players>damage",
 +            "payload": {
@@ -358,7 +577,7 @@ Index: @cards>pick
 +                  "duration": 1
 +                }
 +              },
-+              "playerName": "Tripa"
++              "playerName": "xXx-geologist-xXx"
 +            }
 +          },
 +          "value": 3
@@ -375,14 +594,14 @@ Index: @cards>pick
 +              "duration": 1
 +            }
 +          },
-+          "playerName": "Tripa"
++          "playerName": "xXx-geologist-xXx"
 +        }
 +      },
 +      {
 +        "type": "@dices>roll",
 +        "payload": {
 +          "min": 4,
-+          "playerName": "Sutat",
++          "playerName": "xXx-medic-xXx",
 +          "actionOnFail": {
 +            "type": "@players>damage",
 +            "payload": {
@@ -394,7 +613,7 @@ Index: @cards>pick
 +                  "duration": 1
 +                }
 +              },
-+              "playerName": "Sutat"
++              "playerName": "xXx-medic-xXx"
 +            }
 +          }
 +        }
@@ -403,7 +622,7 @@ Index: @cards>pick
 +        "type": "@dices>rolled",
 +        "payload": {
 +          "min": 4,
-+          "playerName": "Sutat",
++          "playerName": "xXx-medic-xXx",
 +          "actionOnFail": {
 +            "type": "@players>damage",
 +            "payload": {
@@ -415,7 +634,7 @@ Index: @cards>pick
 +                  "duration": 1
 +                }
 +              },
-+              "playerName": "Sutat"
++              "playerName": "xXx-medic-xXx"
 +            }
 +          },
 +          "value": 4

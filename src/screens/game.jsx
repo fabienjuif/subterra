@@ -51,7 +51,7 @@ const Game = () => {
       <div className={cn('players', classes.players)}>
         <button onClick={() => dispatch('@players>pass')}>pass</button>
         {players.map((player) => (
-          <motion.div key={player.id} positionTransition>
+          <motion.div key={player.type} positionTransition>
             <UIPlayer {...player} />
           </motion.div>
         ))}

@@ -7,6 +7,7 @@ import cards, {
   ShakeCard,
   HorrorCard,
 } from '../utils/cards'
+import archetypes from '../utils/archetypes'
 
 expect.addSnapshotSerializer({
   test: () => true,
@@ -22,7 +23,16 @@ describe('engine without mock', () => {
         type: '@cards>init',
         payload: [cards[2], cards[3], cards[1], cards[0]],
       })
-      engine.dispatch('@players>init')
+      engine.dispatch({
+        type: '@players>init',
+        payload: [archetypes[0], archetypes[1], archetypes[2]].map(
+          (archetype) => ({
+            ...archetype,
+            archetype,
+            name: `xXx-${archetype.type}-xXx`,
+          }),
+        ),
+      })
       engine.dispatch('@cards>pick')
       // TODO: here play a fake game
 
@@ -56,7 +66,16 @@ describe('engine without mock', () => {
       type: '@cards>init',
       payload: [ShakeCard, GazCard, WaterCard, HorrorCard, EndCard],
     })
-    dispatchAndSnap('@players>init')
+    dispatchAndSnap({
+      type: '@players>init',
+      payload: [archetypes[0], archetypes[1], archetypes[2]].map(
+        (archetype) => ({
+          ...archetype,
+          archetype,
+          name: `xXx-${archetype.type}-xXx`,
+        }),
+      ),
+    })
     dispatchAndSnap({ type: '@dices>init', payload: [2, 3, 4, 5] })
     dispatchAndSnap('@cards>pick')
 

@@ -3,10 +3,10 @@ import cn from 'classnames'
 import classes from './player.module.scss'
 import gameClasses from '../player.module.scss'
 
-const Player = ({ actionPoints, health, name, archetype, current }) => {
+const Player = ({ actionPoints, health, name, type, current }) => {
   return (
     <table
-      className={cn('player', classes.player, gameClasses[archetype], {
+      className={cn('player', classes.player, gameClasses[type], {
         [classes.current]: current,
       })}
     >
@@ -17,7 +17,7 @@ const Player = ({ actionPoints, health, name, archetype, current }) => {
         </tr>
         <tr>
           <td>archetype</td>
-          <td>{archetype}</td>
+          <td>{type}</td>
         </tr>
         <tr>
           <td>action points</td>
