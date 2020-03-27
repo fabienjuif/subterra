@@ -126,27 +126,46 @@ describe('players', () => {
   })
 
   describe('move', () => {
-    it('should move player', () => {
+    it('should move player when the action is a known possibilities', () => {
+      const action = {
+        type: '@players>move',
+        payload: { playerName: 'Hatsu', cost: 1, x: 1, y: -1 },
+      }
       const store = createStore({
         players: [
           { name: 'Hatsu', actionPoints: 1, x: 0, y: 0 },
           { name: 'SoE', actionPoints: 2, x: 0, y: 0 },
         ],
+        playerActions: { possibilities: [action] },
       })
 
-      store.dispatch = jest.fn()
+      players.move(store, action)
 
-      players.move(store, {
+      expect(store.getState().players).toEqual([
+        { name: 'Hatsu', actionPoints: 0, x: 1, y: -1 },
+        { name: 'SoE', actionPoints: 2, x: 0, y: 0 },
+      ])
+    })
+
+    it('should not move player when the action is not a known possibilities', () => {
+      const action = {
+        type: '@players>move',
         payload: { playerName: 'Hatsu', cost: 1, x: 1, y: -1 },
-      })
-
-      expect(store.getState()).toEqual({
+      }
+      const store = createStore({
         players: [
-          { name: 'Hatsu', actionPoints: 0, x: 1, y: -1 },
+          { name: 'Hatsu', actionPoints: 1, x: 0, y: 0 },
           { name: 'SoE', actionPoints: 2, x: 0, y: 0 },
         ],
+        playerActions: { possibilities: [] },
       })
-      expect(store.dispatch).toHaveBeenCalledTimes(0)
+
+      players.move(store, action)
+
+      expect(store.getState().players).toEqual([
+        { name: 'Hatsu', actionPoints: 1, x: 0, y: 0 },
+        { name: 'SoE', actionPoints: 2, x: 0, y: 0 },
+      ])
     })
   })
 

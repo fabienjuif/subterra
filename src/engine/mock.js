@@ -56,19 +56,19 @@ export const init = (store, action) => {
     // necessary as long as possibilities are not calculated
     state.playerActions.possibilities = [
       {
-        type: '@players>actions>move',
+        type: '@players>move',
         payload: { playerName: 'Sutat', cost: 1, x: 0, y: 1 },
       },
       {
-        type: '@players>actions>move',
+        type: '@players>move',
         payload: { playerName: 'Sutat', cost: 1, x: 1, y: 0 },
       },
       {
-        type: '@players>actions>move',
+        type: '@players>move',
         payload: { playerName: 'Sutat', cost: 1, x: 0, y: -1 },
       },
       {
-        type: '@players>actions>move',
+        type: '@players>move',
         payload: { playerName: 'Sutat', cost: 2, x: -1, y: 0 },
       },
     ]

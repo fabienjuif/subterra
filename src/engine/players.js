@@ -38,11 +38,18 @@ export const pass = (store, action) => {
 }
 
 export const move = (store, action) => {
-  const player = store
-    .getState()
-    .players.find(({ name }) => name === action.payload.playerName)
-
   store.mutate((state) => {
+    if (
+      !state.playerActions.possibilities.some(
+        (possibility) => action === possibility,
+      )
+    )
+      return
+
+    const player = state.players.find(
+      ({ name }) => name === action.payload.playerName,
+    )
+
     player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
     player.x = action.payload.x
     player.y = action.payload.y
