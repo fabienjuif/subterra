@@ -16,14 +16,30 @@ export const pick = (store, action) => {
 
   const nextState = store.getState()
   const { type: cardType } = nextState.activeCard
-  if (['shake', 'water', 'gaz', 'enemy'].includes(cardType)) {
+  if (['shake', 'water', 'gaz', 'enemy', 'end'].includes(cardType)) {
     store.dispatch({
       type: `@cards>${cardType}`,
       payload: { card: nextState.activeCard },
     })
-  } else if (nextState.activeCard.type === 'landslide') {
+  } else if (cardType === 'landslide') {
     store.dispatch(roll.then({ type: '@cards>landslide' }))
   }
+}
+
+export const end = (store, action) => {
+  store.getState().players.forEach((player) => {
+    if (player.health <= 0) return
+
+    store.dispatch(
+      roll.failThen(
+        3,
+        player,
+        players.damage(player, 1000, {
+          from: { card: action.payload.card },
+        }),
+      ),
+    )
+  })
 }
 
 export const shake = (store, action) => {
