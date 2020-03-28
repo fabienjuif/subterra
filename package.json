@@ -66,5 +66,10 @@
     "singleQuote": true,
     "arrowParens": "always",
     "endOfLine": "lf"
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
   }
 }

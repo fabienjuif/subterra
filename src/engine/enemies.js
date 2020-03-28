@@ -9,7 +9,7 @@ const mapGridToAstarGraph = (grid) => {
     if (!graph[cell.x][cell.y]) graph[cell.x][cell.y] = [cell.x, cell.y]
   })
 
-  return grid
+  return graph
 }
 
 export const process = (store, action) => {
@@ -17,7 +17,7 @@ export const process = (store, action) => {
   const { grid, players } = previousState
 
   // find enemies
-  const enemies = grid.filters(({ status }) => status === 'enemy')
+  const enemies = grid.filter(({ status }) => status.includes('enemy'))
 
   // map grid to a star graph
   const graph = mapGridToAstarGraph(grid)
@@ -29,7 +29,7 @@ export const process = (store, action) => {
   // *  if the shortest path is shared between multiple player
   //    the enemy move toward the player with the lesser strengh
   enemies.forEach((enemy) => {
-    let shortestPath = []
+    let shortestPath
     let closestPlayer
 
     players.forEach((player) => {
@@ -40,7 +40,7 @@ export const process = (store, action) => {
       )
 
       if (status === 0) {
-        if (path.length === shortestPath.length) {
+        if (!shortestPath || path.length === shortestPath.length) {
           if (!closestPlayer || closestPlayer.strengh > player.strengh) {
             shortestPath = path
             closestPlayer = player
@@ -52,7 +52,7 @@ export const process = (store, action) => {
       }
     })
 
-    if (shortestPath.length > 1) {
+    if (shortestPath && shortestPath.length > 1) {
       store.dispatch({
         type: '@enemies>move',
         payload: {
