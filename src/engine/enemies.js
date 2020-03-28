@@ -71,7 +71,7 @@ export const process = (store, action) => {
 export const move = (store, action) => {
   store.mutate((state) => {
     const previousCell = state.grid.find(isCellEqual(action.payload.enemy))
-    previousCell.splice(
+    previousCell.status.splice(
       previousCell.status.findIndex((s) => s === 'enemy'),
       1,
     )
