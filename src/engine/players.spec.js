@@ -34,7 +34,7 @@ describe('players', () => {
       })
     })
 
-    it('should give action point back, mark the first player and mark the turn as ended', () => {
+    it('should give action point back, mark the first player and start a new turn', () => {
       // first case the last player is the last in the array
       let store = createStore({
         players: [
