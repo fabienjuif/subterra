@@ -1,4 +1,9 @@
 import { isActionEquals } from './actions'
+import {
+  isCellEqual,
+  getWrappingCells,
+  findActionsOnCell,
+} from '../utils/tiles'
 
 export const pass = (store, action) => {
   const previousState = store.getState()
@@ -50,6 +55,21 @@ export const move = (store, action) => {
     player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
     player.x = action.payload.x
     player.y = action.payload.y
+  })
+}
+
+export const findPossibilities = (store, action) => {
+  store.mutate((state) => {
+    const player = state.players.find(({ current }) => current)
+    state.playerActions.possibilities = []
+
+    if (player.actionPoints === 0 || player.health === 0) return // We should add excess in another PR.
+
+    const tile = state.grid.find(isCellEqual(player))
+    const cells = getWrappingCells(state.grid)
+    const findPlayerActionsOnCell = findActionsOnCell(player, tile)
+
+    state.playerActions.possibilities = cells.flatMap(findPlayerActionsOnCell)
   })
 }
 

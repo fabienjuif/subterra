@@ -1,3 +1,5 @@
+import { players } from '../engine/actions'
+
 const rotate90 = (where) => {
   switch (where) {
     case 'left':
@@ -107,34 +109,25 @@ export const getDistanceFromTo = (from) => (to) => {
   return getSimpleDistanceFromTo(from)(to)
 }
 
-export const findActionsOnCell = (playerCell) => (cell) => {
-  if (getDistanceFromTo(playerCell)(cell) > 1) return []
+export const findActionsOnCell = (player, playerTile) => (cell) => {
+  if (getDistanceFromTo(playerTile)(cell) > 1) return []
 
   const actions = []
 
   if (isCellTile(cell)) {
-    if (canMoveFromTo(playerCell.tile, cell.tile)) {
-      actions.push({ cell, code: 'move', cost: 1 })
-    }
-  } else {
-    // create a fake tile that is opened everywhere
-    // so we can test we can go to this fake tile
-    const fakeOpenTile = {
-      ...cell,
-      top: true,
-      left: true,
-      bottom: true,
-      right: true,
-    }
-
-    if (
-      isCellsTouched(playerCell, cell) &&
-      canMoveFromTo(playerCell.tile, fakeOpenTile)
-    ) {
-      actions.push({ cell, code: 'look', cost: 1 })
-      actions.push({ cell, code: 'explore', cost: 1 })
+    if (canMoveFromTo(playerTile, cell.tile)) {
+      actions.push(players.move(player, cell.tile))
     }
   }
+  // else {
+  //   if (
+  //     isCellsTouched(playerCell, cell) &&
+  //     canMoveFromTo(playerCell.tile, fakeOpenTile)
+  //   ) {
+  //     actions.push({ cell, code: 'look', cost: 1 })
+  //     actions.push({ cell, code: 'explore', cost: 1 })
+  //   }
+  // }
 
   return actions
 }

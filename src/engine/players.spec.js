@@ -1,5 +1,6 @@
 import createStore from '@myrtille/mutate'
 import * as players from './players'
+import { players as actions } from './actions'
 
 describe('players', () => {
   describe('pass', () => {
@@ -276,6 +277,115 @@ describe('players', () => {
           },
         ],
       })
+    })
+  })
+
+  describe('findPossibilities', () => {
+    it('should find a move possibilities when the path to the next tile is open', () => {
+      const store = createStore({
+        players: [
+          {
+            name: 'Hatsu',
+            x: 0,
+            y: 0,
+            health: 1,
+            actionPoints: 1,
+            current: true,
+          },
+        ],
+        grid: [
+          { x: 0, y: 0, right: true },
+          { x: 1, y: 0, left: true },
+        ],
+        playerActions: {
+          possibilities: [],
+        },
+      })
+
+      players.findPossibilities(store, {})
+
+      expect(store.getState().playerActions.possibilities).toEqual([
+        actions.move({ name: 'Hatsu' }, { x: 1, y: 0 }),
+      ])
+    })
+
+    it('should not find any possibilities when the player has no action points', () => {
+      const store = createStore({
+        players: [
+          {
+            name: 'Hatsu',
+            x: 0,
+            y: 0,
+            health: 1,
+            actionPoints: 0,
+            current: true,
+          },
+        ],
+        grid: [
+          { x: 0, y: 0, right: true },
+          { x: 1, y: 0, left: true },
+        ],
+        playerActions: {
+          possibilities: [{ previous: 'possibilities' }],
+        },
+      })
+
+      players.findPossibilities(store, {})
+
+      expect(store.getState().playerActions.possibilities).toEqual([])
+    })
+
+    it('should not find any possibilities when the player has no health', () => {
+      const store = createStore({
+        players: [
+          {
+            name: 'Hatsu',
+            x: 0,
+            y: 0,
+            health: 0,
+            actionPoints: 1,
+            current: true,
+          },
+        ],
+        grid: [
+          { x: 0, y: 0, right: true },
+          { x: 1, y: 0, left: true },
+        ],
+        playerActions: {
+          possibilities: [],
+        },
+      })
+
+      players.findPossibilities(store, {})
+
+      expect(store.getState().playerActions.possibilities).toEqual([])
+    })
+
+    it('should not find a move possibilities when the path to the next tile is closed', () => {
+      const store = createStore({
+        players: [
+          {
+            name: 'Hatsu',
+            x: 0,
+            y: 0,
+            health: 1,
+            actionPoints: 1,
+            current: true,
+          },
+        ],
+        grid: [
+          { x: 0, y: 0, right: true },
+          { x: 1, y: 0 },
+          { x: -1, y: 0, right: true },
+        ],
+        playerActions: {
+          possibilities: [],
+        },
+      })
+
+      players.findPossibilities(store, {})
+
+      expect(store.getState().playerActions.possibilities).toEqual([])
     })
   })
 })

@@ -14,10 +14,11 @@ describe('listeners', () => {
   })
 
   describe('@players>init', () => {
-    it('should call player.init', () => {
+    it('should call players.init and players.findPossibilities', () => {
       const engine = createEngine({})
       engine.dispatch('@players>init')
       expect(players.init).toHaveBeenCalledTimes(1)
+      expect(players.findPossibilities).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -32,22 +33,24 @@ describe('listeners', () => {
   })
 
   describe('@players>pass', () => {
-    it('should call players.pass', () => {
+    it('should call players.pass and players.findPossibilities', () => {
       const engine = createEngine({})
 
       engine.dispatch('@players>pass')
 
       expect(players.pass).toHaveBeenCalledTimes(1)
+      expect(players.findPossibilities).toHaveBeenCalledTimes(1)
     })
   })
 
   describe('@players>move', () => {
-    it('should call players.move', () => {
+    it('should call players.move and players.findPossibilities', () => {
       const engine = createEngine({})
 
       engine.dispatch('@players>move')
 
       expect(players.move).toHaveBeenCalledTimes(1)
+      expect(players.findPossibilities).toHaveBeenCalledTimes(1)
     })
   })
 
