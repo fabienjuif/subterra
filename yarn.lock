@@ -978,6 +978,11 @@
   resolved "https://registry.yarnpkg.com/@emotion/memoize/-/memoize-0.7.4.tgz#19bf0f5af19149111c40d98bb0cf82119f5d9eeb"
   integrity sha512-Ja/Vfqe3HpuzRsG1oBtWTHk2PGZ7GR+2Vz5iYGelAw8dx32K0y7PjVuxK6z1nMpZOqAFsRUPCkK1YjJ56qJlgw==
 
+"@fabienjuif/astar@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@fabienjuif/astar/-/astar-0.1.0.tgz#dbc303efb9c343c9d71cbeab289e91badfe3cd07"
+  integrity sha512-iSYH2Th1DLO4QHuBHiXZaSQjZESJz//QPnsWnoEAOBwxqbb1hxNwUZQplgZOWVeOfV3DR2TFXIrsu0YjAVPFuw==
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"

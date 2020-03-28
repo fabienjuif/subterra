@@ -34,7 +34,7 @@ describe('players', () => {
       })
     })
 
-    it('should give action point back, mark the first player and pick a card', () => {
+    it('should give action point back, mark the first player and start a new turn', () => {
       // first case the last player is the last in the array
       let store = createStore({
         players: [
@@ -77,7 +77,7 @@ describe('players', () => {
         ],
       })
       expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith('@cards>pick')
+      expect(store.dispatch).toHaveBeenCalledWith('@turn>start')
 
       // second case the last player is NOT the last in the array
       store = createStore({
@@ -121,7 +121,7 @@ describe('players', () => {
         ],
       })
       expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith('@cards>pick')
+      expect(store.dispatch).toHaveBeenCalledWith('@turn>start')
     })
   })
 
