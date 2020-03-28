@@ -359,9 +359,6 @@ describe('enemies', () => {
       })
     })
 
-    it.todo('should move not move the enemy through a wall')
-    it.todo('should kill an enemy if it is too far away (> 6 tiles)')
-
     it('should move all enemies', () => {
       const store = createStore({
         players: [
@@ -444,6 +441,142 @@ describe('enemies', () => {
           },
         },
       ])
+    })
+
+    it('should kill an enemy if it is too far away (> 6 tiles)', () => {
+      const store = createStore({
+        players: [
+          {
+            name: 'Tripa',
+            x: 0,
+            y: 0,
+            strengh: 2,
+          },
+        ],
+        grid: [
+          {
+            type: 'start',
+            x: 0,
+            y: 0,
+            status: [],
+          },
+          {
+            x: 1,
+            y: 0,
+            status: [],
+          },
+          {
+            x: 2,
+            y: 0,
+            status: [],
+          },
+          {
+            x: 3,
+            y: 0,
+            status: [],
+          },
+          {
+            x: 4,
+            y: 0,
+            status: [],
+          },
+          {
+            x: 5,
+            y: 0,
+            status: [],
+          },
+          {
+            x: 6,
+            y: 0,
+            status: [],
+          },
+          {
+            x: 7,
+            y: 0,
+            status: ['enemy'],
+          },
+        ],
+      })
+      store.dispatch = jest.fn()
+
+      enemies.process(store, {})
+
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@enemies>kill',
+        payload: {
+          x: 7,
+          y: 0,
+        },
+      })
+    })
+
+    it.todo('should move not move the enemy through a wall')
+  })
+
+  describe('kill', () => {
+    it('should kill the enemy', () => {
+      const store = createStore({
+        grid: [
+          {
+            x: 0,
+            y: 0,
+          },
+          {
+            x: 1,
+            y: 0,
+            status: ['enemy'],
+          },
+        ],
+      })
+
+      enemies.kill(store, { payload: { x: 1, y: 0 } })
+
+      expect(store.getState()).toEqual({
+        grid: [
+          {
+            x: 0,
+            y: 0,
+          },
+          {
+            x: 1,
+            y: 0,
+            status: [],
+          },
+        ],
+      })
+    })
+
+    it('should kill on of the enemy', () => {
+      const store = createStore({
+        grid: [
+          {
+            x: 0,
+            y: 0,
+          },
+          {
+            x: 1,
+            y: 0,
+            status: ['enemy', 'enemy'],
+          },
+        ],
+      })
+
+      enemies.kill(store, { payload: { x: 1, y: 0 } })
+
+      expect(store.getState()).toEqual({
+        grid: [
+          {
+            x: 0,
+            y: 0,
+          },
+          {
+            x: 1,
+            y: 0,
+            status: ['enemy'],
+          },
+        ],
+      })
     })
   })
 })
