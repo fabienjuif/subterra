@@ -120,6 +120,15 @@ export const findActionsOnCell = (player, playerTile) => (cell) => {
     }
   }
   // else {
+  //   // create a fake tile that is opened everywhere
+  //   // so we can test we can go to this fake tile
+  //   const fakeOpenTile = {
+  //     ...cell,
+  //     top: true,
+  //     left: true,
+  //     bottom: true,
+  //     right: true,
+  //   }
   //   if (
   //     isCellsTouched(playerCell, cell) &&
   //     canMoveFromTo(playerCell.tile, fakeOpenTile)

@@ -63,7 +63,7 @@ export const findPossibilities = (store, action) => {
     const player = state.players.find(({ current }) => current)
     state.playerActions.possibilities = []
 
-    if (player.actionPoints === 0 || player.health === 0) return // We should add excess in another PR.
+    if (player.actionPoints === 0 || player.health === 0) return // TODO: We should add excess in another PR.
 
     const tile = state.grid.find(isCellEqual(player))
     const cells = getWrappingCells(state.grid)
