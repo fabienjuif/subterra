@@ -11,6 +11,7 @@ export default [
   // game going on
   ['@players>pass', players.pass],
   ['@players>damage', players.damage],
+  ['@turn>start', game.checkWin],
   ['@turn>start', (store) => store.dispatch('@cards>pick')],
   ['@turn>start', (store) => store.dispatch('@enemies>process')],
   ['@players>move', players.move],

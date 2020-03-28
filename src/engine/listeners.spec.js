@@ -192,6 +192,14 @@ describe('listeners', () => {
 
       expect(engine.dispatch).toHaveBeenCalledWith('@enemies>process')
     })
+
+    it('should call game.checkWin', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@turn>start')
+
+      expect(game.checkWin).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('@enemies>kill', () => {
