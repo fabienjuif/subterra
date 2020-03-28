@@ -21,6 +21,8 @@ export default [
   ['@cards>enemy', cards.processMarkerCard],
   ['@cards>end', cards.end],
   ['@enemies>kill', enemies.kill],
+  ['@enemies>process', enemies.process],
+  ['@enemies>move', enemies.move],
   // "random"
   ['@dices>init', dices.init],
   ['@dices>roll', dices.roll],
