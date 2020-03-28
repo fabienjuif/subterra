@@ -41,7 +41,7 @@ export const pass = (store, action) => {
     }
   })
 
-  if (turnEnd) store.dispatch('@cards>pick')
+  if (turnEnd) store.dispatch('@turn>start')
 }
 
 export const move = (store, action) => {
