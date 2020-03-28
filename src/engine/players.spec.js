@@ -125,6 +125,56 @@ describe('players', () => {
     })
   })
 
+  describe('move', () => {
+    it('should move player when the action is a known possibilities', () => {
+      const store = createStore({
+        players: [
+          { name: 'Hatsu', actionPoints: 1, x: 0, y: 0 },
+          { name: 'SoE', actionPoints: 2, x: 0, y: 0 },
+        ],
+        playerActions: {
+          possibilities: [
+            {
+              type: '@players>move',
+              payload: { playerName: 'Hatsu', cost: 1, x: 1, y: -1 },
+            },
+          ],
+        },
+      })
+
+      players.move(store, {
+        type: '@players>move',
+        payload: { playerName: 'Hatsu', cost: 1, x: 1, y: -1 },
+      })
+
+      expect(store.getState().players).toEqual([
+        { name: 'Hatsu', actionPoints: 0, x: 1, y: -1 },
+        { name: 'SoE', actionPoints: 2, x: 0, y: 0 },
+      ])
+    })
+
+    it('should not move player when the action is not a known possibilities', () => {
+      const action = {
+        type: '@players>move',
+        payload: { playerName: 'Hatsu', cost: 1, x: 1, y: -1 },
+      }
+      const store = createStore({
+        players: [
+          { name: 'Hatsu', actionPoints: 1, x: 0, y: 0 },
+          { name: 'SoE', actionPoints: 2, x: 0, y: 0 },
+        ],
+        playerActions: { possibilities: [] },
+      })
+
+      players.move(store, action)
+
+      expect(store.getState().players).toEqual([
+        { name: 'Hatsu', actionPoints: 1, x: 0, y: 0 },
+        { name: 'SoE', actionPoints: 2, x: 0, y: 0 },
+      ])
+    })
+  })
+
   describe('damage', () => {
     it('should damage player', () => {
       const store = createStore({
@@ -140,9 +190,12 @@ describe('players', () => {
         ],
       })
 
+      store.dispatch = jest.fn()
+
       players.damage(store, {
         payload: { playerName: 'Hatsu', damage: 2 },
       })
+
       expect(store.getState()).toEqual({
         players: [
           {
@@ -155,6 +208,7 @@ describe('players', () => {
           },
         ],
       })
+      expect(store.dispatch).toHaveBeenCalledTimes(0)
     })
 
     it('should kill player if it has no health remaining', () => {
@@ -172,6 +226,7 @@ describe('players', () => {
         payload: { playerName: 'SoE', damage: 2 },
       })
 
+      expect(store.getState().players).toEqual([{ name: 'SoE', health: 0 }])
       expect(store.dispatch).toHaveBeenCalledTimes(1)
       expect(store.dispatch).toHaveBeenCalledWith({
         type: '@players>death',

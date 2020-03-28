@@ -11,6 +11,7 @@ export default [
   ['@players>damage', players.damage],
   ['@turn>start', (store) => store.dispatch('@cards>pick')],
   ['@turn>start', (store) => store.dispatch('@enemies>process')],
+  ['@players>move', players.move],
   ['@cards>pick', cards.pick],
   ['@cards>shake', cards.shake],
   ['@cards>landslide', cards.landslide],
