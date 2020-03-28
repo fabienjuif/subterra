@@ -1,29 +1,32 @@
 import createStore from '@myrtille/mutate'
 import * as enemies from './enemies'
 
+const createCell = (x, y) => ({
+  x,
+  y,
+  status: [],
+  top: true,
+  right: true,
+  bottom: true,
+  left: true,
+})
+
 describe('enemies', () => {
   describe('move', () => {
     it('should move enemy from a cell to an other', () => {
       const store = createStore({
         grid: [
+          createCell(0, 0),
           {
-            type: 'start',
-            x: 0,
-            y: 0,
-            status: [],
-          },
-          {
-            type: 'water',
             x: 0,
             y: -1,
             status: ['enemy'],
+            top: true,
+            right: true,
+            bottom: true,
+            left: true,
           },
-          {
-            type: 'gaz',
-            x: 1,
-            y: 0,
-            status: [],
-          },
+          createCell(1, 0),
         ],
       })
 
@@ -39,23 +42,16 @@ describe('enemies', () => {
 
       expect(store.getState()).toEqual({
         grid: [
+          createCell(0, 0),
+          createCell(0, -1),
           {
-            type: 'start',
-            x: 0,
-            y: 0,
-            status: [],
-          },
-          {
-            type: 'water',
-            x: 0,
-            y: -1,
-            status: [],
-          },
-          {
-            type: 'gaz',
             x: 1,
             y: 0,
             status: ['enemy'],
+            top: true,
+            right: true,
+            bottom: true,
+            left: true,
           },
         ],
       })
@@ -64,23 +60,24 @@ describe('enemies', () => {
     it('should move enemy without moving an other', () => {
       const store = createStore({
         grid: [
+          createCell(0, 0),
           {
-            type: 'start',
-            x: 0,
-            y: 0,
-            status: [],
-          },
-          {
-            type: 'water',
             x: 0,
             y: -1,
             status: ['enemy', 'enemy'],
+            top: true,
+            right: true,
+            bottom: true,
+            left: true,
           },
           {
-            type: 'gaz',
             x: 1,
             y: 0,
             status: ['landslide'],
+            top: true,
+            right: true,
+            bottom: true,
+            left: true,
           },
         ],
       })
@@ -97,23 +94,24 @@ describe('enemies', () => {
 
       expect(store.getState()).toEqual({
         grid: [
+          createCell(0, 0),
           {
-            type: 'start',
-            x: 0,
-            y: 0,
-            status: [],
-          },
-          {
-            type: 'water',
             x: 0,
             y: -1,
             status: ['enemy'],
+            top: true,
+            right: true,
+            bottom: true,
+            left: true,
           },
           {
-            type: 'gaz',
             x: 1,
             y: 0,
             status: ['landslide', 'enemy'],
+            top: true,
+            right: true,
+            bottom: true,
+            left: true,
           },
         ],
       })
@@ -130,26 +128,7 @@ describe('enemies', () => {
             y: 0,
           },
         ],
-        grid: [
-          {
-            type: 'start',
-            x: 0,
-            y: 0,
-            status: [],
-          },
-          {
-            type: 'water',
-            x: 0,
-            y: -1,
-            status: [],
-          },
-          {
-            type: 'gaz',
-            x: 1,
-            y: 0,
-            status: [],
-          },
-        ],
+        grid: [createCell(0, 0), createCell(0, -1), createCell(1, 0)],
       })
       store.dispatch = jest.fn()
 
@@ -169,23 +148,17 @@ describe('enemies', () => {
           },
         ],
         grid: [
-          {
-            type: 'start',
-            x: 0,
-            y: 0,
-            status: [],
-          },
-          {
-            type: 'water',
-            x: 1,
-            y: 0,
-            status: [],
-          },
+          createCell(0, 0),
+          createCell(1, 0),
           {
             type: 'gaz',
             x: 2,
             y: 0,
             status: ['enemy'],
+            top: true,
+            right: true,
+            bottom: true,
+            left: true,
           },
         ],
       })
@@ -228,29 +201,19 @@ describe('enemies', () => {
           },
         ],
         grid: [
-          {
-            type: 'start',
-            x: 0,
-            y: 0,
-            status: [],
-          },
-          {
-            type: 'water',
-            x: 1,
-            y: 0,
-            status: [],
-          },
+          createCell(0, 0),
+          createCell(1, 0),
           {
             type: 'gaz',
             x: 2,
             y: 0,
             status: ['enemy'],
+            top: true,
+            right: true,
+            bottom: true,
+            left: true,
           },
-          {
-            x: 2,
-            y: 1,
-            status: [],
-          },
+          createCell(2, 1),
         ],
       })
       store.dispatch = jest.fn()
@@ -292,29 +255,19 @@ describe('enemies', () => {
             },
           ],
           grid: [
-            {
-              type: 'start',
-              x: 0,
-              y: 0,
-              status: [],
-            },
-            {
-              type: 'water',
-              x: 1,
-              y: 0,
-              status: [],
-            },
+            createCell(0, 0),
+            createCell(1, 0),
             {
               type: 'gaz',
               x: 2,
               y: 0,
               status: ['enemy'],
+              top: true,
+              right: true,
+              bottom: true,
+              left: true,
             },
-            {
-              x: 2,
-              y: 1,
-              status: [],
-            },
+            createCell(2, 1),
           ],
         })
         store.dispatch = jest.fn()
@@ -370,23 +323,24 @@ describe('enemies', () => {
           },
         ],
         grid: [
+          createCell(0, 0),
           {
-            type: 'start',
-            x: 0,
-            y: 0,
-            status: [],
-          },
-          {
-            type: 'water',
             x: 1,
             y: 0,
             status: ['enemy'],
+            top: true,
+            right: true,
+            bottom: true,
+            left: true,
           },
           {
-            type: 'gaz',
             x: 2,
             y: 0,
             status: ['enemy', 'enemy'],
+            top: true,
+            right: true,
+            bottom: true,
+            left: true,
           },
         ],
       })
@@ -394,7 +348,6 @@ describe('enemies', () => {
 
       enemies.process(store, {})
 
-      // expect(store.dispatch).toHaveBeenCalledTimes(3)
       expect(store.dispatch.mock.calls.map((args) => args[0])).toEqual([
         {
           type: '@enemies>move',
@@ -450,49 +403,28 @@ describe('enemies', () => {
             name: 'Tripa',
             x: 0,
             y: 0,
+            top: true,
+            right: true,
+            bottom: true,
+            left: true,
             strengh: 2,
           },
         ],
         grid: [
-          {
-            type: 'start',
-            x: 0,
-            y: 0,
-            status: [],
-          },
-          {
-            x: 1,
-            y: 0,
-            status: [],
-          },
-          {
-            x: 2,
-            y: 0,
-            status: [],
-          },
-          {
-            x: 3,
-            y: 0,
-            status: [],
-          },
-          {
-            x: 4,
-            y: 0,
-            status: [],
-          },
-          {
-            x: 5,
-            y: 0,
-            status: [],
-          },
-          {
-            x: 6,
-            y: 0,
-            status: [],
-          },
+          createCell(0, 0),
+          createCell(1, 0),
+          createCell(2, 0),
+          createCell(3, 0),
+          createCell(4, 0),
+          createCell(5, 0),
+          createCell(6, 0),
           {
             x: 7,
             y: 0,
+            top: true,
+            right: true,
+            bottom: true,
+            left: true,
             status: ['enemy'],
           },
         ],
@@ -511,7 +443,53 @@ describe('enemies', () => {
       })
     })
 
-    it.todo('should move not move the enemy through a wall')
+    it('should not move the enemy through a wall', () => {
+      const store = createStore({
+        players: [
+          {
+            name: 'Tripa',
+            x: 0,
+            y: 0,
+            strengh: 2,
+          },
+        ],
+        grid: [
+          createCell(0, 0),
+          createCell(1, 0),
+          {
+            x: 2,
+            y: 0,
+            status: ['enemy'],
+            bottom: true,
+            right: true,
+          },
+          createCell(2, 1),
+          createCell(1, 1),
+        ],
+      })
+      store.dispatch = jest.fn()
+
+      enemies.process(store, {})
+
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@enemies>move',
+        payload: {
+          enemy: {
+            x: 2,
+            y: 0,
+          },
+          path: [
+            { x: 2, y: 0 },
+            { x: 2, y: 1 },
+            { x: 1, y: 1 },
+            { x: 1, y: 0 },
+            { x: 0, y: 0 },
+          ],
+          playerName: 'Tripa',
+        },
+      })
+    })
   })
 
   describe('kill', () => {

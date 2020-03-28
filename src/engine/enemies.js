@@ -1,5 +1,5 @@
 import getClosestPath from '@fabienjuif/astar'
-import { isCellEqual } from '../utils/tiles'
+import { isCellEqual, canMoveFromTo } from '../utils/tiles'
 
 const mapGridToAstarGraph = (grid) => {
   const graph = []
@@ -45,6 +45,18 @@ export const process = (store, action) => {
         graph,
         [enemy.x, enemy.y],
         [player.x, player.y],
+        {
+          heuristic: (start, end) => {
+            if (
+              canMoveFromTo(
+                grid.find(isCellEqual({ x: start[0], y: start[1] })),
+                grid.find(isCellEqual({ x: end[0], y: end[1] })),
+              )
+            )
+              return 1
+            return Infinity
+          },
+        },
       )
 
       if (status === 0) {
