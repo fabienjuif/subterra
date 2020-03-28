@@ -1,5 +1,6 @@
 import * as cards from './cards'
 import * as dices from './dices'
+import * as enemies from './enemies'
 import * as players from './players'
 
 export default [
@@ -19,6 +20,7 @@ export default [
   ['@cards>gaz', cards.processMarkerCard],
   ['@cards>enemy', cards.processMarkerCard],
   ['@cards>end', cards.end],
+  ['@enemies>kill', enemies.kill],
   // "random"
   ['@dices>init', dices.init],
   ['@dices>roll', dices.roll],

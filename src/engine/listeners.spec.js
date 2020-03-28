@@ -1,10 +1,12 @@
 import createEngine, * as core from './core'
-import * as players from './players'
 import * as cards from './cards'
 import * as dices from './dices'
+import * as enemies from './enemies'
+import * as players from './players'
 
 jest.mock('./players')
 jest.mock('./cards')
+jest.mock('./enemies')
 jest.mock('./dices')
 core.saveAction = jest.fn()
 
@@ -176,6 +178,16 @@ describe('listeners', () => {
       engine.dispatch('@turn>start')
 
       expect(engine.dispatch).toHaveBeenCalledWith('@enemies>process')
+    })
+  })
+
+  describe('@enemies>kill', () => {
+    it('should call enemies.kill', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@enemies>kill')
+
+      expect(enemies.kill).toHaveBeenCalledTimes(1)
     })
   })
 })
