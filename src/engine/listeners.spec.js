@@ -148,4 +148,24 @@ describe('listeners', () => {
       expect(cards.landslide).toHaveBeenCalledTimes(1)
     })
   })
+
+  describe('@turn>start', () => {
+    it('should dispatch @cards>pick', () => {
+      const engine = createEngine({})
+      engine.dispatch = jest.fn(engine.dispatch)
+
+      engine.dispatch('@turn>start')
+
+      expect(engine.dispatch).toHaveBeenCalledWith('@cards>pick')
+    })
+
+    it('should dispatch @enemies>process', () => {
+      const engine = createEngine({})
+      engine.dispatch = jest.fn(engine.dispatch)
+
+      engine.dispatch('@turn>start')
+
+      expect(engine.dispatch).toHaveBeenCalledWith('@enemies>process')
+    })
+  })
 })
