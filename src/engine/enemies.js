@@ -17,7 +17,15 @@ export const process = (store, action) => {
   const { grid, players } = previousState
 
   // find enemies
-  const enemies = grid.filter(({ status }) => status.includes('enemy'))
+  const enemies = grid
+    .filter(({ status }) => status.includes('enemy'))
+    // if there is multiple enemies on the same tile we duplicates tiles
+    // for the rest of the function
+    .flatMap((tile) =>
+      Array.from({
+        length: tile.status.filter((s) => s === 'enemy').length,
+      }).map(() => tile),
+    )
 
   // map grid to a star graph
   const graph = mapGridToAstarGraph(grid)
@@ -41,7 +49,7 @@ export const process = (store, action) => {
 
       if (status === 0) {
         if (!shortestPath || path.length === shortestPath.length) {
-          if (!closestPlayer || closestPlayer.strengh > player.strengh) {
+          if (!closestPlayer || closestPlayer.strength > player.strength) {
             shortestPath = path
             closestPlayer = player
           }
