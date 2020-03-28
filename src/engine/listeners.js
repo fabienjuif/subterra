@@ -20,6 +20,7 @@ export default [
   ['@cards>gaz', cards.processMarkerCard],
   ['@cards>enemy', cards.processMarkerCard],
   ['@cards>end', cards.end],
+  ['@enemies>kill', enemies.kill],
   ['@enemies>process', enemies.process],
   ['@enemies>move', enemies.move],
   // "random"

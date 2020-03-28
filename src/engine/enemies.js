@@ -60,7 +60,7 @@ export const process = (store, action) => {
       }
     })
 
-    if (shortestPath && shortestPath.length > 1) {
+    if (shortestPath && shortestPath.length > 1 && shortestPath.length < 7) {
       store.dispatch({
         type: '@enemies>move',
         payload: {
@@ -70,6 +70,14 @@ export const process = (store, action) => {
           },
           path: shortestPath.map(([x, y]) => ({ x, y })),
           playerName: closestPlayer.name,
+        },
+      })
+    } else {
+      store.dispatch({
+        type: '@enemies>kill',
+        payload: {
+          x: enemy.x,
+          y: enemy.y,
         },
       })
     }
@@ -86,5 +94,15 @@ export const move = (store, action) => {
 
     const nextCell = state.grid.find(isCellEqual(action.payload.path[1]))
     nextCell.status.push('enemy')
+  })
+}
+
+export const kill = (store, action) => {
+  store.mutate((state) => {
+    const cell = state.grid.find(isCellEqual(action.payload))
+    cell.status.splice(
+      cell.status.findIndex((s) => s === 'enemy'),
+      1,
+    )
   })
 }
