@@ -3,7 +3,7 @@ import listeners from './listeners'
 import tilesData from '../utils/tiles'
 
 export const initState = () => ({
-  gameOver: false,
+  gameOver: undefined, // 'loose' | 'win'
   players: [],
   enemies: [],
   deckTiles: { length: 10 }, // should be an array in a futur iteration

@@ -1,5 +1,6 @@
 import * as cards from './cards'
 import * as dices from './dices'
+import * as game from './game'
 import * as players from './players'
 
 export default [
@@ -17,6 +18,7 @@ export default [
   ['@cards>gaz', cards.processMarkerCard],
   ['@cards>enemy', cards.processMarkerCard],
   ['@cards>end', cards.end],
+  ['@players>death', game.checkLoose],
   // "random"
   ['@dices>init', dices.init],
   ['@dices>roll', dices.roll],
