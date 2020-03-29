@@ -2,12 +2,14 @@ import createEngine, * as core from './core'
 import * as cards from './cards'
 import * as dices from './dices'
 import * as enemies from './enemies'
+import * as game from './game'
 import * as players from './players'
 
 jest.mock('./cards')
 jest.mock('./enemies')
 jest.mock('./dices')
 jest.mock('./enemies')
+jest.mock('./game')
 jest.mock('./players')
 core.saveAction = jest.fn()
 
@@ -165,6 +167,16 @@ describe('listeners', () => {
     })
   })
 
+  describe('@players>death', () => {
+    it('should call game.checkLoose', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@players>death')
+
+      expect(game.checkLoose).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('@turn>start', () => {
     it('should dispatch @cards>pick', () => {
       const engine = createEngine({})
@@ -182,6 +194,14 @@ describe('listeners', () => {
       engine.dispatch('@turn>start')
 
       expect(engine.dispatch).toHaveBeenCalledWith('@enemies>process')
+    })
+
+    it('should call game.checkWin', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@turn>start')
+
+      expect(game.checkWin).toHaveBeenCalledTimes(1)
     })
   })
 
