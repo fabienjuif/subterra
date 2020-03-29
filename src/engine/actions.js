@@ -7,6 +7,15 @@ export const players = {
       playerName: player.name,
     },
   }),
+  move: (player, tile) => ({
+    type: '@players>move',
+    payload: {
+      playerName: player.name,
+      x: tile.x,
+      y: tile.y,
+      cost: 1, // TODO: Get this from the tile and block any action with a cost > pa
+    },
+  }),
 }
 
 export const roll = {

@@ -6,13 +6,16 @@ import * as players from './players'
 export default [
   // initializations
   ['@players>init', players.init],
+  ['@players>init', players.findPossibilities],
   ['@cards>init', cards.init],
   // game going on
   ['@players>pass', players.pass],
+  ['@players>pass', players.findPossibilities],
   ['@players>damage', players.damage],
   ['@turn>start', (store) => store.dispatch('@cards>pick')],
   ['@turn>start', (store) => store.dispatch('@enemies>process')],
   ['@players>move', players.move],
+  ['@players>move', players.findPossibilities],
   ['@cards>pick', cards.pick],
   ['@cards>shake', cards.shake],
   ['@cards>landslide', cards.landslide],

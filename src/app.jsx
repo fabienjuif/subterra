@@ -98,27 +98,4 @@ const createMockedEngine = createEngine({
       status: [],
     },
   ],
-  // mock necessary as long as possibilities are not calculated
-  playerActions: {
-    tile: undefined,
-    current: {}, // action the player is currently doing
-    possibilities: [
-      {
-        type: '@players>move',
-        payload: { playerName: 'Sutat', cost: 1, x: 0, y: -1 },
-      },
-      {
-        type: '@players>move',
-        payload: { playerName: 'Sutat', cost: 1, x: 1, y: 0 },
-      },
-      {
-        type: '@players>move',
-        payload: { playerName: 'Sutat', cost: 1, x: 0, y: 1 },
-      },
-      {
-        type: '@players>move',
-        payload: { playerName: 'Sutat', cost: 2, x: -1, y: 0 },
-      },
-    ],
-  },
 })
