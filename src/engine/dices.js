@@ -20,18 +20,25 @@ export const roll = (store, action) => {
 }
 
 export const checkAndDispatch = (store, action) => {
+  let { value } = action.payload
   if (action.payload.min === undefined) {
     store.dispatch({
       ...action.payload.nextAction,
       payload: {
         ...action.payload.nextAction.payload,
-        rolled: action.payload.value,
+        rolled: value,
       },
     })
     return
   }
 
-  if (action.payload.value < action.payload.min) {
+  const prevState = store.getState()
+  const player = prevState.players.find(({ name }) => action.payload.playerName)
+  if (player && player.skills.some(({ type }) => type === 'experienced')) {
+    value += 1
+  }
+
+  if (value < action.payload.min) {
     if (action.payload.actionOnFail) {
       store.dispatch(action.payload.actionOnFail)
     }
