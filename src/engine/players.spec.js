@@ -291,6 +291,10 @@ describe('players', () => {
             health: 1,
             actionPoints: 1,
             current: true,
+            skills: [],
+            archetype: {
+              health: 1,
+            },
           },
         ],
         grid: [
@@ -319,6 +323,10 @@ describe('players', () => {
             health: 1,
             actionPoints: 0,
             current: true,
+            skills: [],
+            archetype: {
+              health: 1,
+            },
           },
         ],
         grid: [
@@ -345,6 +353,10 @@ describe('players', () => {
             health: 0,
             actionPoints: 1,
             current: true,
+            skills: [],
+            archetype: {
+              health: 1,
+            },
           },
         ],
         grid: [
@@ -371,6 +383,10 @@ describe('players', () => {
             health: 1,
             actionPoints: 1,
             current: true,
+            skills: [],
+            archetype: {
+              health: 1,
+            },
           },
         ],
         grid: [
