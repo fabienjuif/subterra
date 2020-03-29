@@ -74,10 +74,40 @@ export const findPossibilities = (store, action) => {
 }
 
 export const damage = (store, action) => {
-  store.mutate((state) => {
-    const player = state.players.find(
-      ({ name }) => name === action.payload.playerName,
+  const prevState = store.getState()
+  const playerIndex = prevState.players.findIndex(
+    ({ name }) => name === action.payload.playerName,
+  )
+  const prevPlayer = prevState.players[playerIndex]
+
+  const findProtect = (skill) => skill.type === 'protect'
+
+  // if the player does not have protect skill
+  // we try to find someone who has one the same tile
+  if (!prevPlayer.skills.some(findProtect)) {
+    const withProtect = prevState.players.find(
+      (player) =>
+        isCellEqual(player)(prevPlayer) &&
+        player.health > 0 &&
+        player.skills.some(findProtect),
     )
+
+    if (withProtect) {
+      store.dispatch({
+        type: '@players>protected',
+        payload: {
+          playerName: action.payload.playerName,
+          protectedBy: withProtect.name,
+        },
+      })
+
+      return
+    }
+  }
+
+  // no one to protect the player, it takes damage
+  store.mutate((state) => {
+    const player = state.players[playerIndex]
     player.health = Math.max(0, player.health - action.payload.damage)
 
     if (player.health <= 0) {
