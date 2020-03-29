@@ -568,4 +568,118 @@ describe('players', () => {
       ])
     })
   })
+
+  describe('heal', () => {
+    it('should heal the player', () => {
+      const store = createStore({
+        players: [
+          {
+            name: 'Hatsu',
+            health: 2,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+          {
+            name: 'SoE',
+            health: 1,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
+
+      players.heal(store, {
+        payload: { playerName: 'Hatsu', cost: 1, amount: 1 },
+      })
+
+      expect(store.getState()).toEqual({
+        players: [
+          {
+            name: 'Hatsu',
+            health: 3,
+            actionPoints: 0,
+            archetype: {
+              health: 3,
+            },
+          },
+          {
+            name: 'SoE',
+            health: 1,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
+    })
+
+    it('should not overheal a player', () => {
+      const store = createStore({
+        players: [
+          {
+            name: 'Hatsu',
+            health: 2,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
+
+      players.heal(store, {
+        payload: { playerName: 'Hatsu', cost: 1, amount: 2 },
+      })
+
+      expect(store.getState()).toEqual({
+        players: [
+          {
+            name: 'Hatsu',
+            health: 3,
+            actionPoints: 0,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
+    })
+
+    it('should not put actionPoints a negative level', () => {
+      const store = createStore({
+        players: [
+          {
+            name: 'Hatsu',
+            health: 2,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
+
+      players.heal(store, {
+        payload: { playerName: 'Hatsu', cost: 2, amount: 1 },
+      })
+
+      expect(store.getState()).toEqual({
+        players: [
+          {
+            name: 'Hatsu',
+            health: 3,
+            actionPoints: 0,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
+    })
+  })
 })

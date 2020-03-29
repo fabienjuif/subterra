@@ -18,6 +18,7 @@ export default [
   ['@turn>start', (store) => store.dispatch('@enemies>process')],
   ['@players>move', players.move],
   ['@players>move', players.findPossibilities],
+  ['@players>heal', players.heal],
   ['@cards>pick', cards.pick],
   ['@cards>shake', cards.shake],
   ['@cards>landslide', cards.landslide],

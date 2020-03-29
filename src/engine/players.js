@@ -145,3 +145,16 @@ export const init = (store, action) => {
     state.players[0].first = true
   })
 }
+
+export const heal = (store, action) => {
+  store.mutate((state) => {
+    const player = state.players.find(
+      ({ name }) => name === action.payload.playerName,
+    )
+    player.health = Math.min(
+      player.health + action.payload.amount,
+      player.archetype.health,
+    )
+    player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
+  })
+}
