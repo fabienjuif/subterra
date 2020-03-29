@@ -66,15 +66,13 @@ export const findPossibilities = (store, action) => {
     if (player.actionPoints === 0 || player.health === 0) return // TODO: We should add excess in another PR by filter all actions once they are created
 
     const tile = state.grid.find(isCellEqual(player))
-    const sameCellPlayers = state.players.filter(
-      (currPlayer) => currPlayer !== player && isCellEqual(player)(currPlayer),
-    )
+    const playersOnCell = state.players.filter(isCellEqual(player))
 
     // based actions
     // TODO: clear / climb / etc
     let commonActions = [
       // - heal
-      ...sameCellPlayers
+      ...playersOnCell
         // some health is missing
         .filter(({ health, archetype }) => health < archetype.health)
         // map it to an action
