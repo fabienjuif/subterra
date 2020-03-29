@@ -1,2 +1,2 @@
 export { default as Game } from './game'
-export { default as Prepare } from './prepare'
+export { default as Prepare } from './prepare/prepare'
