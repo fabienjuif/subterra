@@ -1,7 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 import classes from './player.module.scss'
-import gameClasses from '../player.module.scss'
+import gameClasses from '../playerIcon.module.scss' // TODO: use icon react
 
 const Player = ({ actionPoints, health, name, type, current }) => {
   return (

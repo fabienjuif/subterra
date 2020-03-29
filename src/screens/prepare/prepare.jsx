@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react'
 import cn from 'classnames'
-import archetypesData from '../utils/archetypes'
-import cardsData from '../utils/cards'
-import { getRandomInArray, roll6 } from '../utils/dices'
+import archetypesData from '../../utils/archetypes'
+import cardsData from '../../utils/cards'
+import { getRandomInArray, roll6 } from '../../utils/dices'
+import Archetype from './archetype'
 import classes from './prepare.module.scss'
 
 const Prepare = ({ onStart }) => {
@@ -52,31 +53,33 @@ const Prepare = ({ onStart }) => {
       <div className={cn('players', classes.players)}>
         <h2>Players</h2>
         <div className={cn('body', classes.body)}>
-          <div>
+          <div className={cn('side', classes.side)}>
             <h3>archetypes pool</h3>
-            <ul>
-              {archetypesPool.map(({ type }) => (
-                <li
-                  key={type}
-                  onClick={() => onAddArchetype(type)}
-                  className={cn('archetype', classes.archetype)}
-                >
-                  {type}
+            <ul className={cn('list', classes.list)}>
+              {archetypesPool.map(({ type, ...archetype }) => (
+                <li key={type}>
+                  <Archetype
+                    {...archetype}
+                    onClick={() => onAddArchetype(type)}
+                    className={cn('archetype', classes.archetype)}
+                    type={type}
+                  />
                 </li>
               ))}
             </ul>
           </div>
 
-          <div>
+          <div className={cn('side', classes.side)}>
             <h3>You choose</h3>
-            <ul>
-              {archetypes.map(({ type }) => (
-                <li
-                  key={type}
-                  onClick={() => onRemoveArchetype(type)}
-                  className={cn('archetype', classes.archetype)}
-                >
-                  {type}
+            <ul className={cn('list', classes.list)}>
+              {archetypes.map(({ type, ...archetype }) => (
+                <li key={type}>
+                  <Archetype
+                    {...archetype}
+                    onClick={() => onRemoveArchetype(type)}
+                    className={cn('archetype', classes.archetype)}
+                    type={type}
+                  />
                 </li>
               ))}
             </ul>
