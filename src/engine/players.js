@@ -98,6 +98,7 @@ export const findPossibilities = (store, action) => {
       // this is already processed in common actions, we just lower the cost
       commonActions = commonActions.map((currAction) => {
         if (currAction.type !== '@players>heal') return currAction
+        if (currAction.payload.playerName === player.name) return currAction
         return {
           ...currAction,
           payload: {

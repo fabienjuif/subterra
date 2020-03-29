@@ -485,5 +485,87 @@ describe('players', () => {
         },
       ])
     })
+
+    it('should find skill "heal" possibilities', () => {
+      const store = createStore({
+        playerActions: {
+          possibilities: [],
+        },
+        players: [
+          // heal itself
+          {
+            name: 'SoE',
+            current: true,
+            x: 0,
+            y: 0,
+            skills: [{ type: 'heal', cost: 1 }],
+            health: 2,
+            archetype: {
+              health: 3,
+            },
+          },
+          // heal an ally
+          {
+            name: 'Tripa',
+            x: 0,
+            y: 0,
+            skills: [],
+            health: 3,
+            archetype: {
+              health: 5,
+            },
+          },
+          // do not heal a max health player
+          {
+            name: 'Hatsu',
+            x: 0,
+            y: 0,
+            skills: [],
+            health: 3,
+            archetype: {
+              health: 3,
+            },
+          },
+          // do not heal a player that is not on same cell
+          {
+            name: 'Sutat',
+            x: 1,
+            y: 0,
+            skills: [],
+            health: 2,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+        grid: [
+          {
+            x: 0,
+            y: 0,
+          },
+        ],
+      })
+
+      players.findPossibilities(store, {})
+
+      expect(store.getState().playerActions.possibilities).toEqual([
+        {
+          type: '@players>heal',
+          payload: {
+            amount: 1,
+            cost: 2, // can not use the skill "heal" on itself
+            playerName: 'SoE',
+          },
+        },
+        {
+          type: '@players>heal',
+          payload: {
+            amount: 1,
+            cost: 1,
+            playerName: 'Tripa',
+          },
+        },
+      ])
+    })
   })
 })
