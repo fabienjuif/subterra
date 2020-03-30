@@ -183,10 +183,12 @@ describe('players', () => {
           {
             name: 'SoE',
             health: 10,
+            skills: [],
           },
           {
             name: 'Hatsu',
             health: 5,
+            skills: [],
           },
         ],
       })
@@ -202,10 +204,12 @@ describe('players', () => {
           {
             name: 'SoE',
             health: 10,
+            skills: [],
           },
           {
             name: 'Hatsu',
             health: 3,
+            skills: [],
           },
         ],
       })
@@ -218,6 +222,7 @@ describe('players', () => {
           {
             name: 'SoE',
             health: 1,
+            skills: [],
           },
         ],
       })
@@ -227,7 +232,13 @@ describe('players', () => {
         payload: { playerName: 'SoE', damage: 2 },
       })
 
-      expect(store.getState().players).toEqual([{ name: 'SoE', health: 0 }])
+      expect(store.getState().players).toEqual([
+        {
+          name: 'SoE',
+          health: 0,
+          skills: [],
+        },
+      ])
       expect(store.dispatch).toHaveBeenCalledTimes(1)
       expect(store.dispatch).toHaveBeenCalledWith({
         type: '@players>death',
@@ -235,6 +246,152 @@ describe('players', () => {
           playerName: 'SoE',
         },
       })
+    })
+
+    it('should not damage player if it has a protect player on same tile', () => {
+      const store = createStore({
+        players: [
+          {
+            name: 'Tripa',
+            health: 2,
+            skills: [],
+            x: 1,
+            y: 2,
+          },
+          {
+            name: 'SoE',
+            health: 3,
+            skills: [{ type: 'protect' }],
+            x: 1,
+            y: 2,
+          },
+        ],
+      })
+      store.dispatch = jest.fn()
+
+      players.damage(store, { payload: { playerName: 'Tripa', damage: 1 } })
+
+      expect(store.getState()).toEqual({
+        players: [
+          {
+            name: 'Tripa',
+            health: 2,
+            skills: [],
+            x: 1,
+            y: 2,
+          },
+          {
+            name: 'SoE',
+            health: 3,
+            skills: [{ type: 'protect' }],
+            x: 1,
+            y: 2,
+          },
+        ],
+      })
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@players>protected',
+        payload: {
+          playerName: 'Tripa',
+          protectedBy: 'SoE',
+        },
+      })
+    })
+
+    it('should not prevent player from taking damage player because the protect player is dead', () => {
+      const store = createStore({
+        players: [
+          {
+            name: 'Tripa',
+            health: 2,
+            skills: [],
+            x: 1,
+            y: 2,
+          },
+          {
+            name: 'SoE',
+            health: 0,
+            skills: [{ type: 'protect' }],
+            x: 1,
+            y: 2,
+          },
+        ],
+      })
+      store.dispatch = jest.fn()
+
+      players.damage(store, { payload: { playerName: 'Tripa', damage: 1 } })
+
+      expect(store.getState()).toEqual({
+        players: [
+          {
+            name: 'Tripa',
+            health: 1,
+            skills: [],
+            x: 1,
+            y: 2,
+          },
+          {
+            name: 'SoE',
+            health: 0,
+            skills: [{ type: 'protect' }],
+            x: 1,
+            y: 2,
+          },
+        ],
+      })
+      expect(store.dispatch).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: '@players>protected',
+        }),
+      )
+    })
+
+    it('should damage player even if he has protect skill', () => {
+      const store = createStore({
+        players: [
+          {
+            name: 'Tripa',
+            health: 2,
+            skills: [{ type: 'protect' }],
+            x: 1,
+            y: 2,
+          },
+          {
+            name: 'SoE',
+            health: 2,
+            skills: [],
+            x: 1,
+            y: 2,
+          },
+        ],
+      })
+      store.dispatch = jest.fn()
+
+      players.damage(store, { payload: { playerName: 'Tripa', damage: 1 } })
+
+      expect(store.getState()).toEqual({
+        players: [
+          {
+            name: 'Tripa',
+            health: 1,
+            skills: [{ type: 'protect' }],
+            x: 1,
+            y: 2,
+          },
+          {
+            name: 'SoE',
+            health: 2,
+            skills: [],
+            x: 1,
+            y: 2,
+          },
+        ],
+      })
+      expect(store.dispatch).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: '@players>protected',
+        }),
+      )
     })
   })
 
