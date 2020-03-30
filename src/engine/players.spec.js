@@ -201,7 +201,9 @@ describe('players', () => {
             status: [],
           },
         ],
-        playerActions: { possibilities: [action] },
+        playerActions: {
+          possibilities: [actions.look({ name: 'Hatsu' }, { x: 1, y: 0 })],
+        },
       })
     })
 
