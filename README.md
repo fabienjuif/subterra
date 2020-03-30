@@ -13,7 +13,9 @@
 1. Install dependencies: `yarn`
 2. Run tests: `yarn test`, note that if you want to run all tests you have to press `a` after test are listening
 
-## Stack
+## ⚗ Stack
+
+### 💠 Node version
 
 Take note that we use node experimental ESM resolve (`experimental-specifier-resolution`).
 To use it you need node >=v13.12.0.
