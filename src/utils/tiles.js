@@ -15,6 +15,13 @@ const rotate90 = (where) => {
   }
 }
 
+export const nextRotation = (tile) => {
+  const next = (tile.rotation || 0) + 90
+
+  if (next === 360) return 0
+  return next
+}
+
 export const isOpen = (where) => (tile) => {
   let rotations = (tile.rotation || 0) / 90
   let rotatedWhere = where

@@ -3,6 +3,7 @@ import {
   isCellEqual,
   getWrappingCells,
   findActionsOnCell,
+  canMoveFromTo,
 } from '../utils/tiles'
 
 export const pass = (store, action) => {
@@ -65,6 +66,8 @@ export const look = (store, action) => {
     const player = state.players.find(
       ({ name }) => name === action.payload.playerName,
     )
+    const playerTile = state.grid.find(isCellEqual(player))
+
     // TODO: Should take the first tile of the deck Tile
     const tile = {
       x: action.payload.x,
@@ -74,14 +77,41 @@ export const look = (store, action) => {
       bottom: true,
       left: true,
       status: [],
+      rotation: 0,
     }
 
     player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
     state.playerActions.tile = tile
-    // TODO: Should calculate a 'rotate' action as possibilities and set the new tile as 'playerActions.tile' when there is more than one open path.
+
     state.playerActions.possibilities = [
-      players.drop(action.payload.playerName, tile),
+      players.rotate(player, tile, nextRotation(tile)),
     ]
+
+    if (canMoveFromTo(playerTile, tile))
+      state.playerActions.possibilities.push(
+        players.drop(action.payload.playerName, tile),
+      )
+  })
+}
+
+export const rotate = (store, action) => {
+  store.mutate((state) => {
+    if (!state.playerActions.possibilities.some(isActionEquals(action))) return
+
+    const rotatedTile = {
+      ...action.payload.tile,
+      rotation: action.payload.rotation,
+    }
+
+    state.playerActions.tile = rotatedTile
+    state.playerActions.possibilities = [
+      players.rotate(player, rotatedTile, nextRotation(rotatedTile)),
+    ]
+
+    if (canMoveFromTo(playerTile, rotatedTile))
+      state.playerActions.possibilities.push(
+        players.drop(action.payload.playerName, rotatedTile),
+      )
   })
 }
 
