@@ -7,6 +7,8 @@
   ],
   "dependencies": {},
   "scripts": {
+    "build:ui": "yarn --cwd packages/ui build",
+    "build": "run-p build:*",
     "start:ui": "yarn --cwd packages/ui start",
     "start": "run-p start:*",
     "test": "jest",
