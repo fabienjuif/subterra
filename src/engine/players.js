@@ -170,6 +170,12 @@ export const init = (store, action) => {
 }
 
 export const heal = (store, action) => {
+  const prevState = store.getState()
+
+  if (!prevState.playerActions.possibilities.some(isActionEquals(action))) {
+    return
+  }
+
   store.mutate((state) => {
     const player = state.players.find(
       ({ name }) => name === action.payload.playerName,

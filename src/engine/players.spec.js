@@ -699,8 +699,11 @@ describe('players', () => {
   })
 
   describe('heal', () => {
-    it('should heal the player', () => {
+    it('should not heal the player when the action is not a known possibilities', () => {
       const store = createStore({
+        playerActions: {
+          possibilities: [],
+        },
         players: [
           {
             name: 'Hatsu',
@@ -726,6 +729,71 @@ describe('players', () => {
       })
 
       expect(store.getState()).toEqual({
+        playerActions: {
+          possibilities: [],
+        },
+        players: [
+          {
+            name: 'Hatsu',
+            health: 2,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+          {
+            name: 'SoE',
+            health: 1,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
+    })
+
+    it('should heal the player', () => {
+      const store = createStore({
+        playerActions: {
+          possibilities: [
+            {
+              payload: { playerName: 'Hatsu', cost: 1, amount: 1 },
+            },
+          ],
+        },
+        players: [
+          {
+            name: 'Hatsu',
+            health: 2,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+          {
+            name: 'SoE',
+            health: 1,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
+
+      players.heal(store, {
+        payload: { playerName: 'Hatsu', cost: 1, amount: 1 },
+      })
+
+      expect(store.getState()).toEqual({
+        playerActions: {
+          possibilities: [
+            {
+              payload: { playerName: 'Hatsu', cost: 1, amount: 1 },
+            },
+          ],
+        },
         players: [
           {
             name: 'Hatsu',
@@ -749,6 +817,13 @@ describe('players', () => {
 
     it('should not overheal a player', () => {
       const store = createStore({
+        playerActions: {
+          possibilities: [
+            {
+              payload: { playerName: 'Hatsu', cost: 1, amount: 2 },
+            },
+          ],
+        },
         players: [
           {
             name: 'Hatsu',
@@ -766,6 +841,13 @@ describe('players', () => {
       })
 
       expect(store.getState()).toEqual({
+        playerActions: {
+          possibilities: [
+            {
+              payload: { playerName: 'Hatsu', cost: 1, amount: 2 },
+            },
+          ],
+        },
         players: [
           {
             name: 'Hatsu',
@@ -781,6 +863,13 @@ describe('players', () => {
 
     it('should not put actionPoints a negative level', () => {
       const store = createStore({
+        playerActions: {
+          possibilities: [
+            {
+              payload: { playerName: 'Hatsu', cost: 2, amount: 1 },
+            },
+          ],
+        },
         players: [
           {
             name: 'Hatsu',
@@ -798,6 +887,13 @@ describe('players', () => {
       })
 
       expect(store.getState()).toEqual({
+        playerActions: {
+          possibilities: [
+            {
+              payload: { playerName: 'Hatsu', cost: 2, amount: 1 },
+            },
+          ],
+        },
         players: [
           {
             name: 'Hatsu',
