@@ -59,6 +59,17 @@ describe('listeners', () => {
     })
   })
 
+  describe('@players>look', () => {
+    it('should call players.look and players.findPossibilities', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@players>look')
+
+      expect(players.look).toHaveBeenCalledTimes(1)
+      expect(players.findPossibilities).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('@cards>init', () => {
     it('should call cards.init', () => {
       const engine = createEngine({})
