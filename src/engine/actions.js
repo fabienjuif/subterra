@@ -25,11 +25,11 @@ export const players = {
       cost: 1,
     },
   }),
-  drop: (playerName, tile) => ({
+  drop: (player, tile) => ({
     type: '@players>drop',
     payload: {
-      playerName: playerName,
-      tile: tile,
+      playerName: player.name,
+      tile,
       cost: 0,
     },
   }),

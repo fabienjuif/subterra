@@ -80,7 +80,7 @@ export const look = (store, action) => {
     state.playerActions.tile = tile
     // TODO: Should calculate a 'rotate' action as possibilities and set the new tile as 'playerActions.tile' when there is more than one open path.
     state.playerActions.possibilities = [
-      players.drop(action.payload.playerName, tile),
+      players.drop({ name: action.payload.playerName }, tile),
     ]
   })
 }
@@ -89,7 +89,7 @@ export const drop = (store, action) => {
   store.mutate((state) => {
     if (!state.playerActions.possibilities.some(isActionEquals(action))) return
 
-    state.grid = [...state.grid, state.playerActions.tile]
+    state.grid.push(state.playerActions.tile)
     state.playerActions.tile = undefined
   })
 }

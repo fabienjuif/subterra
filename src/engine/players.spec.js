@@ -204,7 +204,7 @@ describe('players', () => {
         grid: [{ x: 0, y: 0 }],
         playerActions: {
           tile: expectedTile,
-          possibilities: [actions.drop('Hatsu', expectedTile)],
+          possibilities: [actions.drop({ name: 'Hatsu' }, expectedTile)],
         },
       })
     })
@@ -234,7 +234,7 @@ describe('players', () => {
 
   describe('drop', () => {
     it('should drop playerActions.tile in the grid', () => {
-      const action = actions.drop('Hatsu', {})
+      const action = actions.drop({ name: 'Hatsu' }, {})
       const store = createStore({
         players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0 }],
@@ -254,7 +254,7 @@ describe('players', () => {
         ],
         playerActions: {
           tile: undefined,
-          possibilities: [actions.drop('Hatsu', {})],
+          possibilities: [actions.drop({ name: 'Hatsu' }, {})],
         },
       })
     })
@@ -269,7 +269,7 @@ describe('players', () => {
         },
       })
 
-      players.drop(store, actions.drop('Hatsu', {}))
+      players.drop(store, actions.drop({ name: 'Hatsu' }, {}))
 
       expect(store.getState()).toEqual({
         players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
