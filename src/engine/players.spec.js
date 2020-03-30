@@ -448,6 +448,10 @@ describe('players', () => {
             health: 1,
             actionPoints: 1,
             current: true,
+            skills: [],
+            archetype: {
+              health: 1,
+            },
           },
         ],
         grid: [
@@ -476,6 +480,10 @@ describe('players', () => {
             health: 1,
             actionPoints: 0,
             current: true,
+            skills: [],
+            archetype: {
+              health: 1,
+            },
           },
         ],
         grid: [
@@ -502,6 +510,10 @@ describe('players', () => {
             health: 0,
             actionPoints: 1,
             current: true,
+            skills: [],
+            archetype: {
+              health: 1,
+            },
           },
         ],
         grid: [
@@ -528,6 +540,10 @@ describe('players', () => {
             health: 1,
             actionPoints: 1,
             current: true,
+            skills: [],
+            archetype: {
+              health: 1,
+            },
           },
         ],
         grid: [
@@ -543,6 +559,352 @@ describe('players', () => {
       players.findPossibilities(store, {})
 
       expect(store.getState().playerActions.possibilities).toEqual([])
+    })
+
+    it('should find a common heal possibilities', () => {
+      const store = createStore({
+        playerActions: {
+          possibilities: [],
+        },
+        players: [
+          // heal itself
+          {
+            name: 'SoE',
+            current: true,
+            x: 0,
+            y: 0,
+            skills: [],
+            health: 2,
+            archetype: {
+              health: 3,
+            },
+          },
+          // heal an ally
+          {
+            name: 'Tripa',
+            x: 0,
+            y: 0,
+            skills: [],
+            health: 3,
+            archetype: {
+              health: 5,
+            },
+          },
+          // do not heal a max health player
+          {
+            name: 'Hatsu',
+            x: 0,
+            y: 0,
+            skills: [],
+            health: 3,
+            archetype: {
+              health: 3,
+            },
+          },
+          // do not heal a player that is not on same cell
+          {
+            name: 'Sutat',
+            x: 1,
+            y: 0,
+            skills: [],
+            health: 2,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+        grid: [
+          {
+            x: 0,
+            y: 0,
+          },
+        ],
+      })
+
+      players.findPossibilities(store, {})
+
+      expect(store.getState().playerActions.possibilities).toEqual([
+        actions.heal({ name: 'SoE' }),
+        actions.heal({ name: 'Tripa' }),
+      ])
+    })
+
+    it('should find skill "heal" possibilities', () => {
+      const store = createStore({
+        playerActions: {
+          possibilities: [],
+        },
+        players: [
+          // heal itself
+          {
+            name: 'SoE',
+            current: true,
+            x: 0,
+            y: 0,
+            skills: [{ type: 'heal', cost: 1 }],
+            health: 2,
+            archetype: {
+              health: 3,
+            },
+          },
+          // heal an ally
+          {
+            name: 'Tripa',
+            x: 0,
+            y: 0,
+            skills: [],
+            health: 3,
+            archetype: {
+              health: 5,
+            },
+          },
+          // do not heal a max health player
+          {
+            name: 'Hatsu',
+            x: 0,
+            y: 0,
+            skills: [],
+            health: 3,
+            archetype: {
+              health: 3,
+            },
+          },
+          // do not heal a player that is not on same cell
+          {
+            name: 'Sutat',
+            x: 1,
+            y: 0,
+            skills: [],
+            health: 2,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+        grid: [
+          {
+            x: 0,
+            y: 0,
+          },
+        ],
+      })
+
+      players.findPossibilities(store, {})
+
+      expect(store.getState().playerActions.possibilities).toEqual([
+        actions.heal({ name: 'SoE' }), // can not use the skill "heal" on itself
+        actions.heal({ name: 'Tripa' }, { cost: 1 }),
+      ])
+    })
+  })
+
+  describe('heal', () => {
+    it('should not heal the player when the action is not a known possibilities', () => {
+      const store = createStore({
+        playerActions: {
+          possibilities: [],
+        },
+        players: [
+          {
+            name: 'Hatsu',
+            health: 2,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+          {
+            name: 'SoE',
+            health: 1,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
+
+      players.heal(store, {
+        payload: { playerName: 'Hatsu', cost: 1, amount: 1 },
+      })
+
+      expect(store.getState()).toEqual({
+        playerActions: {
+          possibilities: [],
+        },
+        players: [
+          {
+            name: 'Hatsu',
+            health: 2,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+          {
+            name: 'SoE',
+            health: 1,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
+    })
+
+    it('should heal the player', () => {
+      const store = createStore({
+        playerActions: {
+          possibilities: [
+            {
+              payload: { playerName: 'Hatsu', cost: 1, amount: 1 },
+            },
+          ],
+        },
+        players: [
+          {
+            name: 'Hatsu',
+            health: 2,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+          {
+            name: 'SoE',
+            health: 1,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
+
+      players.heal(store, {
+        payload: { playerName: 'Hatsu', cost: 1, amount: 1 },
+      })
+
+      expect(store.getState()).toEqual({
+        playerActions: {
+          possibilities: [
+            {
+              payload: { playerName: 'Hatsu', cost: 1, amount: 1 },
+            },
+          ],
+        },
+        players: [
+          {
+            name: 'Hatsu',
+            health: 3,
+            actionPoints: 0,
+            archetype: {
+              health: 3,
+            },
+          },
+          {
+            name: 'SoE',
+            health: 1,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
+    })
+
+    it('should not overheal a player', () => {
+      const store = createStore({
+        playerActions: {
+          possibilities: [
+            {
+              payload: { playerName: 'Hatsu', cost: 1, amount: 2 },
+            },
+          ],
+        },
+        players: [
+          {
+            name: 'Hatsu',
+            health: 2,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
+
+      players.heal(store, {
+        payload: { playerName: 'Hatsu', cost: 1, amount: 2 },
+      })
+
+      expect(store.getState()).toEqual({
+        playerActions: {
+          possibilities: [
+            {
+              payload: { playerName: 'Hatsu', cost: 1, amount: 2 },
+            },
+          ],
+        },
+        players: [
+          {
+            name: 'Hatsu',
+            health: 3,
+            actionPoints: 0,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
+    })
+
+    it('should not put actionPoints a negative level', () => {
+      const store = createStore({
+        playerActions: {
+          possibilities: [
+            {
+              payload: { playerName: 'Hatsu', cost: 2, amount: 1 },
+            },
+          ],
+        },
+        players: [
+          {
+            name: 'Hatsu',
+            health: 2,
+            actionPoints: 1,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
+
+      players.heal(store, {
+        payload: { playerName: 'Hatsu', cost: 2, amount: 1 },
+      })
+
+      expect(store.getState()).toEqual({
+        playerActions: {
+          possibilities: [
+            {
+              payload: { playerName: 'Hatsu', cost: 2, amount: 1 },
+            },
+          ],
+        },
+        players: [
+          {
+            name: 'Hatsu',
+            health: 3,
+            actionPoints: 0,
+            archetype: {
+              health: 3,
+            },
+          },
+        ],
+      })
     })
   })
 })

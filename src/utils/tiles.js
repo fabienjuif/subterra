@@ -106,6 +106,7 @@ export const getSimpleDistanceFromTo = (from) => (to) => {
 
 export const getDistanceFromTo = (from) => (to) => {
   // TODO: use A*
+  //      care of tile cost
   return getSimpleDistanceFromTo(from)(to)
 }
 
