@@ -1,4 +1,4 @@
-import { isActionEquals } from './actions'
+import { isActionEquals, players } from './actions'
 import {
   isCellEqual,
   getWrappingCells,
@@ -65,23 +65,32 @@ export const look = (store, action) => {
     const player = state.players.find(
       ({ name }) => name === action.payload.playerName,
     )
+    // TODO: Should take the first tile of the deck Tile
+    const tile = {
+      x: action.payload.x,
+      y: action.payload.y,
+      top: true,
+      right: true,
+      bottom: true,
+      left: true,
+      status: [],
+    }
 
     player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
-    // TODO: Should take the first tile of the deck Tile
+    state.playerActions.tile = tile
     // TODO: Should calculate a 'rotate' action as possibilities and set the new tile as 'playerActions.tile' when there is more than one open path.
-    // TODO: Should 'drop' the new tile when there is only one open path.
-    state.grid = [
-      ...state.grid,
-      {
-        x: action.payload.x,
-        y: action.payload.y,
-        top: true,
-        right: true,
-        bottom: true,
-        left: true,
-        status: [],
-      },
+    state.playerActions.possibilities = [
+      players.drop(action.payload.playerName, tile),
     ]
+  })
+}
+
+export const drop = (store, action) => {
+  store.mutate((state) => {
+    if (!state.playerActions.possibilities.some(isActionEquals(action))) return
+
+    state.grid = [...state.grid, state.playerActions.tile]
+    state.playerActions.tile = undefined
   })
 }
 

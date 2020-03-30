@@ -40,8 +40,8 @@ Index: @cards>init
    "activeCard": {},
    "grid": [
      {
-@@ -24,7 +48,36 @@
-     "current": {},
+@@ -23,7 +47,36 @@
+   "playerActions": {
      "possibilities": []
    },
    "technical": {
@@ -224,11 +224,11 @@ Index: @players>init
    "deckTiles": {
      "length": 10
    },
-@@ -45,9 +174,46 @@
+@@ -44,9 +173,46 @@
+       "status": []
      }
    ],
    "playerActions": {
-     "current": {},
 -    "possibilities": []
 +    "possibilities": [
 +      {
@@ -272,7 +272,7 @@ Index: @players>init
    "technical": {
      "actions": [
        {
-@@ -76,8 +242,130 @@
+@@ -75,8 +241,130 @@
            {
              "type": "end"
            }
@@ -428,7 +428,7 @@ Index: @dices>init
    "grid": [
      {
        "id": 0,
-@@ -364,8 +369,17 @@
+@@ -363,8 +368,17 @@
              },
              "name": "xXx-scoot-xXx"
            }
@@ -511,7 +511,7 @@ Index: @cards>pick
      {
        "id": 0,
        "type": "start",
-@@ -378,8 +374,178 @@
+@@ -377,8 +373,178 @@
            3,
            4,
            5

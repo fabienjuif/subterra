@@ -25,6 +25,14 @@ export const players = {
       cost: 1,
     },
   }),
+  drop: (playerName, tile) => ({
+    type: '@players>drop',
+    payload: {
+      playerName: playerName,
+      tile: tile,
+      cost: 0,
+    },
+  }),
 }
 
 export const roll = {

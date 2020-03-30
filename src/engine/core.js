@@ -22,7 +22,6 @@ export const initState = () => ({
   ],
   playerActions: {
     tile: undefined,
-    current: {}, // action the player is currently doing
     possibilities: [], // known possible actions for the current player
   },
   technical: {
