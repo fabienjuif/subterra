@@ -18,6 +18,8 @@
 ### 💠 Node version
 
 Take note that we use node experimental ESM resolve (`experimental-specifier-resolution`).
-To use it you need node >=v13.12.0.
-
 It allow us to not transpile our server code (neither the engine)
+
+To use it you need node `>=v13.12.0`, you can check your version with `node --version`.
+
+If you want a node version manager, we advise you to test [n](https://github.com/tj/n)
