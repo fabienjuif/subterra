@@ -8,20 +8,24 @@
   "dependencies": {},
   "scripts": {
     "build:ui": "yarn --cwd packages/ui build",
+    "build:server": "yarn --cwd packages/server build",
     "build": "run-p build:*",
     "start:ui": "yarn --cwd packages/ui start",
+    "start:server": "yarn --cwd packages/server start",
     "start": "run-p start:*",
-    "test": "jest",
+    "test": "jest --watch",
     "format": "prettier \"**/*.{ts,tsx,js,jsx,md,json}\" --write",
     "format:check": "prettier \"**/*.{ts,tsx,js,jsx,md,json}\" --check",
-    "ci": "CI=1 run-p format:check test",
+    "ci": "CI=1 run-p format:check 'test --watchAll=false'",
     "coverage:engine": "run-s 'test --coverage --all --watchAll=false'"
   },
   "eslintConfig": {
     "extends": "react-app"
   },
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
     "@babel/plugin-transform-modules-commonjs": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
     "babel-jest": "^24.9.0",
@@ -47,5 +51,8 @@
     "singleQuote": true,
     "arrowParens": "always",
     "endOfLine": "lf"
+  },
+  "engines": {
+    "node": ">=13.12.0"
   }
 }

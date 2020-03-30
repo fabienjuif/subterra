@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "main": "src/index.js",
+  "type": "module",
   "dependencies": {
     "@fabienjuif/astar": "^0.1.0",
     "@myrtille/mutate": "^0.8.1",
