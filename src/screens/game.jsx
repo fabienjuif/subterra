@@ -62,6 +62,7 @@ const Game = () => {
           cells={cells}
           players={state.players}
           nextTile={state.playerActions.tile}
+          possibilities={state.playerActions.possibilities}
         />
       </MovableGrid>
       <div className={cn('turn', classes.turn)}>turn: {state.turn}</div>
