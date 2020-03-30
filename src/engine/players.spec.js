@@ -624,22 +624,8 @@ describe('players', () => {
       players.findPossibilities(store, {})
 
       expect(store.getState().playerActions.possibilities).toEqual([
-        {
-          type: '@players>heal',
-          payload: {
-            amount: 1,
-            cost: 2,
-            playerName: 'SoE',
-          },
-        },
-        {
-          type: '@players>heal',
-          payload: {
-            amount: 1,
-            cost: 2,
-            playerName: 'Tripa',
-          },
-        },
+        actions.heal({ name: 'SoE' }),
+        actions.heal({ name: 'Tripa' }),
       ])
     })
 
@@ -706,22 +692,8 @@ describe('players', () => {
       players.findPossibilities(store, {})
 
       expect(store.getState().playerActions.possibilities).toEqual([
-        {
-          type: '@players>heal',
-          payload: {
-            amount: 1,
-            cost: 2, // can not use the skill "heal" on itself
-            playerName: 'SoE',
-          },
-        },
-        {
-          type: '@players>heal',
-          payload: {
-            amount: 1,
-            cost: 1,
-            playerName: 'Tripa',
-          },
-        },
+        actions.heal({ name: 'SoE' }), // can not use the skill "heal" on itself
+        actions.heal({ name: 'Tripa' }, { cost: 1 }),
       ])
     })
   })

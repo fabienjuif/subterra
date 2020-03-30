@@ -1,4 +1,4 @@
-import { isActionEquals } from './actions'
+import { isActionEquals, players as actions } from './actions'
 import {
   isCellEqual,
   getWrappingCells,
@@ -76,14 +76,7 @@ export const findPossibilities = (store, action) => {
         // some health is missing
         .filter(({ health, archetype }) => health < archetype.health)
         // map it to an action
-        .map(({ name }) => ({
-          type: '@players>heal',
-          payload: {
-            playerName: name,
-            cost: 2, // TODO: We should add excess in another PR by filter all actions once they are created
-            amount: 1,
-          },
-        })),
+        .map((currentPlayer) => actions.heal(currentPlayer)), // TODO: We should add excess in another PR by filter all actions once they are created
     ]
 
     // actions on cells

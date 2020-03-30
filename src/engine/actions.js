@@ -16,6 +16,14 @@ export const players = {
       cost: 1, // TODO: Get this from the tile and block any action with a cost > pa
     },
   }),
+  heal: (player, skill) => ({
+    type: '@players>heal',
+    payload: {
+      playerName: player.name,
+      cost: skill ? skill.cost : 2,
+      amount: 1,
+    },
+  }),
 }
 
 export const roll = {
