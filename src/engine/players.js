@@ -58,6 +58,33 @@ export const move = (store, action) => {
   })
 }
 
+export const look = (store, action) => {
+  store.mutate((state) => {
+    if (!state.playerActions.possibilities.some(isActionEquals(action))) return
+
+    const player = state.players.find(
+      ({ name }) => name === action.payload.playerName,
+    )
+
+    player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
+    // TODO: Should take the first tile of the deck Tile
+    // TODO: Should calculate a 'rotate' action as possibilities and set the new tile as 'playerActions.tile' when there is more than one open path.
+    // TODO: Should 'drop' the new tile when there is only one open path.
+    state.grid = [
+      ...state.grid,
+      {
+        x: action.payload.x,
+        y: action.payload.y,
+        top: true,
+        right: true,
+        bottom: true,
+        left: true,
+        status: [],
+      },
+    ]
+  })
+}
+
 export const findPossibilities = (store, action) => {
   store.mutate((state) => {
     const player = state.players.find(({ current }) => current)

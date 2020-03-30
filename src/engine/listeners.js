@@ -12,6 +12,8 @@ export default [
   // game going on
   ['@players>pass', players.pass],
   ['@players>pass', players.findPossibilities],
+  ['@players>look', players.look],
+  ['@players>look', players.findPossibilities], // TODO: Should be replaced by 'drop' action
   ['@players>damage', players.damage],
   ['@turn>start', game.checkWin],
   ['@turn>start', (store) => store.dispatch('@cards>pick')],

@@ -16,6 +16,15 @@ export const players = {
       cost: 1, // TODO: Get this from the tile and block any action with a cost > pa
     },
   }),
+  look: (player, tile) => ({
+    type: '@players>look',
+    payload: {
+      playerName: player.name,
+      x: tile.x,
+      y: tile.y,
+      cost: 1,
+    },
+  }),
 }
 
 export const roll = {

@@ -176,6 +176,53 @@ describe('players', () => {
     })
   })
 
+  describe('look', () => {
+    it('should drop a full open empty tile at the expected coordinates', () => {
+      const action = actions.look({ name: 'Hatsu' }, { x: 1, y: 0 })
+      const store = createStore({
+        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        grid: [{ x: 0, y: 0 }],
+        playerActions: { possibilities: [action] },
+      })
+
+      players.look(store, action)
+
+      expect(store.getState()).toEqual({
+        players: [{ name: 'Hatsu', actionPoints: 0, x: 0, y: 0 }],
+        grid: [
+          { x: 0, y: 0 },
+          {
+            x: 1,
+            y: 0,
+            top: true,
+            right: true,
+            bottom: true,
+            left: true,
+            status: [],
+          },
+        ],
+        playerActions: { possibilities: [action] },
+      })
+    })
+
+    it('should not drop a any tile when the action is not a known possibilities', () => {
+      const action = actions.look({ name: 'Hatsu' }, { x: 1, y: 0 })
+      const store = createStore({
+        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        grid: [{ x: 0, y: 0 }],
+        playerActions: { possibilities: [] },
+      })
+
+      players.look(store, action)
+
+      expect(store.getState()).toEqual({
+        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        grid: [{ x: 0, y: 0 }],
+        playerActions: { possibilities: [] },
+      })
+    })
+  })
+
   describe('damage', () => {
     it('should damage player', () => {
       const store = createStore({
