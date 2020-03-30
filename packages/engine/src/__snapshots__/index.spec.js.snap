@@ -1,0 +1,647 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`engine without mock should connect behaviours to actions 1`] = `
+Index: @cards>init
+===================================================================
+--- @cards>init
++++ @cards>init
+@@ -3,9 +3,33 @@
+   "enemies": [],
+   "deckTiles": {
+     "length": 10
+   },
+-  "deckCards": [],
++  "deckCards": [
++    {
++      "type": "shake",
++      "damage": 1,
++      "duration": 1
++    },
++    {
++      "type": "gaz",
++      "damage": 2,
++      "duration": 1
++    },
++    {
++      "type": "water",
++      "damage": 2,
++      "duration": 1
++    },
++    {
++      "type": "enemy",
++      "damage": 3,
++      "duration": 1
++    },
++    {
++      "type": "end"
++    }
++  ],
+   "dices": [],
+   "activeCard": {},
+   "grid": [
+     {
+@@ -24,7 +48,36 @@
+     "current": {},
+     "possibilities": []
+   },
+   "technical": {
+-    "actions": []
++    "actions": [
++      {
++        "type": "@cards>init",
++        "payload": [
++          {
++            "type": "shake",
++            "damage": 1,
++            "duration": 1
++          },
++          {
++            "type": "gaz",
++            "damage": 2,
++            "duration": 1
++          },
++          {
++            "type": "water",
++            "damage": 2,
++            "duration": 1
++          },
++          {
++            "type": "enemy",
++            "damage": 3,
++            "duration": 1
++          },
++          {
++            "type": "end"
++          }
++        ]
++      }
++    ]
+   }
+ }
+\\ No newline at end of file
+
+`;
+
+exports[`engine without mock should connect behaviours to actions 2`] = `
+Index: @players>init
+===================================================================
+--- @players>init
++++ @players>init
+@@ -1,6 +1,135 @@
+ {
+-  "players": [],
++  "players": [
++    {
++      "type": "medic",
++      "health": 3,
++      "strength": 6,
++      "skills": [
++        {
++          "type": "heal",
++          "perGame": null,
++          "perTurn": null,
++          "cost": 1
++        },
++        {
++          "type": "sprint",
++          "perGame": null,
++          "perTurn": null,
++          "cost": 1
++        }
++      ],
++      "archetype": {
++        "type": "medic",
++        "health": 3,
++        "strength": 6,
++        "skills": [
++          {
++            "type": "heal",
++            "perGame": null,
++            "perTurn": null,
++            "cost": 1
++          },
++          {
++            "type": "sprint",
++            "perGame": null,
++            "perTurn": null,
++            "cost": 1
++          }
++        ]
++      },
++      "name": "xXx-medic-xXx",
++      "x": 0,
++      "y": 0,
++      "actionPoints": 2,
++      "current": true,
++      "first": true
++    },
++    {
++      "type": "geologist",
++      "health": 3,
++      "strength": 3,
++      "skills": [
++        {
++          "type": "intuition",
++          "perGame": null,
++          "perTurn": null,
++          "cost": 0
++        },
++        {
++          "type": "clear",
++          "perGame": null,
++          "perTurn": null,
++          "cost": 1
++        }
++      ],
++      "archetype": {
++        "type": "geologist",
++        "health": 3,
++        "strength": 3,
++        "skills": [
++          {
++            "type": "intuition",
++            "perGame": null,
++            "perTurn": null,
++            "cost": 0
++          },
++          {
++            "type": "clear",
++            "perGame": null,
++            "perTurn": null,
++            "cost": 1
++          }
++        ]
++      },
++      "name": "xXx-geologist-xXx",
++      "x": 0,
++      "y": 0,
++      "actionPoints": 2
++    },
++    {
++      "type": "scoot",
++      "health": 3,
++      "strength": 2,
++      "skills": [
++        {
++          "type": "guide",
++          "cost": 0,
++          "perGame": 3,
++          "perTurn": null
++        },
++        {
++          "type": "furtivity",
++          "cost": 0,
++          "perGame": null,
++          "perTurn": null
++        }
++      ],
++      "archetype": {
++        "type": "scoot",
++        "health": 3,
++        "strength": 2,
++        "skills": [
++          {
++            "type": "guide",
++            "cost": 0,
++            "perGame": 3,
++            "perTurn": null
++          },
++          {
++            "type": "furtivity",
++            "cost": 0,
++            "perGame": null,
++            "perTurn": null
++          }
++        ]
++      },
++      "name": "xXx-scoot-xXx",
++      "x": 0,
++      "y": 0,
++      "actionPoints": 2
++    }
++  ],
+   "enemies": [],
+   "deckTiles": {
+     "length": 10
+   },
+@@ -76,8 +205,130 @@
+           {
+             "type": "end"
+           }
+         ]
++      },
++      {
++        "type": "@players>init",
++        "payload": [
++          {
++            "type": "medic",
++            "health": 3,
++            "strength": 6,
++            "skills": [
++              {
++                "type": "heal",
++                "perGame": null,
++                "perTurn": null,
++                "cost": 1
++              },
++              {
++                "type": "sprint",
++                "perGame": null,
++                "perTurn": null,
++                "cost": 1
++              }
++            ],
++            "archetype": {
++              "type": "medic",
++              "health": 3,
++              "strength": 6,
++              "skills": [
++                {
++                  "type": "heal",
++                  "perGame": null,
++                  "perTurn": null,
++                  "cost": 1
++                },
++                {
++                  "type": "sprint",
++                  "perGame": null,
++                  "perTurn": null,
++                  "cost": 1
++                }
++              ]
++            },
++            "name": "xXx-medic-xXx"
++          },
++          {
++            "type": "geologist",
++            "health": 3,
++            "strength": 3,
++            "skills": [
++              {
++                "type": "intuition",
++                "perGame": null,
++                "perTurn": null,
++                "cost": 0
++              },
++              {
++                "type": "clear",
++                "perGame": null,
++                "perTurn": null,
++                "cost": 1
++              }
++            ],
++            "archetype": {
++              "type": "geologist",
++              "health": 3,
++              "strength": 3,
++              "skills": [
++                {
++                  "type": "intuition",
++                  "perGame": null,
++                  "perTurn": null,
++                  "cost": 0
++                },
++                {
++                  "type": "clear",
++                  "perGame": null,
++                  "perTurn": null,
++                  "cost": 1
++                }
++              ]
++            },
++            "name": "xXx-geologist-xXx"
++          },
++          {
++            "type": "scoot",
++            "health": 3,
++            "strength": 2,
++            "skills": [
++              {
++                "type": "guide",
++                "cost": 0,
++                "perGame": 3,
++                "perTurn": null
++              },
++              {
++                "type": "furtivity",
++                "cost": 0,
++                "perGame": null,
++                "perTurn": null
++              }
++            ],
++            "archetype": {
++              "type": "scoot",
++              "health": 3,
++              "strength": 2,
++              "skills": [
++                {
++                  "type": "guide",
++                  "cost": 0,
++                  "perGame": 3,
++                  "perTurn": null
++                },
++                {
++                  "type": "furtivity",
++                  "cost": 0,
++                  "perGame": null,
++                  "perTurn": null
++                }
++              ]
++            },
++            "name": "xXx-scoot-xXx"
++          }
++        ]
+       }
+     ]
+   }
+ }
+\\ No newline at end of file
+
+`;
+
+exports[`engine without mock should connect behaviours to actions 3`] = `
+Index: @dices>init
+===================================================================
+--- @dices>init
++++ @dices>init
+@@ -157,9 +157,14 @@
+     {
+       "type": "end"
+     }
+   ],
+-  "dices": [],
++  "dices": [
++    2,
++    3,
++    4,
++    5
++  ],
+   "activeCard": {},
+   "grid": [
+     {
+       "id": 0,
+@@ -327,8 +332,17 @@
+             },
+             "name": "xXx-scoot-xXx"
+           }
+         ]
++      },
++      {
++        "type": "@dices>init",
++        "payload": [
++          2,
++          3,
++          4,
++          5
++        ]
+       }
+     ]
+   }
+ }
+\\ No newline at end of file
+
+`;
+
+exports[`engine without mock should connect behaviours to actions 4`] = `
+Index: @cards>pick
+===================================================================
+--- @cards>pick
++++ @cards>pick
+@@ -1,9 +1,9 @@
+ {
+   "players": [
+     {
+       "type": "medic",
+-      "health": 3,
++      "health": 2,
+       "strength": 6,
+       "skills": [
+         {
+           "type": "heal",
+@@ -45,9 +45,9 @@
+       "first": true
+     },
+     {
+       "type": "geologist",
+-      "health": 3,
++      "health": 2,
+       "strength": 3,
+       "skills": [
+         {
+           "type": "intuition",
+@@ -134,13 +134,8 @@
+     "length": 10
+   },
+   "deckCards": [
+     {
+-      "type": "shake",
+-      "damage": 1,
+-      "duration": 1
+-    },
+-    {
+       "type": "gaz",
+       "damage": 2,
+       "duration": 1
+     },
+@@ -158,14 +153,15 @@
+       "type": "end"
+     }
+   ],
+   "dices": [
+-    2,
+-    3,
+-    4,
+     5
+   ],
+-  "activeCard": {},
++  "activeCard": {
++    "type": "shake",
++    "damage": 1,
++    "duration": 1
++  },
+   "grid": [
+     {
+       "id": 0,
+       "type": "start",
+@@ -341,8 +337,178 @@
+           3,
+           4,
+           5
+         ]
++      },
++      {
++        "type": "@cards>pick"
++      },
++      {
++        "type": "@cards>shake",
++        "payload": {
++          "card": {
++            "type": "shake",
++            "damage": 1,
++            "duration": 1
++          }
++        }
++      },
++      {
++        "type": "@dices>roll",
++        "payload": {
++          "min": 4,
++          "playerName": "xXx-medic-xXx",
++          "actionOnFail": {
++            "type": "@players>damage",
++            "payload": {
++              "damage": 1,
++              "from": {
++                "card": {
++                  "type": "shake",
++                  "damage": 1,
++                  "duration": 1
++                }
++              },
++              "playerName": "xXx-medic-xXx"
++            }
++          }
++        }
++      },
++      {
++        "type": "@dices>roll",
++        "payload": {
++          "min": 4,
++          "playerName": "xXx-geologist-xXx",
++          "actionOnFail": {
++            "type": "@players>damage",
++            "payload": {
++              "damage": 1,
++              "from": {
++                "card": {
++                  "type": "shake",
++                  "damage": 1,
++                  "duration": 1
++                }
++              },
++              "playerName": "xXx-geologist-xXx"
++            }
++          }
++        }
++      },
++      {
++        "type": "@dices>roll",
++        "payload": {
++          "min": 4,
++          "playerName": "xXx-scoot-xXx",
++          "actionOnFail": {
++            "type": "@players>damage",
++            "payload": {
++              "damage": 1,
++              "from": {
++                "card": {
++                  "type": "shake",
++                  "damage": 1,
++                  "duration": 1
++                }
++              },
++              "playerName": "xXx-scoot-xXx"
++            }
++          }
++        }
++      },
++      {
++        "type": "@dices>rolled",
++        "payload": {
++          "min": 4,
++          "playerName": "xXx-medic-xXx",
++          "actionOnFail": {
++            "type": "@players>damage",
++            "payload": {
++              "damage": 1,
++              "from": {
++                "card": {
++                  "type": "shake",
++                  "damage": 1,
++                  "duration": 1
++                }
++              },
++              "playerName": "xXx-medic-xXx"
++            }
++          },
++          "value": 2
++        }
++      },
++      {
++        "type": "@dices>rolled",
++        "payload": {
++          "min": 4,
++          "playerName": "xXx-geologist-xXx",
++          "actionOnFail": {
++            "type": "@players>damage",
++            "payload": {
++              "damage": 1,
++              "from": {
++                "card": {
++                  "type": "shake",
++                  "damage": 1,
++                  "duration": 1
++                }
++              },
++              "playerName": "xXx-geologist-xXx"
++            }
++          },
++          "value": 3
++        }
++      },
++      {
++        "type": "@dices>rolled",
++        "payload": {
++          "min": 4,
++          "playerName": "xXx-scoot-xXx",
++          "actionOnFail": {
++            "type": "@players>damage",
++            "payload": {
++              "damage": 1,
++              "from": {
++                "card": {
++                  "type": "shake",
++                  "damage": 1,
++                  "duration": 1
++                }
++              },
++              "playerName": "xXx-scoot-xXx"
++            }
++          },
++          "value": 4
++        }
++      },
++      {
++        "type": "@players>damage",
++        "payload": {
++          "damage": 1,
++          "from": {
++            "card": {
++              "type": "shake",
++              "damage": 1,
++              "duration": 1
++            }
++          },
++          "playerName": "xXx-medic-xXx"
++        }
++      },
++      {
++        "type": "@players>damage",
++        "payload": {
++          "damage": 1,
++          "from": {
++            "card": {
++              "type": "shake",
++              "damage": 1,
++              "duration": 1
++            }
++          },
++          "playerName": "xXx-geologist-xXx"
++        }
+       }
+     ]
+   }
+ }
+\\ No newline at end of file
+
+`;
