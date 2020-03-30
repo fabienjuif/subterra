@@ -51,8 +51,5 @@
     "singleQuote": true,
     "arrowParens": "always",
     "endOfLine": "lf"
-  },
-  "engines": {
-    "node": ">=13.12.0"
   }
 }
