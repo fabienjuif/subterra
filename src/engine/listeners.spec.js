@@ -69,6 +69,16 @@ describe('listeners', () => {
     })
   })
 
+  describe('@players>rotate', () => {
+    it('should call players.rotate', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@players>rotate')
+
+      expect(players.rotate).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('@players>drop', () => {
     it('should call players.drop and players.findPossibilities', () => {
       const engine = createEngine({})

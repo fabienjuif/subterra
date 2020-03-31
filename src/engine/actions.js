@@ -25,11 +25,18 @@ export const players = {
       cost: 1,
     },
   }),
-  drop: (player, tile) => ({
+  rotate: (player, rotation) => ({
+    type: '@players>rotate',
+    payload: {
+      playerName: player.name,
+      rotation,
+      cost: 0,
+    },
+  }),
+  drop: (player) => ({
     type: '@players>drop',
     payload: {
       playerName: player.name,
-      tile,
       cost: 0,
     },
   }),

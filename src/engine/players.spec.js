@@ -181,6 +181,40 @@ describe('players', () => {
       const action = actions.look({ name: 'Hatsu' }, { x: 1, y: 0 })
       const store = createStore({
         players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        grid: [{ x: 0, y: 0, right: true }],
+        playerActions: {
+          tile: undefined,
+          possibilities: [action],
+        },
+      })
+
+      players.look(store, action)
+
+      expect(store.getState()).toEqual({
+        players: [{ name: 'Hatsu', actionPoints: 0, x: 0, y: 0 }],
+        grid: [{ x: 0, y: 0, right: true }],
+        playerActions: {
+          tile: {
+            x: 1,
+            y: 0,
+            right: true,
+            bottom: true,
+            left: true,
+            status: [],
+            rotation: 0,
+          },
+          possibilities: [
+            actions.rotate({ name: 'Hatsu' }, 90),
+            actions.drop({ name: 'Hatsu' }),
+          ],
+        },
+      })
+    })
+
+    it('should not set a drop possibilities when we can move from the current tile to the looked tile', () => {
+      const action = actions.look({ name: 'Hatsu' }, { x: 1, y: 0 })
+      const store = createStore({
+        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0 }],
         playerActions: {
           tile: undefined,
@@ -190,21 +224,20 @@ describe('players', () => {
 
       players.look(store, action)
 
-      const expectedTile = {
-        x: 1,
-        y: 0,
-        top: true,
-        right: true,
-        bottom: true,
-        left: true,
-        status: [],
-      }
       expect(store.getState()).toEqual({
         players: [{ name: 'Hatsu', actionPoints: 0, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0 }],
         playerActions: {
-          tile: expectedTile,
-          possibilities: [actions.drop({ name: 'Hatsu' }, expectedTile)],
+          tile: {
+            x: 1,
+            y: 0,
+            right: true,
+            bottom: true,
+            left: true,
+            status: [],
+            rotation: 0,
+          },
+          possibilities: [actions.rotate({ name: 'Hatsu' }, 90)],
         },
       })
     })
@@ -232,9 +265,82 @@ describe('players', () => {
     })
   })
 
+  describe('rotate', () => {
+    it('should rotate the playerAction.tile to the expected rotation', () => {
+      const action = actions.rotate({ name: 'Hatsu' }, 90)
+      const store = createStore({
+        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        grid: [{ x: 0, y: 0, right: true }],
+        playerActions: {
+          tile: { x: 1, y: 0, bottom: true, rotation: 0 },
+          possibilities: [action],
+        },
+      })
+
+      players.rotate(store, action)
+
+      expect(store.getState()).toEqual({
+        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        grid: [{ x: 0, y: 0, right: true }],
+        playerActions: {
+          tile: { x: 1, y: 0, bottom: true, rotation: 90 },
+          possibilities: [
+            actions.rotate({ name: 'Hatsu' }, 180),
+            actions.drop({ name: 'Hatsu' }),
+          ],
+        },
+      })
+    })
+
+    it('should not set a drop possibilities when we can move from the current tile to the rotated tile', () => {
+      const action = actions.rotate({ name: 'Hatsu' }, 270)
+      const store = createStore({
+        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        grid: [{ x: 0, y: 0, right: true }],
+        playerActions: {
+          tile: { x: 1, y: 0, bottom: true, rotation: 0 },
+          possibilities: [action],
+        },
+      })
+
+      players.rotate(store, action)
+
+      expect(store.getState()).toEqual({
+        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        grid: [{ x: 0, y: 0, right: true }],
+        playerActions: {
+          tile: { x: 1, y: 0, bottom: true, rotation: 270 },
+          possibilities: [actions.rotate({ name: 'Hatsu' }, 0)],
+        },
+      })
+    })
+
+    it('should not rotate the playerAction.tile when the action is not a known possibilities', () => {
+      const store = createStore({
+        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        grid: [{ x: 0, y: 0, right: true }],
+        playerActions: {
+          tile: { x: 1, y: 0, bottom: true, rotation: 0 },
+          possibilities: [],
+        },
+      })
+
+      players.rotate(store, actions.rotate({ name: 'Hatsu' }, 90))
+
+      expect(store.getState()).toEqual({
+        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        grid: [{ x: 0, y: 0, right: true }],
+        playerActions: {
+          tile: { x: 1, y: 0, bottom: true, rotation: 0 },
+          possibilities: [],
+        },
+      })
+    })
+  })
+
   describe('drop', () => {
     it('should drop playerActions.tile in the grid', () => {
-      const action = actions.drop({ name: 'Hatsu' }, {})
+      const action = actions.drop({ name: 'Hatsu' })
       const store = createStore({
         players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0 }],
@@ -254,7 +360,7 @@ describe('players', () => {
         ],
         playerActions: {
           tile: undefined,
-          possibilities: [actions.drop({ name: 'Hatsu' }, {})],
+          possibilities: [actions.drop({ name: 'Hatsu' })],
         },
       })
     })
@@ -269,7 +375,7 @@ describe('players', () => {
         },
       })
 
-      players.drop(store, actions.drop({ name: 'Hatsu' }, {}))
+      players.drop(store, actions.drop({ name: 'Hatsu' }))
 
       expect(store.getState()).toEqual({
         players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
