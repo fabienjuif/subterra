@@ -4,6 +4,7 @@ import {
   getWrappingCells,
   findActionsOnCell,
   canMoveFromTo,
+  nextRotation,
 } from '../utils/tiles'
 
 export const pass = (store, action) => {
@@ -72,7 +73,6 @@ export const look = (store, action) => {
     const tile = {
       x: action.payload.x,
       y: action.payload.y,
-      top: true,
       right: true,
       bottom: true,
       left: true,
@@ -83,14 +83,10 @@ export const look = (store, action) => {
     player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
     state.playerActions.tile = tile
 
-    state.playerActions.possibilities = [
-      players.rotate(player, tile, nextRotation(tile)),
-    ]
+    state.playerActions.possibilities = [players.rotate(player, tile, 90)]
 
     if (canMoveFromTo(playerTile, tile))
-      state.playerActions.possibilities.push(
-        players.drop(action.payload.playerName, tile),
-      )
+      state.playerActions.possibilities.push(players.drop(player, tile))
   })
 }
 
@@ -98,8 +94,12 @@ export const rotate = (store, action) => {
   store.mutate((state) => {
     if (!state.playerActions.possibilities.some(isActionEquals(action))) return
 
+    const player = state.players.find(
+      ({ name }) => name === action.payload.playerName,
+    )
+    const playerTile = state.grid.find(isCellEqual(player))
     const rotatedTile = {
-      ...action.payload.tile,
+      ...state.playerActions.tile,
       rotation: action.payload.rotation,
     }
 
@@ -109,9 +109,7 @@ export const rotate = (store, action) => {
     ]
 
     if (canMoveFromTo(playerTile, rotatedTile))
-      state.playerActions.possibilities.push(
-        players.drop(action.payload.playerName, rotatedTile),
-      )
+      state.playerActions.possibilities.push(players.drop(player, rotatedTile))
   })
 }
 
@@ -119,7 +117,7 @@ export const drop = (store, action) => {
   store.mutate((state) => {
     if (!state.playerActions.possibilities.some(isActionEquals(action))) return
 
-    state.grid = [...state.grid, state.playerActions.tile]
+    state.grid.push(state.playerActions.tile)
     state.playerActions.tile = undefined
   })
 }

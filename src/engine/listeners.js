@@ -13,6 +13,7 @@ export default [
   ['@players>pass', players.pass],
   ['@players>pass', players.findPossibilities],
   ['@players>look', players.look],
+  ['@players>rotate', players.rotate],
   ['@players>drop', players.drop],
   ['@players>drop', players.findPossibilities],
   ['@players>damage', players.damage],
