@@ -1,24 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import cn from 'classnames'
 import { motion } from 'framer-motion'
-import { useStateAt, useDispatch } from '@myrtille/react'
 import { tiles } from '@subterra/engine'
 import { Grid, UIPlayer, CardsDeck, Logs, MovableGrid } from '../components'
 import classes from './game.module.scss'
 
-const Game = () => {
-  const state = useStateAt()
-  const dispatch = useDispatch()
+const Game = ({ state, dispatch }) => {
   const [cells, setCells] = useState([])
   const [players, setPlayers] = useState([])
-
-  useEffect(() => {
-    // this is for debug purpose
-    dispatch('@cards>pick')
-    dispatch('@cards>pick')
-    dispatch('@cards>pick')
-    dispatch('@cards>pick')
-  }, [dispatch])
 
   useEffect(() => {
     let cells = tiles.getWrappingCells(state.grid)
