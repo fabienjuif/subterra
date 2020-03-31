@@ -83,10 +83,10 @@ export const look = (store, action) => {
     player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
     state.playerActions.tile = tile
 
-    state.playerActions.possibilities = [players.rotate(player, tile, 90)]
+    state.playerActions.possibilities = [players.rotate(player, 90)]
 
     if (canMoveFromTo(playerTile, tile))
-      state.playerActions.possibilities.push(players.drop(player, tile))
+      state.playerActions.possibilities.push(players.drop(player))
   })
 }
 
@@ -105,11 +105,11 @@ export const rotate = (store, action) => {
 
     state.playerActions.tile = rotatedTile
     state.playerActions.possibilities = [
-      players.rotate(player, rotatedTile, nextRotation(rotatedTile)),
+      players.rotate(player, nextRotation(rotatedTile)),
     ]
 
     if (canMoveFromTo(playerTile, rotatedTile))
-      state.playerActions.possibilities.push(players.drop(player, rotatedTile))
+      state.playerActions.possibilities.push(players.drop(player))
   })
 }
 
