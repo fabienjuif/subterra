@@ -1,4 +1,4 @@
-import { players } from '../engine/actions'
+import { players } from '../actions'
 
 const rotate90 = (where) => {
   switch (where) {

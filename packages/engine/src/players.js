@@ -1,9 +1,5 @@
 import { isActionEquals, players as actions } from './actions'
-import {
-  isCellEqual,
-  getWrappingCells,
-  findActionsOnCell,
-} from '../utils/tiles'
+import { isCellEqual, getWrappingCells, findActionsOnCell } from './utils/tiles'
 
 export const pass = (store, action) => {
   const previousState = store.getState()

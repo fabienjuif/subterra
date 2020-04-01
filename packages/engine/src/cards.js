@@ -1,5 +1,5 @@
 import { players, roll } from './actions'
-import { isCellEqual } from '../utils/tiles'
+import { isCellEqual } from './utils/tiles'
 
 export const init = (store, action) => {
   store.mutate((state) => {

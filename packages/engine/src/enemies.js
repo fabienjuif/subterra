@@ -1,5 +1,5 @@
 import getClosestPath from '@fabienjuif/astar'
-import { isCellEqual, canMoveFromTo } from '../utils/tiles'
+import { isCellEqual, canMoveFromTo } from './utils/tiles'
 
 const mapGridToAstarGraph = (grid) => {
   const graph = []

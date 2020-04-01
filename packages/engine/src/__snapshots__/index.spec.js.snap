@@ -407,6 +407,17 @@ Index: @cards>pick
 ===================================================================
 --- @cards>pick
 +++ @cards>pick
+@@ -1,9 +1,9 @@
+ {
+   "players": [
+     {
+       "type": "medic",
+-      "health": 3,
++      "health": 2,
+       "strength": 6,
+       "skills": [
+         {
+           "type": "heal",
 @@ -45,9 +45,9 @@
        "first": true
      },
@@ -418,17 +429,6 @@ Index: @cards>pick
        "skills": [
          {
            "type": "intuition",
-@@ -87,9 +87,9 @@
-       "actionPoints": 2
-     },
-     {
-       "type": "scoot",
--      "health": 3,
-+      "health": 2,
-       "strength": 2,
-       "skills": [
-         {
-           "type": "guide",
 @@ -134,13 +134,8 @@
      "length": 10
    },
@@ -486,7 +486,7 @@ Index: @cards>pick
 +        "type": "@dices>roll",
 +        "payload": {
 +          "min": 4,
-+          "playerName": "xXx-scoot-xXx",
++          "playerName": "xXx-medic-xXx",
 +          "actionOnFail": {
 +            "type": "@players>damage",
 +            "payload": {
@@ -498,45 +498,9 @@ Index: @cards>pick
 +                  "duration": 1
 +                }
 +              },
-+              "playerName": "xXx-scoot-xXx"
++              "playerName": "xXx-medic-xXx"
 +            }
 +          }
-+        }
-+      },
-+      {
-+        "type": "@dices>rolled",
-+        "payload": {
-+          "min": 4,
-+          "playerName": "xXx-scoot-xXx",
-+          "actionOnFail": {
-+            "type": "@players>damage",
-+            "payload": {
-+              "damage": 1,
-+              "from": {
-+                "card": {
-+                  "type": "shake",
-+                  "damage": 1,
-+                  "duration": 1
-+                }
-+              },
-+              "playerName": "xXx-scoot-xXx"
-+            }
-+          },
-+          "value": 2
-+        }
-+      },
-+      {
-+        "type": "@players>damage",
-+        "payload": {
-+          "damage": 1,
-+          "from": {
-+            "card": {
-+              "type": "shake",
-+              "damage": 1,
-+              "duration": 1
-+            }
-+          },
-+          "playerName": "xXx-scoot-xXx"
 +        }
 +      },
 +      {
@@ -558,6 +522,49 @@ Index: @cards>pick
 +              "playerName": "xXx-geologist-xXx"
 +            }
 +          }
++        }
++      },
++      {
++        "type": "@dices>roll",
++        "payload": {
++          "min": 4,
++          "playerName": "xXx-scoot-xXx",
++          "actionOnFail": {
++            "type": "@players>damage",
++            "payload": {
++              "damage": 1,
++              "from": {
++                "card": {
++                  "type": "shake",
++                  "damage": 1,
++                  "duration": 1
++                }
++              },
++              "playerName": "xXx-scoot-xXx"
++            }
++          }
++        }
++      },
++      {
++        "type": "@dices>rolled",
++        "payload": {
++          "min": 4,
++          "playerName": "xXx-medic-xXx",
++          "actionOnFail": {
++            "type": "@players>damage",
++            "payload": {
++              "damage": 1,
++              "from": {
++                "card": {
++                  "type": "shake",
++                  "damage": 1,
++                  "duration": 1
++                }
++              },
++              "playerName": "xXx-medic-xXx"
++            }
++          },
++          "value": 2
 +        }
 +      },
 +      {
@@ -583,6 +590,42 @@ Index: @cards>pick
 +        }
 +      },
 +      {
++        "type": "@dices>rolled",
++        "payload": {
++          "min": 4,
++          "playerName": "xXx-scoot-xXx",
++          "actionOnFail": {
++            "type": "@players>damage",
++            "payload": {
++              "damage": 1,
++              "from": {
++                "card": {
++                  "type": "shake",
++                  "damage": 1,
++                  "duration": 1
++                }
++              },
++              "playerName": "xXx-scoot-xXx"
++            }
++          },
++          "value": 4
++        }
++      },
++      {
++        "type": "@players>damage",
++        "payload": {
++          "damage": 1,
++          "from": {
++            "card": {
++              "type": "shake",
++              "damage": 1,
++              "duration": 1
++            }
++          },
++          "playerName": "xXx-medic-xXx"
++        }
++      },
++      {
 +        "type": "@players>damage",
 +        "payload": {
 +          "damage": 1,
@@ -594,49 +637,6 @@ Index: @cards>pick
 +            }
 +          },
 +          "playerName": "xXx-geologist-xXx"
-+        }
-+      },
-+      {
-+        "type": "@dices>roll",
-+        "payload": {
-+          "min": 4,
-+          "playerName": "xXx-medic-xXx",
-+          "actionOnFail": {
-+            "type": "@players>damage",
-+            "payload": {
-+              "damage": 1,
-+              "from": {
-+                "card": {
-+                  "type": "shake",
-+                  "damage": 1,
-+                  "duration": 1
-+                }
-+              },
-+              "playerName": "xXx-medic-xXx"
-+            }
-+          }
-+        }
-+      },
-+      {
-+        "type": "@dices>rolled",
-+        "payload": {
-+          "min": 4,
-+          "playerName": "xXx-medic-xXx",
-+          "actionOnFail": {
-+            "type": "@players>damage",
-+            "payload": {
-+              "damage": 1,
-+              "from": {
-+                "card": {
-+                  "type": "shake",
-+                  "damage": 1,
-+                  "duration": 1
-+                }
-+              },
-+              "playerName": "xXx-medic-xXx"
-+            }
-+          },
-+          "value": 4
 +        }
        }
      ]
