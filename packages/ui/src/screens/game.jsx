@@ -20,6 +20,17 @@ const Game = ({ mode, cards, players, tiles, dices }) => {
     if (mode === 'online') {
       const server = new SockJS('/game')
 
+      const send = (action) => server.send(JSON.stringify(action))
+
+      // send our token
+      // TODO: retrieve token from localStorage
+      const sendToken = () =>
+        send({
+          type: '@client>token',
+          payload:
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJpZC0xLWZhYmllbiIsImlhdCI6MTU4NTc1ODA0M30.O7rY7vd5dsnUz0fWRSPaccv1sBefGE-w-Gte1lAb_pQ',
+        })
+
       // this is just for DEBUG purpose in redux-devtools
       let store = { state: {}, dispatch: () => {} }
       if (process.env.NODE_ENV === 'development') {
@@ -29,6 +40,8 @@ const Game = ({ mode, cards, players, tiles, dices }) => {
         store.addListener('@server>setState', (store, action) => {
           store.setState(action.payload)
         })
+
+        store.addListener('@server>askToken', sendToken)
       }
 
       server.onmessage = function (e) {
@@ -36,8 +49,14 @@ const Game = ({ mode, cards, players, tiles, dices }) => {
         store.dispatch(action)
 
         const { type, payload } = action
+
         if (type === '@server>setState') {
           setStore((old) => ({ ...old, state: payload }))
+          return
+        }
+
+        if (type === '@server>error') {
+          console.error(action)
           return
         }
 
@@ -48,14 +67,16 @@ const Game = ({ mode, cards, players, tiles, dices }) => {
         console.log('TODO: close server socket')
       }
 
-      setStore((old) => ({
-        ...old,
-        dispatch: (action) => {
-          server.send(
-            JSON.stringify({ type: '@client>dispatch', payload: action }),
-          )
-        },
-      }))
+      server.onopen = () => {
+        sendToken()
+
+        setStore((old) => ({
+          ...old,
+          dispatch: (action) => {
+            send({ type: '@client>dispatch', payload: action })
+          },
+        }))
+      }
     } else {
       const engine = createEngine()
       // connects engine to react

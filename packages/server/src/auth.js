@@ -1,10 +1,8 @@
-import uuidPackage from 'uuid'
 import { promisify } from 'util'
 import bodyParser from 'body-parser'
 import send from '@polka/send-type'
 import jwt from 'jsonwebtoken'
 
-const uuid = uuidPackage.v4
 const sign = promisify(jwt.sign)
 const verify = promisify(jwt.verify)
 
@@ -17,6 +15,18 @@ if (!PRIVATE_KEY) {
   PRIVATE_KEY = 'devmode'
 }
 
+// TODO: database or auth0
+const USERS = [
+  { id: 'id-1-fabien', username: 'fabienjuif', password: 'yespassword' },
+  { id: 'id-2-florent', username: 'florentjuif', password: 'ouchpassword' },
+  {
+    id: 'id-3-delphine',
+    username: 'delphinemillet',
+    password: 'isitapassword',
+  },
+  { id: 'id-4-wesley', username: 'wesleyruchaud', password: 'youpipassword' },
+]
+
 export default (server, prefix) => {
   const withPrefix = (path) => `${prefix}${path}`
 
@@ -25,12 +35,13 @@ export default (server, prefix) => {
     .post(withPrefix('/'), async (req, res) => {
       const { username, password } = req.body
 
-      if (username !== 'fabienjuif' || password !== 'oui') {
-        // TODO: use database
+      const user = USERS.find(
+        (user) => user.username === username && user.password === password,
+      )
+      if (!user) {
         send(res, 401)
       } else {
-        const userId = uuid() // TODO: use database
-        const token = await sign({ userId }, PRIVATE_KEY)
+        const token = await sign({ userId: user.id }, PRIVATE_KEY)
 
         send(res, 200, token)
       }

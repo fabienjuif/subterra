@@ -1,6 +1,11 @@
+import got from 'got'
+import sockjs from 'sockjs'
 import { createEngine, dices } from '@subterra/engine'
 import { archetypes, cards } from '@subterra/data'
-import sockjs from 'sockjs'
+
+const PORT = process.env.PORT || 9999
+const ENDPOINT_AUTH_VERIFY =
+  process.env.ENDPOINT_AUTH_VERIFY || `http://localhost:${PORT}/auth`
 
 const engine = createEngine()
 engine.dispatch({
@@ -35,7 +40,8 @@ engine.dispatch({
 })
 
 const wrapSocket = (socket) => {
-  socket.dispatch = (action) => {
+  socket.dispatch = (action, mute) => {
+    if (!mute) console.log('<<<', action.type)
     socket.write(JSON.stringify(action))
   }
 
@@ -48,6 +54,8 @@ const wrapSocket = (socket) => {
   socket.on('data', (message) => {
     const action = JSON.parse(message)
 
+    console.log('>>>', action.type)
+
     listeners
       .filter(([type]) => type === action.type)
       .forEach(([, reaction]) => reaction(action))
@@ -57,32 +65,82 @@ const wrapSocket = (socket) => {
 }
 
 const gameServer = sockjs.createServer({})
-const clients = []
+let clients = []
 
 const broadcast = (action) => {
   clients.forEach((client) => {
-    client.dispatch(action)
+    console.log('<<<', action.type, '[broadcast]')
+    client.dispatch(action, true)
   })
+}
+
+const close = (client, reason) => {
+  clients = clients.filter((curr) => curr !== client)
+  client.dispatch({ type: '@server>error', payload: reason })
+  client.close()
 }
 
 gameServer.on('connection', function (socket) {
   const client = wrapSocket(socket)
   clients.push(client)
 
+  let verified = false
+  let verifying = false
+
+  const sendState = () =>
+    broadcast({ type: '@server>setState', payload: engine.getState() })
+
   // register reactions
+  client.addListener('@client>token', async ({ payload }) => {
+    if (verifying) return
+
+    const notFound = () => {
+      throw new Error('User not found')
+    }
+
+    try {
+      verifying = true
+
+      const res = await got(ENDPOINT_AUTH_VERIFY, {
+        headers: {
+          authorization: `Bearer ${payload}`,
+        },
+      })
+      const { body } = res || {}
+      if (!body) notFound()
+      const user = JSON.parse(body)
+      if (!user.userId) notFound()
+
+      console.log(`\tWelcome to ${user.userId}`)
+
+      verified = true
+      verifying = false
+      sendState()
+    } catch (ex) {
+      console.trace(ex)
+
+      close(client, 'Error while checking token')
+      verified = false
+      verifying = false
+    }
+  })
+
   client.addListener('@client>dispatch', ({ payload }) => {
+    if (!verified) {
+      if (verifying) return
+      client.dispatch({ type: '@server>askToken' })
+      return
+    }
+
     // TODO: copy state then dispatch, then check the client has the right to do this?
     //      (anticheat)
     engine.dispatch(payload)
 
     // TODO: better logs on server
-    console.log(typeof payload === 'string' ? payload : payload.type)
+    console.log('\t-', typeof payload === 'string' ? payload : payload.type)
 
-    broadcast({ type: '@server>setState', payload: engine.getState() })
+    sendState()
   })
-
-  // send the known data to the client when it connects
-  client.dispatch({ type: '@server>setState', payload: engine.getState() })
 
   client.on('close', function () {})
 })

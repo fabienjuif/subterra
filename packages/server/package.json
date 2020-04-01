@@ -9,6 +9,7 @@
     "@subterra/data": "^0.1.0",
     "@subterra/engine": "^0.1.0",
     "body-parser": "^1.19.0",
+    "got": "^10.7.0",
     "jsonwebtoken": "^8.5.1",
     "polka": "^0.5.2",
     "sockjs": "^0.3.20",

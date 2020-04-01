@@ -10,6 +10,8 @@ This package will be split into 3 distincts package in future iterations:
 
 This is a REST API.
 
+Users and passwords are handled (for now) in a hardcoded constant in auth.js.
+
 | method | path    | description                                                                                                                         | returns                                              |
 | ------ | ------- | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | `POST` | `/auth` | given "username" and "password" in body authenticate                                                                                | return the JWT token in plain text                   |
