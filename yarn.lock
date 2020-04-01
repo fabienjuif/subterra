@@ -5058,6 +5058,11 @@ fresh@0.5.2:
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
   integrity sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=
 
+from-form-submit@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/from-form-submit/-/from-form-submit-0.3.0.tgz#3abe93df7f6cd3d62360bd1c58cc878f233ccd4e"
+  integrity sha512-CuZDfdG5u0sb6KAd68+8sTxTJJ2LZCgzq3TyxLaBOaPb6yWdcJTFd/mTpE4WvCBPIy8q9InIAjHEwmjnjKyoeQ==
+
 from2@^2.1.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/from2/-/from2-2.3.0.tgz#8bfb5502bde4a4d36cfdeea007fcca21d7e382af"

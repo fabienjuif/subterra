@@ -8,7 +8,7 @@ import { tiles as tilesHelpers } from '@subterra/engine'
 import { Grid, UIPlayer, CardsDeck, Logs, MovableGrid } from '../components'
 import classes from './game.module.scss'
 
-const Game = ({ mode, cards, players, tiles, dices }) => {
+const Game = ({ mode, cards, players, tiles, dices, token }) => {
   const [cells, setCells] = useState([])
   const [orderedPlayers, setOrderedPlayers] = useState([])
   const [{ state, dispatch }, setStore] = useState({
@@ -27,8 +27,7 @@ const Game = ({ mode, cards, players, tiles, dices }) => {
       const sendToken = () =>
         send({
           type: '@client>token',
-          payload:
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJpZC0xLWZhYmllbiIsImlhdCI6MTU4NTc1ODA0M30.O7rY7vd5dsnUz0fWRSPaccv1sBefGE-w-Gte1lAb_pQ',
+          payload: token,
         })
 
       // this is just for DEBUG purpose in redux-devtools
@@ -94,7 +93,7 @@ const Game = ({ mode, cards, players, tiles, dices }) => {
       engine.dispatch({ type: '@tiles>init', payload: tiles })
       engine.dispatch({ type: '@players>init', payload: players })
     }
-  }, [mode, cards, dices, tiles, players])
+  }, [mode, cards, dices, tiles, players, token])
 
   useEffect(() => {
     let cells = tilesHelpers.getWrappingCells(state.grid)
