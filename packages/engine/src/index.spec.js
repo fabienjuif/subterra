@@ -1,13 +1,14 @@
 import { createPatch } from 'diff'
 import { createEngine } from './index'
-import cards, {
+import {
+  cards,
+  archetypes,
   EndCard,
   GazCard,
   WaterCard,
   ShakeCard,
   HorrorCard,
-} from '../utils/cards'
-import archetypes from '../utils/archetypes'
+} from '@subterra/data'
 
 expect.addSnapshotSerializer({
   test: () => true,

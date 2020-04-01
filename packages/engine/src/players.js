@@ -5,7 +5,7 @@ import {
   findActionsOnCell,
   canMoveFromTo,
   nextRotation,
-} from '../utils/tiles'
+} from './utils/tiles'
 
 export const pass = (store, action) => {
   const previousState = store.getState()

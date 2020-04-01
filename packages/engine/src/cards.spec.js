@@ -1,5 +1,5 @@
 import createStore from '@myrtille/mutate'
-import cardData from '../utils/cards'
+import { cards as cardData } from '@subterra/data'
 import { players, roll } from './actions'
 import * as cards from './cards'
 

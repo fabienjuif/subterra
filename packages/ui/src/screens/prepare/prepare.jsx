@@ -1,8 +1,10 @@
 import React, { useState, useCallback } from 'react'
 import cn from 'classnames'
-import archetypesData from '../../utils/archetypes'
-import cardsData from '../../utils/cards'
-import { getRandomInArray, roll6 } from '../../utils/dices'
+import {
+  archetypes as archetypesData,
+  cards as cardsData,
+} from '@subterra/data'
+import { dices } from '@subterra/engine'
 import Archetype from './archetype'
 import classes from './prepare.module.scss'
 
@@ -13,16 +15,14 @@ const Prepare = ({ onStart }) => {
   const innerOnStart = useCallback(() => {
     const cards = [
       ...Array.from({ length: 10 }).map(() =>
-        getRandomInArray(cardsData.slice(1)),
+        dices.getRandomInArray(cardsData.slice(1)),
       ),
       cardsData[0],
     ]
 
-    const dices = Array.from({ length: 5000 }).map(() => roll6())
-
     onStart({
       cards,
-      dices,
+      dices: Array.from({ length: 5000 }).map(() => dices.roll6()),
       players: archetypes.map((archetype) => ({
         ...archetype,
         archetype,

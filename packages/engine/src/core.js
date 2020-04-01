@@ -1,6 +1,6 @@
 import createStore from '@myrtille/mutate'
 import listeners from './listeners'
-import tilesData from '../utils/tiles'
+import tilesData from './utils/tiles'
 
 export const initState = () => ({
   gameOver: undefined, // 'loose' | 'win'

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import cn from 'classnames'
-import { getCellsBounds, isCellEqual } from '../utils/tiles'
+import { tiles } from '@subterra/engine'
 import Cell from './cell'
 import classes from './grid.module.scss'
 
@@ -9,7 +9,7 @@ const Grid = ({ cells, onAction, players, nextTile, possibilities }) => {
   const [translateY, setTranslateY] = useState(0)
 
   useEffect(() => {
-    const { left, top } = getCellsBounds(cells)
+    const { left, top } = tiles.getCellsBounds(cells)
 
     setTranslateX(left * -1)
     setTranslateY(top * -1)
@@ -24,12 +24,12 @@ const Grid = ({ cells, onAction, players, nextTile, possibilities }) => {
     >
       {cells.map(
         (cell) =>
-          (!nextTile || !isCellEqual(cell)(nextTile)) && (
+          (!nextTile || !tiles.isCellEqual(cell)(nextTile)) && (
             <Cell
               key={`${cell.x}:${cell.y}`}
               {...cell}
               onAction={onAction}
-              players={players.filter(isCellEqual(cell))}
+              players={players.filter(tiles.isCellEqual(cell))}
             />
           ),
       )}

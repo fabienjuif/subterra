@@ -1,0 +1,20 @@
+{
+  "name": "@subterra/server",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.js",
+  "type": "module",
+  "dependencies": {
+    "@subterra/data": "^0.1.0",
+    "@subterra/engine": "^0.1.0",
+    "sockjs": "^0.3.20"
+  },
+  "scripts": {
+    "serve": "node --experimental-specifier-resolution=node src/index.js",
+    "start:nodemon": "nodemon -q --experimental-specifier-resolution=node src/index.js",
+    "start": "run-p start:*"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
