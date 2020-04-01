@@ -42,7 +42,6 @@ export default (server, prefix) => {
         if (authorization) {
           const split = authorization.split('Bearer ')
           if (split) token = split[1]
-          console.log(token)
         }
       }
 
