@@ -23,7 +23,6 @@ const Game = ({ mode, cards, players, tiles, dices, token }) => {
       const send = (action) => server.send(JSON.stringify(action))
 
       // send our token
-      // TODO: retrieve token from localStorage
       const sendToken = () =>
         send({
           type: '@client>token',
