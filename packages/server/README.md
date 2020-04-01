@@ -28,3 +28,5 @@ TODO: submit token from auth API
 | `@client>dispatch` | client to server | send an action to the server, so it can dispatch it in the engine |
 | `@server>setState` | server to client | send the new state after a player submit an action                |
 | `@server>error`    | server to client | send an error                                                     |
+| `@server>askToken` | server to client | server ask the client to send its token                           |
+| `@client>token`    | client to server | client send the token                                             |
