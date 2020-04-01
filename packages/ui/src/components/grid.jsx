@@ -4,7 +4,7 @@ import { tiles } from '@subterra/engine'
 import Cell from './cell'
 import classes from './grid.module.scss'
 
-const Grid = ({ cells, onAction, players, nextTile }) => {
+const Grid = ({ cells, onAction, players, nextTile, possibilities }) => {
   const [translateX, setTranslateX] = useState(0)
   const [translateY, setTranslateY] = useState(0)
 
@@ -39,7 +39,7 @@ const Grid = ({ cells, onAction, players, nextTile }) => {
           {...nextTile}
           tile={nextTile}
           empty={false}
-          actions={[{ code: 'done' }, { code: 'rotate' }]}
+          actions={possibilities}
           onAction={onAction}
         />
       )}

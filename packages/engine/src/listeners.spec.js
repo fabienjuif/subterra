@@ -59,6 +59,37 @@ describe('listeners', () => {
     })
   })
 
+  describe('@players>look', () => {
+    it('should call players.look', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@players>look')
+
+      expect(players.look).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('@players>rotate', () => {
+    it('should call players.rotate', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@players>rotate')
+
+      expect(players.rotate).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('@players>drop', () => {
+    it('should call players.drop and players.findPossibilities', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@players>drop')
+
+      expect(players.drop).toHaveBeenCalledTimes(1)
+      expect(players.findPossibilities).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('@cards>init', () => {
     it('should call cards.init', () => {
       const engine = createEngine({})

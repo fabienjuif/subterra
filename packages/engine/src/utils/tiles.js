@@ -15,6 +15,13 @@ const rotate90 = (where) => {
   }
 }
 
+export const nextRotation = (tile) => {
+  const next = (tile.rotation || 0) + 90
+
+  if (next === 360) return 0
+  return next
+}
+
 export const isOpen = (where) => (tile) => {
   let rotations = (tile.rotation || 0) / 90
   let rotatedWhere = where
@@ -119,25 +126,24 @@ export const findActionsOnCell = (player, playerTile) => (cell) => {
     if (canMoveFromTo(playerTile, cell.tile)) {
       actions.push(players.move(player, cell.tile))
     }
+  } else {
+    // create a fake tile that is opened everywhere
+    // so we can test we can go to this fake tile
+    const fakeOpenTile = {
+      ...cell,
+      top: true,
+      left: true,
+      bottom: true,
+      right: true,
+    }
+    if (
+      isCellsTouched(playerTile, cell) &&
+      canMoveFromTo(playerTile, fakeOpenTile)
+    ) {
+      actions.push(players.look(player, fakeOpenTile))
+      //actions.push({ cell, code: 'explore', cost: 1 })
+    }
   }
-  // else {
-  //   // create a fake tile that is opened everywhere
-  //   // so we can test we can go to this fake tile
-  //   const fakeOpenTile = {
-  //     ...cell,
-  //     top: true,
-  //     left: true,
-  //     bottom: true,
-  //     right: true,
-  //   }
-  //   if (
-  //     isCellsTouched(playerCell, cell) &&
-  //     canMoveFromTo(playerCell.tile, fakeOpenTile)
-  //   ) {
-  //     actions.push({ cell, code: 'look', cost: 1 })
-  //     actions.push({ cell, code: 'explore', cost: 1 })
-  //   }
-  // }
 
   return actions
 }

@@ -16,6 +16,30 @@ export const players = {
       cost: 1, // TODO: Get this from the tile and block any action with a cost > pa
     },
   }),
+  look: (player, tile) => ({
+    type: '@players>look',
+    payload: {
+      playerName: player.name,
+      x: tile.x,
+      y: tile.y,
+      cost: 1,
+    },
+  }),
+  rotate: (player, rotation) => ({
+    type: '@players>rotate',
+    payload: {
+      playerName: player.name,
+      rotation,
+      cost: 0,
+    },
+  }),
+  drop: (player) => ({
+    type: '@players>drop',
+    payload: {
+      playerName: player.name,
+      cost: 0,
+    },
+  }),
   heal: (player, skill) => ({
     type: '@players>heal',
     payload: {

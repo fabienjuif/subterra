@@ -12,6 +12,10 @@ export default [
   // game going on
   ['@players>pass', players.pass],
   ['@players>pass', players.findPossibilities],
+  ['@players>look', players.look],
+  ['@players>rotate', players.rotate],
+  ['@players>drop', players.drop],
+  ['@players>drop', players.findPossibilities],
   ['@players>damage', players.damage],
   ['@turn>start', game.checkWin],
   ['@turn>start', (store) => store.dispatch('@cards>pick')],
