@@ -1,5 +1,6 @@
 import createStore from '@myrtille/mutate'
 import * as dices from './dices'
+import * as actions from './actions'
 
 describe('dices', () => {
   describe('init', () => {
@@ -44,7 +45,7 @@ describe('dices', () => {
 
   describe('checkAndDispatch', () => {
     it('should check a roll match a min value and call the success action that is given', () => {
-      const store = createStore()
+      const store = createStore({ players: [] })
       store.dispatch = jest.fn()
 
       dices.checkAndDispatch(store, {
@@ -70,7 +71,7 @@ describe('dices', () => {
     })
 
     it('should check a roll match a min value and call the fail action that is given', () => {
-      const store = createStore()
+      const store = createStore({ players: [] })
       store.dispatch = jest.fn()
 
       dices.checkAndDispatch(store, {
@@ -96,7 +97,7 @@ describe('dices', () => {
     })
 
     it('should check a roll and do not dispatch anything (success branch)', () => {
-      const store = createStore()
+      const store = createStore({ players: [] })
       store.dispatch = jest.fn()
 
       dices.checkAndDispatch(store, {
@@ -110,7 +111,7 @@ describe('dices', () => {
     })
 
     it('should check a roll and do not dispatch anything (fail branch)', () => {
-      const store = createStore()
+      const store = createStore({ players: [] })
       store.dispatch = jest.fn()
 
       dices.checkAndDispatch(store, {
@@ -121,6 +122,46 @@ describe('dices', () => {
       })
 
       expect(store.dispatch).toHaveBeenCalledTimes(0)
+    })
+
+    it('should roll success because the player has the "experienced" skill', () => {
+      const store = createStore({
+        players: [
+          {
+            name: 'SoE',
+            skills: [
+              {
+                type: 'experienced',
+              },
+            ],
+          },
+        ],
+      })
+
+      store.dispatch = jest.fn()
+
+      dices.checkAndDispatch(store, {
+        payload: {
+          min: 2,
+          // it should fail since the value < min bit "experienced" give +1 to the value
+          value: 1,
+          playerName: 'SoE',
+          actionOnSuccess: {
+            type: 'sucess',
+            payload: { some: 'informations' },
+          },
+          actionOnFail: {
+            type: 'fail',
+            payload: { some: 'informations (fail)' },
+          },
+        },
+      })
+
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: 'sucess',
+        payload: { some: 'informations' },
+      })
     })
   })
 })

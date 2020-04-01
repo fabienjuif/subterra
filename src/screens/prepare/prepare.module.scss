@@ -1,0 +1,26 @@
+.body {
+  display: flex;
+
+  & ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .archetype {
+    cursor: pointer;
+  }
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.side {
+  width: 30em;
+
+  &:first-child {
+    margin-right: 4em;
+  }
+}

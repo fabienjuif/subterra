@@ -265,4 +265,14 @@ describe('listeners', () => {
       expect(enemies.move).toHaveBeenCalledTimes(1)
     })
   })
+
+  describe('@players>heal', () => {
+    it('should call players.heal', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@players>heal')
+
+      expect(players.heal).toHaveBeenCalledTimes(1)
+    })
+  })
 })

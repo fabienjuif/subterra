@@ -40,6 +40,14 @@ export const players = {
       cost: 0,
     },
   }),
+  heal: (player, skill) => ({
+    type: '@players>heal',
+    payload: {
+      playerName: player.name,
+      cost: skill ? skill.cost : 2,
+      amount: 1,
+    },
+  }),
 }
 
 export const roll = {

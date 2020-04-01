@@ -3,6 +3,7 @@ import { Provider } from '@myrtille/react'
 import { createEngine } from './engine'
 import { Prepare, Game } from './screens'
 import { initState } from './engine/core'
+import './variables.css'
 
 const App = () => {
   const [engine, setEngine] = useState()

@@ -2,7 +2,7 @@ import React from 'react'
 import cn from 'classnames'
 import EmptyCell from './emptyCell'
 import Tile from './tile'
-import Player from './player'
+import PlayerIcon from './playerIcon'
 import Action from './action'
 import classes from './cell.module.scss'
 
@@ -18,7 +18,10 @@ const Cell = ({ x, y, empty, tile, players, actions, onAction }) => {
       {players && players.length > 0 && (
         <div className={cn('cell-players', classes.players)}>
           {players.map((player) => (
-            <Player {...player} />
+            <PlayerIcon
+              {...player}
+              className={cn('cell-player', classes.player)}
+            />
           ))}
         </div>
       )}
