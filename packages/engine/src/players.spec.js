@@ -8,12 +8,12 @@ describe('players', () => {
       const store = createStore({
         players: [
           {
-            name: 'SoE',
+            id: 'SoE',
             first: true,
             current: true,
           },
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
           },
         ],
       })
@@ -23,12 +23,12 @@ describe('players', () => {
       expect(store.getState()).toEqual({
         players: [
           {
-            name: 'SoE',
+            id: 'SoE',
             first: true,
             current: false,
           },
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             current: true,
           },
         ],
@@ -40,16 +40,16 @@ describe('players', () => {
       let store = createStore({
         players: [
           {
-            name: 'SoE',
+            id: 'SoE',
             first: true,
             actionPoints: 0,
           },
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             actionPoints: 1,
           },
           {
-            name: 'Tripa',
+            id: 'Tripa',
             current: true,
             actionPoints: 2,
           },
@@ -60,18 +60,18 @@ describe('players', () => {
       expect(store.getState()).toEqual({
         players: [
           {
-            name: 'SoE',
+            id: 'SoE',
             first: false,
             actionPoints: 2,
           },
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             first: true,
             current: true,
             actionPoints: 2,
           },
           {
-            name: 'Tripa',
+            id: 'Tripa',
             current: false,
             actionPoints: 2,
           },
@@ -84,16 +84,16 @@ describe('players', () => {
       store = createStore({
         players: [
           {
-            name: 'SoE',
+            id: 'SoE',
             actionPoints: 0,
           },
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             current: true,
             actionPoints: 1,
           },
           {
-            name: 'Tripa',
+            id: 'Tripa',
             first: true,
             actionPoints: 2,
           },
@@ -104,18 +104,18 @@ describe('players', () => {
       expect(store.getState()).toEqual({
         players: [
           {
-            name: 'SoE',
+            id: 'SoE',
             first: true,
             current: true,
             actionPoints: 2,
           },
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             current: false,
             actionPoints: 2,
           },
           {
-            name: 'Tripa',
+            id: 'Tripa',
             first: false,
             actionPoints: 2,
           },
@@ -128,41 +128,34 @@ describe('players', () => {
 
   describe('move', () => {
     it('should move player when the action is a known possibilities', () => {
+      const action = actions.move({ id: 'Hatsu' }, { x: 1, y: -1 })
       const store = createStore({
         players: [
-          { name: 'Hatsu', actionPoints: 1, x: 0, y: 0 },
-          { name: 'SoE', actionPoints: 2, x: 0, y: 0 },
+          { id: 'Hatsu', actionPoints: 1, x: 0, y: 0 },
+          { id: 'SoE', actionPoints: 2, x: 0, y: 0 },
         ],
         playerActions: {
-          possibilities: [
-            {
-              type: '@players>move',
-              payload: { playerName: 'Hatsu', cost: 1, x: 1, y: -1 },
-            },
-          ],
+          possibilities: [action],
         },
       })
 
-      players.move(store, {
-        type: '@players>move',
-        payload: { playerName: 'Hatsu', cost: 1, x: 1, y: -1 },
-      })
+      players.move(store, action)
 
       expect(store.getState().players).toEqual([
-        { name: 'Hatsu', actionPoints: 0, x: 1, y: -1 },
-        { name: 'SoE', actionPoints: 2, x: 0, y: 0 },
+        { id: 'Hatsu', actionPoints: 0, x: 1, y: -1 },
+        { id: 'SoE', actionPoints: 2, x: 0, y: 0 },
       ])
     })
 
     it('should not move player when the action is not a known possibilities', () => {
       const action = {
         type: '@players>move',
-        payload: { playerName: 'Hatsu', cost: 1, x: 1, y: -1 },
+        payload: { playerid: 'Hatsu', cost: 1, x: 1, y: -1 },
       }
       const store = createStore({
         players: [
-          { name: 'Hatsu', actionPoints: 1, x: 0, y: 0 },
-          { name: 'SoE', actionPoints: 2, x: 0, y: 0 },
+          { id: 'Hatsu', actionPoints: 1, x: 0, y: 0 },
+          { id: 'SoE', actionPoints: 2, x: 0, y: 0 },
         ],
         playerActions: { possibilities: [] },
       })
@@ -170,17 +163,17 @@ describe('players', () => {
       players.move(store, action)
 
       expect(store.getState().players).toEqual([
-        { name: 'Hatsu', actionPoints: 1, x: 0, y: 0 },
-        { name: 'SoE', actionPoints: 2, x: 0, y: 0 },
+        { id: 'Hatsu', actionPoints: 1, x: 0, y: 0 },
+        { id: 'SoE', actionPoints: 2, x: 0, y: 0 },
       ])
     })
   })
 
   describe('look', () => {
     it('should set a full open empty tile at the expected coordinates as playerActions.tile', () => {
-      const action = actions.look({ name: 'Hatsu' }, { x: 1, y: 0 })
+      const action = actions.look({ id: 'Hatsu' }, { x: 1, y: 0 })
       const store = createStore({
-        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0, right: true }],
         playerActions: {
           tile: undefined,
@@ -191,7 +184,7 @@ describe('players', () => {
       players.look(store, action)
 
       expect(store.getState()).toEqual({
-        players: [{ name: 'Hatsu', actionPoints: 0, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 0, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0, right: true }],
         playerActions: {
           tile: {
@@ -204,17 +197,17 @@ describe('players', () => {
             rotation: 0,
           },
           possibilities: [
-            actions.rotate({ name: 'Hatsu' }, 90),
-            actions.drop({ name: 'Hatsu' }),
+            actions.rotate({ id: 'Hatsu' }, 90),
+            actions.drop({ id: 'Hatsu' }),
           ],
         },
       })
     })
 
     it('should not set a drop possibilities when we can move from the current tile to the looked tile', () => {
-      const action = actions.look({ name: 'Hatsu' }, { x: 1, y: 0 })
+      const action = actions.look({ id: 'Hatsu' }, { x: 1, y: 0 })
       const store = createStore({
-        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0 }],
         playerActions: {
           tile: undefined,
@@ -225,7 +218,7 @@ describe('players', () => {
       players.look(store, action)
 
       expect(store.getState()).toEqual({
-        players: [{ name: 'Hatsu', actionPoints: 0, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 0, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0 }],
         playerActions: {
           tile: {
@@ -237,14 +230,14 @@ describe('players', () => {
             status: [],
             rotation: 0,
           },
-          possibilities: [actions.rotate({ name: 'Hatsu' }, 90)],
+          possibilities: [actions.rotate({ id: 'Hatsu' }, 90)],
         },
       })
     })
 
     it('should not set any tile when the action is not a known possibilities', () => {
       const store = createStore({
-        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0 }],
         playerActions: {
           tile: undefined,
@@ -252,10 +245,10 @@ describe('players', () => {
         },
       })
 
-      players.look(store, actions.look({ name: 'Hatsu' }, { x: 1, y: 0 }))
+      players.look(store, actions.look({ id: 'Hatsu' }, { x: 1, y: 0 }))
 
       expect(store.getState()).toEqual({
-        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0 }],
         playerActions: {
           tile: undefined,
@@ -267,9 +260,9 @@ describe('players', () => {
 
   describe('rotate', () => {
     it('should rotate the playerAction.tile to the expected rotation', () => {
-      const action = actions.rotate({ name: 'Hatsu' }, 90)
+      const action = actions.rotate({ id: 'Hatsu' }, 90)
       const store = createStore({
-        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0, right: true }],
         playerActions: {
           tile: { x: 1, y: 0, bottom: true, rotation: 0 },
@@ -280,22 +273,22 @@ describe('players', () => {
       players.rotate(store, action)
 
       expect(store.getState()).toEqual({
-        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0, right: true }],
         playerActions: {
           tile: { x: 1, y: 0, bottom: true, rotation: 90 },
           possibilities: [
-            actions.rotate({ name: 'Hatsu' }, 180),
-            actions.drop({ name: 'Hatsu' }),
+            actions.rotate({ id: 'Hatsu' }, 180),
+            actions.drop({ id: 'Hatsu' }),
           ],
         },
       })
     })
 
     it('should not set a drop possibilities when we can move from the current tile to the rotated tile', () => {
-      const action = actions.rotate({ name: 'Hatsu' }, 270)
+      const action = actions.rotate({ id: 'Hatsu' }, 270)
       const store = createStore({
-        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0, right: true }],
         playerActions: {
           tile: { x: 1, y: 0, bottom: true, rotation: 0 },
@@ -306,18 +299,18 @@ describe('players', () => {
       players.rotate(store, action)
 
       expect(store.getState()).toEqual({
-        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0, right: true }],
         playerActions: {
           tile: { x: 1, y: 0, bottom: true, rotation: 270 },
-          possibilities: [actions.rotate({ name: 'Hatsu' }, 0)],
+          possibilities: [actions.rotate({ id: 'Hatsu' }, 0)],
         },
       })
     })
 
     it('should not rotate the playerAction.tile when the action is not a known possibilities', () => {
       const store = createStore({
-        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0, right: true }],
         playerActions: {
           tile: { x: 1, y: 0, bottom: true, rotation: 0 },
@@ -325,10 +318,10 @@ describe('players', () => {
         },
       })
 
-      players.rotate(store, actions.rotate({ name: 'Hatsu' }, 90))
+      players.rotate(store, actions.rotate({ id: 'Hatsu' }, 90))
 
       expect(store.getState()).toEqual({
-        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0, right: true }],
         playerActions: {
           tile: { x: 1, y: 0, bottom: true, rotation: 0 },
@@ -340,9 +333,9 @@ describe('players', () => {
 
   describe('drop', () => {
     it('should drop playerActions.tile in the grid', () => {
-      const action = actions.drop({ name: 'Hatsu' })
+      const action = actions.drop({ id: 'Hatsu' })
       const store = createStore({
-        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0 }],
         playerActions: {
           tile: { x: 1, y: 0 },
@@ -353,21 +346,21 @@ describe('players', () => {
       players.drop(store, action)
 
       expect(store.getState()).toEqual({
-        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [
           { x: 0, y: 0 },
           { x: 1, y: 0 },
         ],
         playerActions: {
           tile: undefined,
-          possibilities: [actions.drop({ name: 'Hatsu' })],
+          possibilities: [actions.drop({ id: 'Hatsu' })],
         },
       })
     })
 
     it('should not drop playerActions.tile when the action is not a known possibilities', () => {
       const store = createStore({
-        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0 }],
         playerActions: {
           tile: { x: 1, y: 0 },
@@ -375,10 +368,10 @@ describe('players', () => {
         },
       })
 
-      players.drop(store, actions.drop({ name: 'Hatsu' }))
+      players.drop(store, actions.drop({ id: 'Hatsu' }))
 
       expect(store.getState()).toEqual({
-        players: [{ name: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0 }],
         playerActions: {
           tile: { x: 1, y: 0 },
@@ -393,12 +386,12 @@ describe('players', () => {
       const store = createStore({
         players: [
           {
-            name: 'SoE',
+            id: 'SoE',
             health: 10,
             skills: [],
           },
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             health: 5,
             skills: [],
           },
@@ -407,19 +400,17 @@ describe('players', () => {
 
       store.dispatch = jest.fn()
 
-      players.damage(store, {
-        payload: { playerName: 'Hatsu', damage: 2 },
-      })
+      players.damage(store, actions.damage({ id: 'Hatsu' }, 2, {}))
 
       expect(store.getState()).toEqual({
         players: [
           {
-            name: 'SoE',
+            id: 'SoE',
             health: 10,
             skills: [],
           },
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             health: 3,
             skills: [],
           },
@@ -432,7 +423,7 @@ describe('players', () => {
       const store = createStore({
         players: [
           {
-            name: 'SoE',
+            id: 'SoE',
             health: 1,
             skills: [],
           },
@@ -440,38 +431,31 @@ describe('players', () => {
       })
       store.dispatch = jest.fn()
 
-      players.damage(store, {
-        payload: { playerName: 'SoE', damage: 2 },
-      })
+      players.damage(store, actions.damage({ id: 'SoE' }, 2, {}))
 
       expect(store.getState().players).toEqual([
         {
-          name: 'SoE',
+          id: 'SoE',
           health: 0,
           skills: [],
         },
       ])
       expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith({
-        type: '@players>death',
-        payload: {
-          playerName: 'SoE',
-        },
-      })
+      expect(store.dispatch).toHaveBeenCalledWith(actions.death({ id: 'SoE' }))
     })
 
     it('should not damage player if it has a protect player on same tile', () => {
       const store = createStore({
         players: [
           {
-            name: 'Tripa',
+            id: 'Tripa',
             health: 2,
             skills: [],
             x: 1,
             y: 2,
           },
           {
-            name: 'SoE',
+            id: 'SoE',
             health: 3,
             skills: [{ type: 'protect' }],
             x: 1,
@@ -481,19 +465,19 @@ describe('players', () => {
       })
       store.dispatch = jest.fn()
 
-      players.damage(store, { payload: { playerName: 'Tripa', damage: 1 } })
+      players.damage(store, actions.damage({ id: 'Tripa' }, 1, {}))
 
       expect(store.getState()).toEqual({
         players: [
           {
-            name: 'Tripa',
+            id: 'Tripa',
             health: 2,
             skills: [],
             x: 1,
             y: 2,
           },
           {
-            name: 'SoE',
+            id: 'SoE',
             health: 3,
             skills: [{ type: 'protect' }],
             x: 1,
@@ -504,7 +488,7 @@ describe('players', () => {
       expect(store.dispatch).toHaveBeenCalledWith({
         type: '@players>protected',
         payload: {
-          playerName: 'Tripa',
+          playerId: 'Tripa',
           protectedBy: 'SoE',
         },
       })
@@ -514,14 +498,14 @@ describe('players', () => {
       const store = createStore({
         players: [
           {
-            name: 'Tripa',
+            id: 'Tripa',
             health: 2,
             skills: [],
             x: 1,
             y: 2,
           },
           {
-            name: 'SoE',
+            id: 'SoE',
             health: 0,
             skills: [{ type: 'protect' }],
             x: 1,
@@ -531,19 +515,19 @@ describe('players', () => {
       })
       store.dispatch = jest.fn()
 
-      players.damage(store, { payload: { playerName: 'Tripa', damage: 1 } })
+      players.damage(store, actions.damage({ id: 'Tripa' }, 1, {}))
 
       expect(store.getState()).toEqual({
         players: [
           {
-            name: 'Tripa',
+            id: 'Tripa',
             health: 1,
             skills: [],
             x: 1,
             y: 2,
           },
           {
-            name: 'SoE',
+            id: 'SoE',
             health: 0,
             skills: [{ type: 'protect' }],
             x: 1,
@@ -562,14 +546,14 @@ describe('players', () => {
       const store = createStore({
         players: [
           {
-            name: 'Tripa',
+            id: 'Tripa',
             health: 2,
             skills: [{ type: 'protect' }],
             x: 1,
             y: 2,
           },
           {
-            name: 'SoE',
+            id: 'SoE',
             health: 2,
             skills: [],
             x: 1,
@@ -579,19 +563,19 @@ describe('players', () => {
       })
       store.dispatch = jest.fn()
 
-      players.damage(store, { payload: { playerName: 'Tripa', damage: 1 } })
+      players.damage(store, actions.damage({ id: 'Tripa' }, 1, {}))
 
       expect(store.getState()).toEqual({
         players: [
           {
-            name: 'Tripa',
+            id: 'Tripa',
             health: 1,
             skills: [{ type: 'protect' }],
             x: 1,
             y: 2,
           },
           {
-            name: 'SoE',
+            id: 'SoE',
             health: 2,
             skills: [],
             x: 1,
@@ -624,8 +608,9 @@ describe('players', () => {
           {
             x: 0,
             y: 0,
-            name: 'Sutat',
+            id: 'explorer',
             type: 'explorer',
+            name: 'Sutat',
             actionPoints: 2,
             current: true,
             first: true,
@@ -633,15 +618,17 @@ describe('players', () => {
           {
             x: 0,
             y: 0,
-            name: 'Tripa',
+            id: 'chef',
             type: 'chef',
+            name: 'Tripa',
             actionPoints: 2,
           },
           {
             x: 0,
             y: 0,
-            name: 'SoE',
+            id: 'miner',
             type: 'miner',
+            name: 'SoE',
             actionPoints: 2,
           },
         ],
@@ -654,7 +641,7 @@ describe('players', () => {
       const store = createStore({
         players: [
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             x: 0,
             y: 0,
             health: 1,
@@ -678,7 +665,7 @@ describe('players', () => {
       players.findPossibilities(store, {})
 
       expect(store.getState().playerActions.possibilities).toEqual([
-        actions.move({ name: 'Hatsu' }, { x: 1, y: 0 }),
+        actions.move({ id: 'Hatsu' }, { x: 1, y: 0 }),
       ])
     })
 
@@ -686,7 +673,7 @@ describe('players', () => {
       const store = createStore({
         players: [
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             x: 0,
             y: 0,
             health: 1,
@@ -716,7 +703,7 @@ describe('players', () => {
       const store = createStore({
         players: [
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             x: 0,
             y: 0,
             health: 0,
@@ -746,7 +733,7 @@ describe('players', () => {
       const store = createStore({
         players: [
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             x: 0,
             y: 0,
             health: 1,
@@ -781,7 +768,7 @@ describe('players', () => {
         players: [
           // heal itself
           {
-            name: 'SoE',
+            id: 'SoE',
             current: true,
             x: 0,
             y: 0,
@@ -793,7 +780,7 @@ describe('players', () => {
           },
           // heal an ally
           {
-            name: 'Tripa',
+            id: 'Tripa',
             x: 0,
             y: 0,
             skills: [],
@@ -804,7 +791,7 @@ describe('players', () => {
           },
           // do not heal a max health player
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             x: 0,
             y: 0,
             skills: [],
@@ -815,7 +802,7 @@ describe('players', () => {
           },
           // do not heal a player that is not on same cell
           {
-            name: 'Sutat',
+            id: 'Sutat',
             x: 1,
             y: 0,
             skills: [],
@@ -836,8 +823,8 @@ describe('players', () => {
       players.findPossibilities(store, {})
 
       expect(store.getState().playerActions.possibilities).toEqual([
-        actions.heal({ name: 'SoE' }),
-        actions.heal({ name: 'Tripa' }),
+        actions.heal({ id: 'SoE' }),
+        actions.heal({ id: 'Tripa' }),
       ])
     })
 
@@ -849,7 +836,7 @@ describe('players', () => {
         players: [
           // heal itself
           {
-            name: 'SoE',
+            id: 'SoE',
             current: true,
             x: 0,
             y: 0,
@@ -861,7 +848,7 @@ describe('players', () => {
           },
           // heal an ally
           {
-            name: 'Tripa',
+            id: 'Tripa',
             x: 0,
             y: 0,
             skills: [],
@@ -872,7 +859,7 @@ describe('players', () => {
           },
           // do not heal a max health player
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             x: 0,
             y: 0,
             skills: [],
@@ -883,7 +870,7 @@ describe('players', () => {
           },
           // do not heal a player that is not on same cell
           {
-            name: 'Sutat',
+            id: 'Sutat',
             x: 1,
             y: 0,
             skills: [],
@@ -904,8 +891,8 @@ describe('players', () => {
       players.findPossibilities(store, {})
 
       expect(store.getState().playerActions.possibilities).toEqual([
-        actions.heal({ name: 'SoE' }), // can not use the skill "heal" on itself
-        actions.heal({ name: 'Tripa' }, { cost: 1 }),
+        actions.heal({ id: 'SoE' }), // can not use the skill "heal" on itself
+        actions.heal({ id: 'Tripa' }, { cost: 1 }),
       ])
     })
   })
@@ -918,7 +905,7 @@ describe('players', () => {
         },
         players: [
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             health: 2,
             actionPoints: 1,
             archetype: {
@@ -926,7 +913,7 @@ describe('players', () => {
             },
           },
           {
-            name: 'SoE',
+            id: 'SoE',
             health: 1,
             actionPoints: 1,
             archetype: {
@@ -936,9 +923,7 @@ describe('players', () => {
         ],
       })
 
-      players.heal(store, {
-        payload: { playerName: 'Hatsu', cost: 1, amount: 1 },
-      })
+      players.heal(store, actions.heal({ id: 'Hatsu' }, { cost: 1 }))
 
       expect(store.getState()).toEqual({
         playerActions: {
@@ -946,7 +931,7 @@ describe('players', () => {
         },
         players: [
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             health: 2,
             actionPoints: 1,
             archetype: {
@@ -954,7 +939,7 @@ describe('players', () => {
             },
           },
           {
-            name: 'SoE',
+            id: 'SoE',
             health: 1,
             actionPoints: 1,
             archetype: {
@@ -966,17 +951,14 @@ describe('players', () => {
     })
 
     it('should heal the player', () => {
+      const action = actions.heal({ id: 'Hatsu' }, { cost: 1 })
       const store = createStore({
         playerActions: {
-          possibilities: [
-            {
-              payload: { playerName: 'Hatsu', cost: 1, amount: 1 },
-            },
-          ],
+          possibilities: [action],
         },
         players: [
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             health: 2,
             actionPoints: 1,
             archetype: {
@@ -984,7 +966,7 @@ describe('players', () => {
             },
           },
           {
-            name: 'SoE',
+            id: 'SoE',
             health: 1,
             actionPoints: 1,
             archetype: {
@@ -994,21 +976,15 @@ describe('players', () => {
         ],
       })
 
-      players.heal(store, {
-        payload: { playerName: 'Hatsu', cost: 1, amount: 1 },
-      })
+      players.heal(store, action)
 
       expect(store.getState()).toEqual({
         playerActions: {
-          possibilities: [
-            {
-              payload: { playerName: 'Hatsu', cost: 1, amount: 1 },
-            },
-          ],
+          possibilities: [actions.heal({ id: 'Hatsu' }, { cost: 1 })],
         },
         players: [
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             health: 3,
             actionPoints: 0,
             archetype: {
@@ -1016,7 +992,7 @@ describe('players', () => {
             },
           },
           {
-            name: 'SoE',
+            id: 'SoE',
             health: 1,
             actionPoints: 1,
             archetype: {
@@ -1028,18 +1004,15 @@ describe('players', () => {
     })
 
     it('should not overheal a player', () => {
+      const action = actions.heal({ id: 'Hatsu' }, { cost: 1 })
       const store = createStore({
         playerActions: {
-          possibilities: [
-            {
-              payload: { playerName: 'Hatsu', cost: 1, amount: 2 },
-            },
-          ],
+          possibilities: [action],
         },
         players: [
           {
-            name: 'Hatsu',
-            health: 2,
+            id: 'Hatsu',
+            health: 3,
             actionPoints: 1,
             archetype: {
               health: 3,
@@ -1048,21 +1021,15 @@ describe('players', () => {
         ],
       })
 
-      players.heal(store, {
-        payload: { playerName: 'Hatsu', cost: 1, amount: 2 },
-      })
+      players.heal(store, action)
 
       expect(store.getState()).toEqual({
         playerActions: {
-          possibilities: [
-            {
-              payload: { playerName: 'Hatsu', cost: 1, amount: 2 },
-            },
-          ],
+          possibilities: [actions.heal({ id: 'Hatsu' }, { cost: 1 })],
         },
         players: [
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             health: 3,
             actionPoints: 0,
             archetype: {
@@ -1074,17 +1041,14 @@ describe('players', () => {
     })
 
     it('should not put actionPoints a negative level', () => {
+      const action = actions.heal({ id: 'Hatsu' }, { cost: 2 })
       const store = createStore({
         playerActions: {
-          possibilities: [
-            {
-              payload: { playerName: 'Hatsu', cost: 2, amount: 1 },
-            },
-          ],
+          possibilities: [action],
         },
         players: [
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             health: 2,
             actionPoints: 1,
             archetype: {
@@ -1094,21 +1058,15 @@ describe('players', () => {
         ],
       })
 
-      players.heal(store, {
-        payload: { playerName: 'Hatsu', cost: 2, amount: 1 },
-      })
+      players.heal(store, actions.heal({ id: 'Hatsu' }, { cost: 2 }))
 
       expect(store.getState()).toEqual({
         playerActions: {
-          possibilities: [
-            {
-              payload: { playerName: 'Hatsu', cost: 2, amount: 1 },
-            },
-          ],
+          possibilities: [actions.heal({ id: 'Hatsu' }, { cost: 2 })],
         },
         players: [
           {
-            name: 'Hatsu',
+            id: 'Hatsu',
             health: 3,
             actionPoints: 0,
             archetype: {

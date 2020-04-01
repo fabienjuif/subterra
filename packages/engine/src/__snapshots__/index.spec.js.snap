@@ -87,7 +87,7 @@ Index: @players>init
 ===================================================================
 --- @players>init
 +++ @players>init
-@@ -1,6 +1,135 @@
+@@ -1,6 +1,138 @@
  {
 -  "players": [],
 +  "players": [
@@ -129,6 +129,7 @@ Index: @players>init
 +        ]
 +      },
 +      "name": "xXx-medic-xXx",
++      "id": "medic",
 +      "x": 0,
 +      "y": 0,
 +      "actionPoints": 2,
@@ -173,6 +174,7 @@ Index: @players>init
 +        ]
 +      },
 +      "name": "xXx-geologist-xXx",
++      "id": "geologist",
 +      "x": 0,
 +      "y": 0,
 +      "actionPoints": 2
@@ -215,6 +217,7 @@ Index: @players>init
 +        ]
 +      },
 +      "name": "xXx-scoot-xXx",
++      "id": "scoot",
 +      "x": 0,
 +      "y": 0,
 +      "actionPoints": 2
@@ -224,7 +227,7 @@ Index: @players>init
    "deckTiles": {
      "length": 10
    },
-@@ -44,9 +173,46 @@
+@@ -44,9 +176,46 @@
        "status": []
      }
    ],
@@ -234,7 +237,7 @@ Index: @players>init
 +      {
 +        "type": "@players>look",
 +        "payload": {
-+          "playerName": "xXx-medic-xXx",
++          "playerId": "medic",
 +          "x": 0,
 +          "y": -1,
 +          "cost": 1
@@ -243,7 +246,7 @@ Index: @players>init
 +      {
 +        "type": "@players>look",
 +        "payload": {
-+          "playerName": "xXx-medic-xXx",
++          "playerId": "medic",
 +          "x": -1,
 +          "y": 0,
 +          "cost": 1
@@ -252,7 +255,7 @@ Index: @players>init
 +      {
 +        "type": "@players>look",
 +        "payload": {
-+          "playerName": "xXx-medic-xXx",
++          "playerId": "medic",
 +          "x": 1,
 +          "y": 0,
 +          "cost": 1
@@ -261,7 +264,7 @@ Index: @players>init
 +      {
 +        "type": "@players>look",
 +        "payload": {
-+          "playerName": "xXx-medic-xXx",
++          "playerId": "medic",
 +          "x": 0,
 +          "y": 1,
 +          "cost": 1
@@ -272,7 +275,7 @@ Index: @players>init
    "technical": {
      "actions": [
        {
-@@ -75,8 +241,130 @@
+@@ -75,8 +244,130 @@
            {
              "type": "end"
            }
@@ -412,7 +415,7 @@ Index: @dices>init
 ===================================================================
 --- @dices>init
 +++ @dices>init
-@@ -157,9 +157,14 @@
+@@ -160,9 +160,14 @@
      {
        "type": "end"
      }
@@ -428,7 +431,7 @@ Index: @dices>init
    "grid": [
      {
        "id": 0,
-@@ -363,8 +368,17 @@
+@@ -366,8 +371,17 @@
              },
              "name": "xXx-scoot-xXx"
            }
@@ -466,7 +469,7 @@ Index: @cards>pick
        "skills": [
          {
            "type": "heal",
-@@ -45,9 +45,9 @@
+@@ -46,9 +46,9 @@
        "first": true
      },
      {
@@ -477,7 +480,7 @@ Index: @cards>pick
        "skills": [
          {
            "type": "intuition",
-@@ -134,13 +134,8 @@
+@@ -137,13 +137,8 @@
      "length": 10
    },
    "deckCards": [
@@ -491,7 +494,7 @@ Index: @cards>pick
        "damage": 2,
        "duration": 1
      },
-@@ -158,14 +153,15 @@
+@@ -161,14 +156,15 @@
        "type": "end"
      }
    ],
@@ -511,7 +514,7 @@ Index: @cards>pick
      {
        "id": 0,
        "type": "start",
-@@ -377,8 +373,178 @@
+@@ -380,8 +376,178 @@
            3,
            4,
            5
@@ -534,7 +537,7 @@ Index: @cards>pick
 +        "type": "@dices>roll",
 +        "payload": {
 +          "min": 4,
-+          "playerName": "xXx-medic-xXx",
++          "playerId": "medic",
 +          "actionOnFail": {
 +            "type": "@players>damage",
 +            "payload": {
@@ -546,7 +549,7 @@ Index: @cards>pick
 +                  "duration": 1
 +                }
 +              },
-+              "playerName": "xXx-medic-xXx"
++              "playerId": "medic"
 +            }
 +          }
 +        }
@@ -555,7 +558,7 @@ Index: @cards>pick
 +        "type": "@dices>roll",
 +        "payload": {
 +          "min": 4,
-+          "playerName": "xXx-geologist-xXx",
++          "playerId": "geologist",
 +          "actionOnFail": {
 +            "type": "@players>damage",
 +            "payload": {
@@ -567,7 +570,7 @@ Index: @cards>pick
 +                  "duration": 1
 +                }
 +              },
-+              "playerName": "xXx-geologist-xXx"
++              "playerId": "geologist"
 +            }
 +          }
 +        }
@@ -576,7 +579,7 @@ Index: @cards>pick
 +        "type": "@dices>roll",
 +        "payload": {
 +          "min": 4,
-+          "playerName": "xXx-scoot-xXx",
++          "playerId": "scoot",
 +          "actionOnFail": {
 +            "type": "@players>damage",
 +            "payload": {
@@ -588,7 +591,7 @@ Index: @cards>pick
 +                  "duration": 1
 +                }
 +              },
-+              "playerName": "xXx-scoot-xXx"
++              "playerId": "scoot"
 +            }
 +          }
 +        }
@@ -597,7 +600,7 @@ Index: @cards>pick
 +        "type": "@dices>rolled",
 +        "payload": {
 +          "min": 4,
-+          "playerName": "xXx-medic-xXx",
++          "playerId": "medic",
 +          "actionOnFail": {
 +            "type": "@players>damage",
 +            "payload": {
@@ -609,7 +612,7 @@ Index: @cards>pick
 +                  "duration": 1
 +                }
 +              },
-+              "playerName": "xXx-medic-xXx"
++              "playerId": "medic"
 +            }
 +          },
 +          "value": 2
@@ -619,7 +622,7 @@ Index: @cards>pick
 +        "type": "@dices>rolled",
 +        "payload": {
 +          "min": 4,
-+          "playerName": "xXx-geologist-xXx",
++          "playerId": "geologist",
 +          "actionOnFail": {
 +            "type": "@players>damage",
 +            "payload": {
@@ -631,7 +634,7 @@ Index: @cards>pick
 +                  "duration": 1
 +                }
 +              },
-+              "playerName": "xXx-geologist-xXx"
++              "playerId": "geologist"
 +            }
 +          },
 +          "value": 3
@@ -641,7 +644,7 @@ Index: @cards>pick
 +        "type": "@dices>rolled",
 +        "payload": {
 +          "min": 4,
-+          "playerName": "xXx-scoot-xXx",
++          "playerId": "scoot",
 +          "actionOnFail": {
 +            "type": "@players>damage",
 +            "payload": {
@@ -653,7 +656,7 @@ Index: @cards>pick
 +                  "duration": 1
 +                }
 +              },
-+              "playerName": "xXx-scoot-xXx"
++              "playerId": "scoot"
 +            }
 +          },
 +          "value": 4
@@ -670,7 +673,7 @@ Index: @cards>pick
 +              "duration": 1
 +            }
 +          },
-+          "playerName": "xXx-medic-xXx"
++          "playerId": "medic"
 +        }
 +      },
 +      {
@@ -684,7 +687,7 @@ Index: @cards>pick
 +              "duration": 1
 +            }
 +          },
-+          "playerName": "xXx-geologist-xXx"
++          "playerId": "geologist"
 +        }
        }
      ]
