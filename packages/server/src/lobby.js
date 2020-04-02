@@ -7,7 +7,24 @@ const { v4: uuid } = uuidPackage
 
 // TODO: check lobbies timeout time to time
 let lobbies = [] // TODO: should be a database
+const waitingLobbies = new Set() // TODO: should be a database
 const gameNodes = new Map() // TODO: should be a database
+
+/**
+ * LobbyId can join the next game node
+ */
+const joinGameNode = (lobbyId) => {
+  waitingLobbies.delete(lobbyId)
+  const [gameNodeId, gameNode] = gameNodes.entries().next.value
+  // FIXME: need a userId -> client Map
+  const lobby = lobbies.find(({ id }) => lobbyId)
+  // TODO: send informations to game node (REST)
+  lobby.game = {
+    id: gameNodeId,
+    startedAt: Date.now(),
+  }
+  // TODO: send @server>redirect / type: 'game'
+}
 
 /**
  * Creates or join a lobby when a player ask.
@@ -38,13 +55,16 @@ const createOrJoinLobby = (join) => (client, action) => {
   } else {
     if (join) {
       lobby = lobbies.find(({ id }) => id === action.payload.lobbyId)
-      if (!lobby) {
-        console.log('\tlobby not found', action.payload.lobbyId)
+      if (!lobby || lobby.game) {
+        console.log(
+          '\tlobby not found or game already started',
+          action.payload.lobbyId,
+        )
 
         client.dispatch({
           type: '@server>error',
           payload: {
-            message: 'lobby not found',
+            message: 'lobby not found or game already started',
             lobbyId: action.payload.lobbyId,
           },
         })
@@ -94,6 +114,7 @@ const leaveLobby = (client, action) => {
   lobby.users = lobby.users.filters((userId) => userId !== client.user.userId)
   if (lobby.users.length === 0) {
     lobbies = lobbies.filter((curr) => curr !== lobby)
+    waitingLobbies.delete(lobby.id)
   }
 }
 
@@ -113,9 +134,15 @@ const startGame = (client, action) => {
 
   const [gameNodeId, gameNode] = gameNodes.entries().next().value || []
   if (!gameNode) {
-    // TODO:
+    console.log(
+      '\tno server found yet... adding the lobby in the waiting list',
+      action.payload.lobbyId,
+    )
+    // TODO: when a server add itself it should look at this
+    waitingLobbies.add(lobby.id)
+    return
   }
-  // TODO:
+  joinGameNode(lobby.id)
 }
 
 const listeners = [
