@@ -44,7 +44,7 @@ const createOrJoinLobby = (join) => (client, action) => {
         client.dispatch({
           type: '@server>error',
           payload: {
-            message: 'Lobby not found',
+            message: 'lobby not found',
             lobbyId: action.payload.lobbyId,
           },
         })
@@ -88,7 +88,7 @@ const createOrJoinLobby = (join) => (client, action) => {
 }
 
 const leaveLobby = (client, action) => {
-  const lobby = lobbies.find(({ id }) => id === action.payload.lobbyId)
+  const lobby = lobbies.find(({ users }) => users.includes(client.user.userId))
   if (!lobby) return
 
   lobby.users = lobby.users.filters((userId) => userId !== client.user.userId)
@@ -97,10 +97,32 @@ const leaveLobby = (client, action) => {
   }
 }
 
+const startGame = (client, action) => {
+  const lobby = lobbies.find(({ id }) => id === action.payload.lobbyId)
+  if (!lobby) {
+    console.log('\tlobby not found', action.payload.lobbyId)
+    send({
+      type: '@server>error',
+      payload: {
+        message: 'lobby not found',
+        lobbyId: action.payload.lobbyId,
+      },
+    })
+    return
+  }
+
+  const [gameNodeId, gameNode] = gameNodes.entries().next().value || []
+  if (!gameNode) {
+    // TODO:
+  }
+  // TODO:
+}
+
 const listeners = [
   ['@client>create', createOrJoinLobby(false)],
   ['@client>join', createOrJoinLobby(true)],
   ['@client>leave', leaveLobby],
+  ['@client>start', startGame],
 ]
 
 export default (polka, prefix) => {
