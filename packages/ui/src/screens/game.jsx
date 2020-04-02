@@ -8,7 +8,7 @@ import { tiles as tilesHelpers } from '@subterra/engine'
 import { Grid, UIPlayer, CardsDeck, Logs, MovableGrid } from '../components'
 import classes from './game.module.scss'
 
-const Game = ({ mode, cards, players, tiles, dices }) => {
+const Game = ({ mode, cards, players, tiles, dices, token }) => {
   const [cells, setCells] = useState([])
   const [orderedPlayers, setOrderedPlayers] = useState([])
   const [{ state, dispatch }, setStore] = useState({
@@ -20,6 +20,15 @@ const Game = ({ mode, cards, players, tiles, dices }) => {
     if (mode === 'online') {
       const server = new SockJS('/game')
 
+      const send = (action) => server.send(JSON.stringify(action))
+
+      // send our token
+      const sendToken = () =>
+        send({
+          type: '@client>token',
+          payload: token,
+        })
+
       // this is just for DEBUG purpose in redux-devtools
       let store = { state: {}, dispatch: () => {} }
       if (process.env.NODE_ENV === 'development') {
@@ -29,6 +38,8 @@ const Game = ({ mode, cards, players, tiles, dices }) => {
         store.addListener('@server>setState', (store, action) => {
           store.setState(action.payload)
         })
+
+        store.addListener('@server>askToken', sendToken)
       }
 
       server.onmessage = function (e) {
@@ -36,8 +47,14 @@ const Game = ({ mode, cards, players, tiles, dices }) => {
         store.dispatch(action)
 
         const { type, payload } = action
+
         if (type === '@server>setState') {
           setStore((old) => ({ ...old, state: payload }))
+          return
+        }
+
+        if (type === '@server>error') {
+          console.error(action)
           return
         }
 
@@ -48,14 +65,16 @@ const Game = ({ mode, cards, players, tiles, dices }) => {
         console.log('TODO: close server socket')
       }
 
-      setStore((old) => ({
-        ...old,
-        dispatch: (action) => {
-          server.send(
-            JSON.stringify({ type: '@client>dispatch', payload: action }),
-          )
-        },
-      }))
+      server.onopen = () => {
+        sendToken()
+
+        setStore((old) => ({
+          ...old,
+          dispatch: (action) => {
+            send({ type: '@client>dispatch', payload: action })
+          },
+        }))
+      }
     } else {
       const engine = createEngine()
       // connects engine to react
@@ -73,7 +92,7 @@ const Game = ({ mode, cards, players, tiles, dices }) => {
       engine.dispatch({ type: '@tiles>init', payload: tiles })
       engine.dispatch({ type: '@players>init', payload: players })
     }
-  }, [mode, cards, dices, tiles, players])
+  }, [mode, cards, dices, tiles, players, token])
 
   useEffect(() => {
     let cells = tilesHelpers.getWrappingCells(state.grid)

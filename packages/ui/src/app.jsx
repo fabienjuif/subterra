@@ -1,10 +1,29 @@
 import React, { useState, useCallback } from 'react'
+import { wrapSubmit } from 'from-form-submit'
 import { Prepare, Game } from './screens'
 import './variables.css'
 
 const App = () => {
   const [mode, setMode] = useState()
   const [init, setInit] = useState()
+
+  const connect = useCallback(
+    wrapSubmit(async (login) => {
+      const raw = await fetch('/auth', {
+        method: 'POST',
+        body: JSON.stringify(login),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      if (raw.ok) {
+        const token = await raw.text()
+        setInit({ token })
+        setMode('online')
+      }
+    }),
+    [],
+  )
 
   const onStart = useCallback((init) => {
     setInit(init)
@@ -13,7 +32,11 @@ const App = () => {
   if (!mode) {
     return (
       <div>
-        <button onClick={() => setMode('online')}>online</button>
+        <form onSubmit={connect}>
+          <input name="username" type="text" placeholder="username" />
+          <input name="password" type="password" placeholder="password" />
+          <button type="submit">connect</button>
+        </form>
         <button onClick={() => setMode('local')}>local</button>
       </div>
     )
@@ -24,7 +47,7 @@ const App = () => {
     return <Game {...init} mode={mode} />
   }
 
-  return <Game mode={mode} />
+  return <Game {...init} mode={mode} />
 }
 
 export default App
