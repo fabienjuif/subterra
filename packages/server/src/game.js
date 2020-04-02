@@ -3,6 +3,8 @@ import sockjs from 'sockjs'
 import { createEngine, dices } from '@subterra/engine'
 import { archetypes, cards } from '@subterra/data'
 
+// TODO: use sock.js wrapper of sockjs
+
 const PORT = process.env.PORT || 9999
 const ENDPOINT_AUTH_VERIFY =
   process.env.ENDPOINT_AUTH_VERIFY || `http://localhost:${PORT}/auth`
@@ -145,6 +147,6 @@ gameServer.on('connection', function (socket) {
   client.on('close', function () {})
 })
 
-export default (server, prefix) => {
-  gameServer.installHandlers(server, { prefix })
+export default (polka, prefix) => {
+  gameServer.installHandlers(polka.server, { prefix })
 }

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { wrapSubmit } from 'from-form-submit'
-import { Prepare, Game } from './screens'
+import { Prepare, Game, Lobby } from './screens'
 import './variables.css'
 
 const App = () => {
@@ -42,12 +42,15 @@ const App = () => {
     )
   }
 
-  if (mode === 'local') {
-    if (!init) return <Prepare onStart={onStart} />
-    return <Game {...init} mode={mode} />
-  }
+  if (init && init.token) return <Lobby {...init} />
+  return null
 
-  return <Game {...init} mode={mode} />
+  // if (mode === 'local') {
+  //   if (!init) return <Prepare onStart={onStart} />
+  //   return <Game {...init} mode={mode} />
+  // }
+
+  // return <Game {...init} mode={mode} />
 }
 
 export default App
