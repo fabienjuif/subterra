@@ -87,9 +87,20 @@ const createOrJoinLobby = (join) => (client, action) => {
   })
 }
 
+const leaveLobby = (client, action) => {
+  const lobby = lobbies.find(({ id }) => id === action.payload.lobbyId)
+  if (!lobby) return
+
+  lobby.users = lobby.users.filters((userId) => userId !== client.user.userId)
+  if (lobby.users.length === 0) {
+    lobbies = lobbies.filter((curr) => curr !== lobby)
+  }
+}
+
 const listeners = [
   ['@client>create', createOrJoinLobby(false)],
   ['@client>join', createOrJoinLobby(true)],
+  ['@client>leave', leaveLobby],
 ]
 
 export default (polka, prefix) => {
