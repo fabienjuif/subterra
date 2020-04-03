@@ -1,3 +1,4 @@
+export { default as Archetype } from './archetype'
 export { default as CardsDeck } from './cardsDeck'
 export { default as Grid } from './grid'
 export { default as Logs } from './logs'

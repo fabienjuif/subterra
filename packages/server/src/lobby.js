@@ -170,7 +170,7 @@ const startGame = (client, action) => {
   if (!gameNode) {
     console.log(
       '\tno server found yet... adding the lobby in the waiting list',
-      action.payload.lobbyId,
+      lobby.id,
     )
     // TODO: when a server add itself it should look at this
     waitingLobbies.add(lobby.id)

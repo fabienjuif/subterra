@@ -64,6 +64,7 @@ export default (polka, prefix) => {
   const withPrefix = (path) => `${prefix}${path}`
 
   polka.use(bodyParser.json()).post(withPrefix('/'), (req, res) => {
+    return
     // TODO: FIXME: security issue, the game server that's call this endpoint
     //       should give a GPG public key
 

@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useCallback } from 'react'
 import { useHistory, useParams, useLocation } from 'react-router-dom'
 import cn from 'classnames'
 import SockJS from 'sockjs-client'
+import { archetypes as archetypesData } from '@subterra/data'
+import { Archetype } from '../components'
+import classes from './lobby.module.scss'
 
 const Lobby = () => {
   const sendRef = useRef()
@@ -65,6 +68,11 @@ const Lobby = () => {
   return (
     <div className={cn('lobby')}>
       Lobby {lobbyId}
+      <div className={cn('archetypes', classes.archetypes)}>
+        {archetypesData.map((archetype) => (
+          <Archetype {...archetype} />
+        ))}
+      </div>
       <button type="button" onClick={onStart}>
         start
       </button>

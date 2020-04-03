@@ -5,7 +5,7 @@ import {
   cards as cardsData,
 } from '@subterra/data'
 import { dices } from '@subterra/engine'
-import Archetype from './archetype'
+import { Archetype } from '../../components'
 import classes from './prepare.module.scss'
 
 const Prepare = ({ onStart }) => {
