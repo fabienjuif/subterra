@@ -17,7 +17,7 @@ const gameNodes = new Map() // TODO: should be a database
  */
 const joinGameNode = async (client, { payload: lobbyId }) => {
   waitingLobbies.delete(lobbyId)
-  const [gameNodeId, gameNode] = gameNodes.entries().next.value
+  const [gameNodeId, gameNode] = gameNodes.entries().next().value
   // FIXME: need a userId -> client Map
   const lobby = lobbies.find(({ id }) => lobbyId)
 
@@ -152,7 +152,8 @@ const leaveLobby = (client, action) => {
 }
 
 const startGame = (client, action) => {
-  const lobby = lobbies.find(({ id }) => id === action.payload.lobbyId)
+  const lobby = lobbies.find(({ users }) => users.includes(client.user.userId))
+
   if (!lobby) {
     console.log('\tlobby not found', action.payload.lobbyId)
     send({

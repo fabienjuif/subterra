@@ -1,18 +1,31 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useCallback } from 'react'
+import { useHistory, useParams, useLocation } from 'react-router-dom'
 import cn from 'classnames'
 import SockJS from 'sockjs-client'
 
-const Lobby = ({ token }) => {
-  useEffect(() => {
-    const server = new SockJS('/lobby')
+const Lobby = () => {
+  const sendRef = useRef()
+  const location = useLocation()
+  const history = useHistory()
+  const { lobbyId } = useParams()
 
-    const send = (action) => server.send(JSON.stringify(action))
+  useEffect(() => {
+    if (sendRef.current) return
+
+    if (!location.state || !location.state.token) {
+      history.push('/')
+      return
+    }
+
+    const server = new SockJS('/lobby/ws')
+
+    sendRef.current = (action) => server.send(JSON.stringify(action))
 
     // send our token
     const sendToken = () =>
-      send({
+      sendRef.current({
         type: '@client>token',
-        payload: token,
+        payload: location.state.token,
       })
 
     server.onmessage = function (e) {
@@ -24,7 +37,7 @@ const Lobby = ({ token }) => {
         console.error(action)
         return
       } else if (type === '@server>redirect') {
-        console.log(action)
+        history.push(`/${payload.type}/${payload.id}`)
         return
       }
 
@@ -37,16 +50,26 @@ const Lobby = ({ token }) => {
 
     server.onopen = () => {
       sendToken()
-
-      // send({ type: '@client>create' })
-      send({
-        type: '@client>join',
-        payload: { lobbyId: '76fe0fc3-5127-4ea1-992b-9ede20673cde' },
-      })
+      sendRef.current({ type: '@client>create' })
     }
-  }, [token])
+  }, [location.state, history])
 
-  return <div className={cn('lobby')}>Lobby</div>
+  const onStart = useCallback(() => {
+    sendRef.current({ type: '@client>start' })
+  }, [])
+
+  if (!lobbyId) {
+    return <div>Creating lobby...</div>
+  }
+
+  return (
+    <div className={cn('lobby')}>
+      Lobby {lobbyId}
+      <button type="button" onClick={onStart}>
+        start
+      </button>
+    </div>
+  )
 }
 
 export default Lobby
