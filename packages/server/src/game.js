@@ -1,7 +1,18 @@
 import bodyParser from 'body-parser'
-import { create } from './sock'
-import { createEngine, dices } from '@subterra/engine'
+import uuidPackage from 'uuid'
+import got from 'got'
 import { archetypes, cards } from '@subterra/data'
+import { createEngine, dices } from '@subterra/engine'
+import { create } from './sock'
+
+const { v4: uuid } = uuidPackage
+
+const ID = process.env.NODE_ID || uuid()
+const PORT = process.env.PORT || 9999
+const URL = process.env.URL || `http://localhost:${PORT}/game`
+const ENDPOINT_LOBBY_REGISTERS =
+  process.env.ENDPOINT_LOBBY_REGISTERS ||
+  `http://localhost:${PORT}/lobby/gameNodes`
 
 let engine
 let users = []
@@ -82,5 +93,18 @@ export default (polka, prefix) => {
   })
 
   const sockServer = create(listeners)
-  sockServer.installHandlers(polka.server, { prefix })
+  sockServer.installHandlers(polka.server, { prefix: `${prefix}/ws` })
+
+  // send the lobby that this server is ready to be called
+
+  got(ENDPOINT_LOBBY_REGISTERS, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      id: ID,
+      url: URL,
+    }),
+  })
 }

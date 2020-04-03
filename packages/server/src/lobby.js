@@ -198,6 +198,7 @@ export default (polka, prefix) => {
     // TODO: FIXME: security issue, the game server that's call this endpoint
     //       should give a GPG public key
     const { id, url } = req.body
+    console.log('gameNode trying to register with id and url', id, url)
     if (!id || !url) {
       send(res, 400, 'Body needs id and url')
       return
@@ -212,9 +213,9 @@ export default (polka, prefix) => {
     lobbies = lobbies.filter((lobby) => lobby.game.id !== id)
 
     // game node is available
-    gameNodes.add(id, { id, url })
+    gameNodes.set(id, { id, url })
   })
 
   const sockServer = create(listeners)
-  sockServer.installHandlers(polka.server, { prefix })
+  sockServer.installHandlers(polka.server, { prefix: `${prefix}/ws` })
 }
