@@ -1,3 +1,4 @@
+import got from 'got'
 import bodyParser from 'body-parser'
 import uuidPackage from 'uuid'
 import send from '@polka/send-type'
@@ -6,6 +7,7 @@ import { create } from './sock'
 const { v4: uuid } = uuidPackage
 
 // TODO: check lobbies timeout time to time
+const clients = new Map() // <userId,client>
 let lobbies = [] // TODO: should be a database
 const waitingLobbies = new Set() // TODO: should be a database
 const gameNodes = new Map() // TODO: should be a database
@@ -13,17 +15,48 @@ const gameNodes = new Map() // TODO: should be a database
 /**
  * LobbyId can join the next game node
  */
-const joinGameNode = (lobbyId) => {
+const joinGameNode = async (client, { payload: lobbyId }) => {
   waitingLobbies.delete(lobbyId)
   const [gameNodeId, gameNode] = gameNodes.entries().next.value
   // FIXME: need a userId -> client Map
   const lobby = lobbies.find(({ id }) => lobbyId)
-  // TODO: send informations to game node (REST)
+
+  // remove the gameNode from available list
+  gameNodes.delete(gameNodeId)
+
+  // send informations to game server
+  await got(gameNode.url, {
+    method: 'POST',
+    body: JSON.stringify({
+      players: lobby.players,
+    }),
+    header: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  // mark the lobby as started
   lobby.game = {
-    id: gameNodeId,
+    ...gameNode,
     startedAt: Date.now(),
   }
-  // TODO: send @server>redirect / type: 'game'
+
+  // send the game url to the lobby users
+  lobby.users.forEach((userId) => {
+    const cl = clients.get(userId)
+    if (!cl) {
+      console.log('\tclient not found while starting the game', userId)
+      return
+    }
+
+    cl.send({
+      type: '@server>redirect',
+      payload: {
+        ...lobby.game,
+        type: 'game',
+      },
+    })
+  })
 }
 
 /**
@@ -37,7 +70,7 @@ const createOrJoinLobby = (join) => (client, action) => {
   let lobby = lobbies.find(({ users }) => users.includes(client.user.userId))
   if (lobby && lobby.game) {
     console.log('\tjoining existing game', client.user.userId)
-    client.dispatch({
+    client.send({
       type: '@server>redirect',
       payload: {
         ...lobby.game,
@@ -61,7 +94,7 @@ const createOrJoinLobby = (join) => (client, action) => {
           action.payload.lobbyId,
         )
 
-        client.dispatch({
+        client.send({
           type: '@server>error',
           payload: {
             message: 'lobby not found or game already started',
@@ -74,7 +107,7 @@ const createOrJoinLobby = (join) => (client, action) => {
       if (lobby.users.length >= 6) {
         console.log('\tlobby is full', action.payload.lobbyId)
 
-        client.dispatch({
+        client.send({
           type: '@server>error',
           payload: {
             message: 'lobby is full',
@@ -98,7 +131,7 @@ const createOrJoinLobby = (join) => (client, action) => {
     }
   }
 
-  client.dispatch({
+  client.send({
     type: '@server>redirect',
     payload: {
       type: 'lobby',
@@ -132,7 +165,7 @@ const startGame = (client, action) => {
     return
   }
 
-  const [gameNodeId, gameNode] = gameNodes.entries().next().value || []
+  const gameNode = gameNodes.values().next().value
   if (!gameNode) {
     console.log(
       '\tno server found yet... adding the lobby in the waiting list',
@@ -142,10 +175,16 @@ const startGame = (client, action) => {
     waitingLobbies.add(lobby.id)
     return
   }
-  joinGameNode(lobby.id)
+  joinGameNode(client, { payload: lobby.id })
+}
+
+const addClient = (client, action) => {
+  clients.set(client.user.userId, client)
+  // TODO: disconnected
 }
 
 const listeners = [
+  ['@server>user>verified', addClient],
   ['@client>create', createOrJoinLobby(false)],
   ['@client>join', createOrJoinLobby(true)],
   ['@client>leave', leaveLobby],
@@ -169,6 +208,10 @@ export default (polka, prefix) => {
       gameNodes.delete(id)
     }
 
+    // remove lobby attached to this game node (if it exists)
+    lobbies = lobbies.filter((lobby) => lobby.game.id !== id)
+
+    // game node is available
     gameNodes.add(id, { id, url })
   })
 

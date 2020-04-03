@@ -9,7 +9,7 @@ const ENDPOINT_AUTH_VERIFY =
   process.env.ENDPOINT_AUTH_VERIFY || `http://localhost:${PORT}/auth`
 
 const wrapSocket = (socket) => {
-  socket.dispatch = (action, mute) => {
+  socket.send = (action, mute) => {
     if (!mute) console.log('<<<', action.type)
     socket.write(JSON.stringify(action))
   }
@@ -20,14 +20,18 @@ const wrapSocket = (socket) => {
     listeners.push([type, reaction])
   }
 
+  socket.dispatch = (action) => {
+    listeners
+      .filter(([type]) => type === action.type)
+      .forEach(([, reaction]) => reaction(socket, action))
+  }
+
   socket.on('data', (message) => {
     const action = JSON.parse(message)
 
     console.log('>>>', action.type)
 
-    listeners
-      .filter(([type]) => type === action.type)
-      .forEach(([, reaction]) => reaction(socket, action))
+    socket.dispatch(action)
   })
 
   return socket
@@ -58,6 +62,7 @@ const checkToken = async (client, { payload }) => {
     client.verified = true
     client.verifying = false
     client.user = user
+    client.dispatch({ type: '@server>user>verified' })
   } catch (ex) {
     console.trace(ex)
 
@@ -80,7 +85,7 @@ export const create = (listeners, sockjsOptions = {}) => {
     const sockjsClose = client.close
     client.close = (client, reason) => {
       clients = clients.filter((curr) => curr !== client)
-      client.dispatch({ type: '@server>error', payload: reason })
+      client.send({ type: '@server>error', payload: reason })
       client.verified = false
       client.verifying = false
       sockjsClose.call(client, [])
@@ -89,7 +94,7 @@ export const create = (listeners, sockjsOptions = {}) => {
     client.broadcast = (action) => {
       clients.forEach((c) => {
         console.log('<<<', action.type, '[broadcast]')
-        c.dispatch(action, true)
+        c.send(action, true)
       })
     }
 
