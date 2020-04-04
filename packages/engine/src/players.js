@@ -1,4 +1,5 @@
 import { isActionEquals, players as actions } from './actions'
+import { players as selectors } from './selectors'
 import {
   isCellEqual,
   getWrappingCells,
@@ -50,7 +51,7 @@ export const move = (store, action) => {
   store.mutate((state) => {
     if (!state.playerActions.possibilities.some(isActionEquals(action))) return
 
-    const player = findPlayerFromAction(state, action)
+    const player = selectors.findById(state, action)
 
     player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
     player.x = action.payload.x
@@ -62,7 +63,7 @@ export const look = (store, action) => {
   store.mutate((state) => {
     if (!state.playerActions.possibilities.some(isActionEquals(action))) return
 
-    const player = findPlayerFromAction(state, action)
+    const player = selectors.findById(state, action)
     const playerTile = state.grid.find(isCellEqual(player))
 
     // TODO: Should take the first tile of the deck Tile
@@ -90,7 +91,7 @@ export const rotate = (store, action) => {
   store.mutate((state) => {
     if (!state.playerActions.possibilities.some(isActionEquals(action))) return
 
-    const player = findPlayerFromAction(state, action)
+    const player = selectors.findById(state, action)
     const playerTile = state.grid.find(isCellEqual(player))
     const rotatedTile = {
       ...state.playerActions.tile,
@@ -233,15 +234,11 @@ export const heal = (store, action) => {
   }
 
   store.mutate((state) => {
-    const player = findPlayerFromAction(state, action)
+    const player = selectors.findById(state, action)
     player.health = Math.min(
       player.health + action.payload.amount,
       player.archetype.health,
     )
     player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
   })
-}
-
-const findPlayerFromAction = (state, action) => {
-  return state.players.find(({ id }) => id === action.payload.playerId)
 }

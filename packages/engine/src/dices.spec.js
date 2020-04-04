@@ -128,7 +128,7 @@ describe('dices', () => {
       const store = createStore({
         players: [
           {
-            name: 'SoE',
+            id: 'SoE',
             skills: [
               {
                 type: 'experienced',
@@ -143,9 +143,9 @@ describe('dices', () => {
       dices.checkAndDispatch(store, {
         payload: {
           min: 2,
-          // it should fail since the value < min bit "experienced" give +1 to the value
+          // it should fail since the value < min but "experienced" give +1 to the value
           value: 1,
-          playerName: 'SoE',
+          playerId: 'SoE',
           actionOnSuccess: {
             type: 'sucess',
             payload: { some: 'informations' },

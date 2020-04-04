@@ -1,5 +1,6 @@
 import createStore from '@myrtille/mutate'
 import * as enemies from './enemies'
+import { enemies as actions } from './actions'
 
 const createCell = (x, y) => ({
   x,
@@ -141,7 +142,7 @@ describe('enemies', () => {
       const store = createStore({
         players: [
           {
-            name: 'Tripa',
+            id: 'Tripa',
             x: 0,
             y: 0,
             strengh: 2,
@@ -167,34 +168,31 @@ describe('enemies', () => {
       enemies.process(store, {})
 
       expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith({
-        type: '@enemies>move',
-        payload: {
-          enemy: {
-            x: 2,
-            y: 0,
-          },
-          path: [
+      expect(store.dispatch).toHaveBeenCalledWith(
+        actions.move(
+          // enemy, path, player
+          { x: 2, y: 0 },
+          [
             { x: 2, y: 0 },
             { x: 1, y: 0 },
             { x: 0, y: 0 },
-          ],
-          playerName: 'Tripa',
-        },
-      })
+          ], //
+          { id: 'Tripa' },
+        ),
+      )
     })
 
     it('should move the enemy towards the closest player', () => {
       const store = createStore({
         players: [
           {
-            name: 'Tripa',
+            id: 'Tripa',
             x: 0,
             y: 0,
             strength: 2,
           },
           {
-            name: 'SoE',
+            id: 'SoE',
             x: 2,
             y: 1,
             strength: 2,
@@ -221,20 +219,16 @@ describe('enemies', () => {
       enemies.process(store, {})
 
       expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith({
-        type: '@enemies>move',
-        payload: {
-          enemy: {
-            x: 2,
-            y: 0,
-          },
-          path: [
+      expect(store.dispatch).toHaveBeenCalledWith(
+        actions.move(
+          { x: 2, y: 0 },
+          [
             { x: 2, y: 0 },
             { x: 2, y: 1 },
           ],
-          playerName: 'SoE',
-        },
-      })
+          { id: 'SoE' },
+        ),
+      )
     })
 
     it('should move the enemy towards the weakest player', () => {
@@ -242,13 +236,13 @@ describe('enemies', () => {
         const store = createStore({
           players: [
             {
-              name: 'Tripa',
+              id: 'Tripa',
               x: 1,
               y: 0,
               strength,
             },
             {
-              name: 'SoE',
+              id: 'SoE',
               x: 2,
               y: 1,
               strength: 2,
@@ -279,44 +273,36 @@ describe('enemies', () => {
 
       let dispatch = getDispatchWithTripaStrength(1)
       expect(dispatch).toHaveBeenCalledTimes(1)
-      expect(dispatch).toHaveBeenCalledWith({
-        type: '@enemies>move',
-        payload: {
-          enemy: {
-            x: 2,
-            y: 0,
-          },
-          path: [
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.move(
+          { x: 2, y: 0 },
+          [
             { x: 2, y: 0 },
             { x: 1, y: 0 },
           ],
-          playerName: 'Tripa',
-        },
-      })
+          { id: 'Tripa' },
+        ),
+      )
 
       dispatch = getDispatchWithTripaStrength(3)
       expect(dispatch).toHaveBeenCalledTimes(1)
-      expect(dispatch).toHaveBeenCalledWith({
-        type: '@enemies>move',
-        payload: {
-          enemy: {
-            x: 2,
-            y: 0,
-          },
-          path: [
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.move(
+          { x: 2, y: 0 },
+          [
             { x: 2, y: 0 },
             { x: 2, y: 1 },
           ],
-          playerName: 'SoE',
-        },
-      })
+          { id: 'SoE' },
+        ),
+      )
     })
 
     it('should move all enemies', () => {
       const store = createStore({
         players: [
           {
-            name: 'Tripa',
+            id: 'Tripa',
             x: 0,
             y: 0,
             strengh: 2,
@@ -349,50 +335,32 @@ describe('enemies', () => {
       enemies.process(store, {})
 
       expect(store.dispatch.mock.calls.map((args) => args[0])).toEqual([
-        {
-          type: '@enemies>move',
-          payload: {
-            enemy: {
-              x: 1,
-              y: 0,
-            },
-            path: [
-              { x: 1, y: 0 },
-              { x: 0, y: 0 },
-            ],
-            playerName: 'Tripa',
-          },
-        },
-        {
-          type: '@enemies>move',
-          payload: {
-            enemy: {
-              x: 2,
-              y: 0,
-            },
-            path: [
-              { x: 2, y: 0 },
-              { x: 1, y: 0 },
-              { x: 0, y: 0 },
-            ],
-            playerName: 'Tripa',
-          },
-        },
-        {
-          type: '@enemies>move',
-          payload: {
-            enemy: {
-              x: 2,
-              y: 0,
-            },
-            path: [
-              { x: 2, y: 0 },
-              { x: 1, y: 0 },
-              { x: 0, y: 0 },
-            ],
-            playerName: 'Tripa',
-          },
-        },
+        actions.move(
+          { x: 1, y: 0 },
+          [
+            { x: 1, y: 0 },
+            { x: 0, y: 0 },
+          ],
+          { id: 'Tripa' },
+        ),
+        actions.move(
+          { x: 2, y: 0 },
+          [
+            { x: 2, y: 0 },
+            { x: 1, y: 0 },
+            { x: 0, y: 0 },
+          ],
+          { id: 'Tripa' },
+        ),
+        actions.move(
+          { x: 2, y: 0 },
+          [
+            { x: 2, y: 0 },
+            { x: 1, y: 0 },
+            { x: 0, y: 0 },
+          ],
+          { id: 'Tripa' },
+        ),
       ])
     })
 
@@ -400,7 +368,7 @@ describe('enemies', () => {
       const store = createStore({
         players: [
           {
-            name: 'Tripa',
+            id: 'Tripa',
             x: 0,
             y: 0,
             top: true,
@@ -434,20 +402,14 @@ describe('enemies', () => {
       enemies.process(store, {})
 
       expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith({
-        type: '@enemies>kill',
-        payload: {
-          x: 7,
-          y: 0,
-        },
-      })
+      expect(store.dispatch).toHaveBeenCalledWith(actions.kill({ x: 7, y: 0 }))
     })
 
     it('should not move the enemy through a wall', () => {
       const store = createStore({
         players: [
           {
-            name: 'Tripa',
+            id: 'Tripa',
             x: 0,
             y: 0,
             strengh: 2,
@@ -472,23 +434,19 @@ describe('enemies', () => {
       enemies.process(store, {})
 
       expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith({
-        type: '@enemies>move',
-        payload: {
-          enemy: {
-            x: 2,
-            y: 0,
-          },
-          path: [
+      expect(store.dispatch).toHaveBeenCalledWith(
+        actions.move(
+          { x: 2, y: 0 },
+          [
             { x: 2, y: 0 },
             { x: 2, y: 1 },
             { x: 1, y: 1 },
             { x: 1, y: 0 },
             { x: 0, y: 0 },
           ],
-          playerName: 'Tripa',
-        },
-      })
+          { id: 'Tripa' },
+        ),
+      )
     })
   })
 
@@ -508,7 +466,7 @@ describe('enemies', () => {
         ],
       })
 
-      enemies.kill(store, { payload: { x: 1, y: 0 } })
+      enemies.kill(store, actions.kill({ x: 1, y: 0 }))
 
       expect(store.getState()).toEqual({
         grid: [
@@ -540,7 +498,7 @@ describe('enemies', () => {
         ],
       })
 
-      enemies.kill(store, { payload: { x: 1, y: 0 } })
+      enemies.kill(store, actions.kill({ x: 1, y: 0 }))
 
       expect(store.getState()).toEqual({
         grid: [

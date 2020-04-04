@@ -56,6 +56,27 @@ export const players = {
   }),
 }
 
+export const enemies = {
+  move: (enemy, path, player) => ({
+    type: '@enemies>move',
+    payload: {
+      enemy: {
+        x: enemy.x,
+        y: enemy.y,
+      },
+      path,
+      playerId: player.id,
+    },
+  }),
+  kill: (enemy) => ({
+    type: '@enemies>kill',
+    payload: {
+      x: enemy.x,
+      y: enemy.y,
+    },
+  }),
+}
+
 export const roll = {
   failThen: (min, player, actionOnFail) => ({
     type: '@dices>roll',
