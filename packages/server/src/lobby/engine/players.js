@@ -9,6 +9,23 @@ export const addPlayer = (store, action) => {
   })
 }
 
+export const removePlayer = (store, action) => {
+  const prevState = store.getState()
+  const playerIndex = prevState.players.findIndex(
+    ({ id }) => id === action.payload.id,
+  )
+
+  if (playerIndex < 0) return
+
+  store.mutate((state) => {
+    const player = state.players[playerIndex]
+    if (player.type) {
+      state.archetypes.push(archetypes.find(({ type }) => type === player.type))
+    }
+    state.players.splice(playerIndex, 1)
+  })
+}
+
 export const setArchetype = (store, action) => {
   const prevState = store.getState()
 

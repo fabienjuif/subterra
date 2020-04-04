@@ -195,7 +195,12 @@ const leaveLobby = (client, action) => {
     waitingLobbies.delete(client.lobby.id)
   }
 
-  // TODO: remove user from lobby engine and broadcast setState
+  client.lobby.engine.dispatch({
+    type: '@players>remove',
+    payload: { id: client.user.userId },
+  })
+
+  broadcastState(client, {})
 
   client.lobby = undefined
 }

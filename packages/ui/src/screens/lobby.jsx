@@ -48,7 +48,6 @@ const Lobby = () => {
         history.push(`/${payload.type}/${payload.id}`)
         return
       } else if (type === '@server>setState') {
-        console.log(payload)
         setStore((old) => ({ ...old, state: payload }))
         return
       }
@@ -102,6 +101,11 @@ const Lobby = () => {
     sendRef.current({ type: '@client>create' })
   }, [])
 
+  const onLeave = useCallback(() => {
+    sendRef.current({ type: '@client>leave' })
+    history.push('/lobby')
+  }, [history])
+
   if (!lobbyId) {
     return (
       <div>
@@ -143,6 +147,9 @@ const Lobby = () => {
       </div>
       <button type="button" onClick={onStart}>
         start
+      </button>
+      <button type="button" onClick={onLeave}>
+        leave
       </button>
     </div>
   )
