@@ -48,6 +48,7 @@ const Lobby = () => {
         history.push(`/${payload.type}/${payload.id}`)
         return
       } else if (type === '@server>setState') {
+        console.log(payload)
         setStore((old) => ({ ...old, state: payload }))
         return
       }
@@ -125,7 +126,19 @@ const Lobby = () => {
       Lobby {lobbyId}
       <div className={cn('archetypes', classes.archetypes)}>
         {state.archetypes.map((archetype) => (
-          <Archetype {...archetype} onClick={onChooseArchetype} />
+          <Archetype
+            {...archetype}
+            onClick={onChooseArchetype}
+            key={archetype.type}
+          />
+        ))}
+      </div>
+      <div className={cn('players', classes.players)}>
+        {state.players.map((player) => (
+          <div key={player.id}>
+            <div>{player.name}</div>
+            {player.archetype && <Archetype {...player.archetype} />}
+          </div>
         ))}
       </div>
       <button type="button" onClick={onStart}>

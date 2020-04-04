@@ -14,6 +14,27 @@ const waitingLobbies = new Set() // TODO: should be a database
 const gameNodes = new Map() // TODO: should be a database
 
 /**
+ * Broadcast state to all players in the lobby
+ */
+const broadcastState = (client, action) => {
+  const { lobby } = client
+  const { engine } = lobby
+
+  lobby.users.forEach((userId) => {
+    const cl = clients.get(userId)
+    if (!cl) {
+      console.log('\tclient not found while sending the lobby state', userId)
+      return
+    }
+
+    cl.send({
+      type: '@server>setState',
+      payload: engine.getState(),
+    })
+  })
+}
+
+/**
  * LobbyId can join the next game node
  */
 const joinGameNode = async (client, action) => {
@@ -68,7 +89,7 @@ const joinGameNode = async (client, action) => {
  */
 const createOrJoinLobby = (join) => (client, action) => {
   // looking for a lobby
-  let lobby = lobbies.find(({ users }) => users.includes(client.user.userId))
+  let lobby = lobbies.find(({ users }) => users.has(client.user.userId))
   if (lobby && lobby.game) {
     console.log('\tjoining existing game', client.user.userId)
     client.send({
@@ -132,12 +153,14 @@ const createOrJoinLobby = (join) => (client, action) => {
     }
   }
 
-  // TODO: use this shortcut in others reactions
   lobby.users.add(client.user.userId)
   client.lobby = lobby
   lobby.engine.dispatch({
     type: '@players>add',
-    payload: { name: client.user.name, id: client.user.userId },
+    payload: {
+      name: client.user.name || client.user.userId,
+      id: client.user.userId,
+    },
   })
   client.send({
     type: '@server>redirect',
@@ -147,10 +170,7 @@ const createOrJoinLobby = (join) => (client, action) => {
     },
   })
 
-  client.send({
-    type: '@server>setState',
-    payload: lobby.engine.getState(),
-  })
+  broadcastState(client, {})
 }
 
 const leaveLobby = (client, action) => {
@@ -174,6 +194,8 @@ const leaveLobby = (client, action) => {
     lobbies = lobbies.filter((curr) => curr !== client.lobby)
     waitingLobbies.delete(client.lobby.id)
   }
+
+  // TODO: remove user from lobby engine and broadcast setState
 
   client.lobby = undefined
 }
@@ -223,10 +245,7 @@ const clientDispatch = (client, { payload }) => {
   // TODO: better logs on server
   console.log('\t-', typeof payload === 'string' ? payload : payload.type)
 
-  client.send({
-    type: '@server>setState',
-    payload: engine.getState(),
-  })
+  broadcastState(client, {})
 }
 
 const listeners = [

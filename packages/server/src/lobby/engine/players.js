@@ -1,6 +1,9 @@
 import { archetypes } from '@subterra/data'
 
 export const addPlayer = (store, action) => {
+  const prevState = store.getState()
+  if (prevState.players.some(({ id }) => id === action.payload.id)) return
+
   store.mutate((state) => {
     state.players.push(action.payload)
   })
