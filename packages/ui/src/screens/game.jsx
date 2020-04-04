@@ -2,13 +2,19 @@ import React, { useState, useEffect } from 'react'
 import cn from 'classnames'
 import SockJS from 'sockjs-client'
 import { motion } from 'framer-motion'
+import { useParams, useHistory } from 'react-router-dom'
 import createStore from '@myrtille/core'
 import { createEngine, initState } from '@subterra/engine'
 import { tiles as tilesHelpers } from '@subterra/engine'
 import { Grid, UIPlayer, CardsDeck, Logs, MovableGrid } from '../components'
+import { useToken } from '../userContext'
 import classes from './game.module.scss'
 
-const Game = ({ mode, cards, players, tiles, dices, token }) => {
+const Game = ({ cards, players, tiles, dices }) => {
+  const { gameId } = useParams()
+  const history = useHistory()
+  const [token] = useToken()
+
   const [cells, setCells] = useState([])
   const [orderedPlayers, setOrderedPlayers] = useState([])
   const [{ state, dispatch }, setStore] = useState({
@@ -17,8 +23,13 @@ const Game = ({ mode, cards, players, tiles, dices, token }) => {
   })
 
   useEffect(() => {
-    if (mode === 'online') {
-      const server = new SockJS('/game')
+    if (gameId) {
+      if (!token) {
+        history.push('/')
+        return
+      }
+
+      const server = new SockJS('/game/ws')
 
       const send = (action) => server.send(JSON.stringify(action))
 
@@ -92,7 +103,7 @@ const Game = ({ mode, cards, players, tiles, dices, token }) => {
       engine.dispatch({ type: '@tiles>init', payload: tiles })
       engine.dispatch({ type: '@players>init', payload: players })
     }
-  }, [mode, cards, dices, tiles, players, token])
+  }, [cards, dices, gameId, history, players, tiles, token])
 
   useEffect(() => {
     let cells = tilesHelpers.getWrappingCells(state.grid)

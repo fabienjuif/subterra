@@ -1,9 +1,11 @@
 import React, { useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 import { wrapSubmit } from 'from-form-submit'
+import { useToken } from '../userContext'
 
 const Welcome = () => {
   const history = useHistory()
+  const [, setToken] = useToken()
 
   const connect = useCallback(
     wrapSubmit(async (login) => {
@@ -15,8 +17,9 @@ const Welcome = () => {
         },
       })
       if (raw.ok) {
-        const token = await raw.text()
-        history.push('/lobby', { token })
+        setToken(await raw.text())
+
+        history.push('/lobby')
       }
     }),
     [],

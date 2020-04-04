@@ -16,11 +16,10 @@ const gameNodes = new Map() // TODO: should be a database
 /**
  * LobbyId can join the next game node
  */
-const joinGameNode = async (client, { payload: lobbyId }) => {
-  waitingLobbies.delete(lobbyId)
+const joinGameNode = async (client, action) => {
+  waitingLobbies.delete(client.lobby.id)
   const [gameNodeId, gameNode] = gameNodes.entries().next().value
-  // FIXME: need a userId -> client Map
-  const lobby = lobbies.find(({ id }) => lobbyId)
+  console.log('Joining game server (id/url)', gameNodeId, gameNode.url)
 
   // remove the gameNode from available list
   gameNodes.delete(gameNodeId)
@@ -29,21 +28,22 @@ const joinGameNode = async (client, { payload: lobbyId }) => {
   await got(gameNode.url, {
     method: 'POST',
     body: JSON.stringify({
-      players: lobby.players,
+      // TODO: only send archetype type and player (id/name)
+      players: client.lobby.engine.getState().players,
     }),
-    header: {
+    headers: {
       'Content-Type': 'application/json',
     },
   })
 
   // mark the lobby as started
-  lobby.game = {
+  client.lobby.game = {
     ...gameNode,
     startedAt: Date.now(),
   }
 
   // send the game url to the lobby users
-  lobby.users.forEach((userId) => {
+  client.lobby.users.forEach((userId) => {
     const cl = clients.get(userId)
     if (!cl) {
       console.log('\tclient not found while starting the game', userId)
@@ -53,7 +53,7 @@ const joinGameNode = async (client, { payload: lobbyId }) => {
     cl.send({
       type: '@server>redirect',
       payload: {
-        ...lobby.game,
+        ...client.lobby.game,
         type: 'game',
       },
     })
@@ -191,7 +191,7 @@ const startGame = (client, action) => {
     waitingLobbies.add(lobby.id)
     return
   }
-  joinGameNode(client, { payload: lobby.id })
+  joinGameNode(client, {})
 }
 
 const addClient = (client, action) => {

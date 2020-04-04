@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react'
-import { useHistory, useParams, useLocation } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import cn from 'classnames'
 import SockJS from 'sockjs-client'
-import { archetypes as archetypesData } from '@subterra/data'
 import { Archetype } from '../components'
+import { useToken } from '../userContext'
 import classes from './lobby.module.scss'
 
 const Lobby = () => {
+  const [token] = useToken()
   const sendRef = useRef()
-  const location = useLocation()
   const history = useHistory()
   const { lobbyId } = useParams()
   const [{ state, dispatch }, setStore] = useState({
@@ -19,7 +19,7 @@ const Lobby = () => {
   useEffect(() => {
     if (sendRef.current) return
 
-    if (!location.state || !location.state.token) {
+    if (!token) {
       history.push('/')
       return
     }
@@ -32,7 +32,7 @@ const Lobby = () => {
     const sendToken = () =>
       sendRef.current({
         type: '@client>token',
-        payload: location.state.token,
+        payload: token,
       })
 
     server.onmessage = function (e) {
@@ -47,7 +47,6 @@ const Lobby = () => {
         history.push(`/${payload.type}/${payload.id}`)
         return
       } else if (type === '@server>setState') {
-        console.log(payload)
         setStore((old) => ({ ...old, state: payload }))
         return
       }
@@ -69,7 +68,7 @@ const Lobby = () => {
         },
       }))
     }
-  }, [location.state, history])
+  }, [token, history])
 
   const onStart = useCallback(() => {
     sendRef.current({ type: '@client>start' })

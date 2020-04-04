@@ -2,16 +2,20 @@ import React, { useState, useCallback } from 'react'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { wrapSubmit } from 'from-form-submit'
 import { Prepare, Game, Lobby, Welcome } from './screens'
+import UserProvider from './userContext'
 import './variables.css'
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Switch>
-        <Route exact path="/" component={Welcome} />
-        <Route exact path={['/lobby', '/lobby/:lobbyId']} component={Lobby} />
-      </Switch>
-    </BrowserRouter>
+    <UserProvider>
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/" component={Welcome} />
+          <Route exact path={['/lobby', '/lobby/:lobbyId']} component={Lobby} />
+          <Route exact path={['/game', '/game/:gameId']} component={Game} />
+        </Switch>
+      </BrowserRouter>
+    </UserProvider>
   )
   // const [mode, setMode] = useState()
   // const [init, setInit] = useState()

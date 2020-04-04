@@ -1,7 +1,8 @@
 import bodyParser from 'body-parser'
 import uuidPackage from 'uuid'
 import got from 'got'
-import { archetypes, cards } from '@subterra/data'
+import send from '@polka/send-type'
+import { cards } from '@subterra/data'
 import { createEngine, dices } from '@subterra/engine'
 import { create } from './sock'
 
@@ -64,15 +65,15 @@ export default (polka, prefix) => {
   const withPrefix = (path) => `${prefix}${path}`
 
   polka.use(bodyParser.json()).post(withPrefix('/'), (req, res) => {
-    return
     // TODO: FIXME: security issue, the game server that's call this endpoint
     //       should give a GPG public key
+    const { players } = req.body
 
     // add authorized users uuid
-    users = req.body.users.map(({ id }) => id)
+    users = players.map(({ id }) => id)
 
     // create game engine and init it
-    engine = createEngine({})
+    engine = createEngine()
     // TODO: tile deck
     engine.dispatch({
       type: '@dices>init',
@@ -89,8 +90,10 @@ export default (polka, prefix) => {
     })
     engine.dispatch({
       type: '@players>init',
-      payload: req.body.users,
+      payload: players,
     })
+
+    send(res, 200)
   })
 
   const sockServer = create(listeners)
