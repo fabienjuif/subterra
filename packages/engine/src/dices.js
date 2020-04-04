@@ -1,3 +1,5 @@
+import { players as playerSelectors } from './selectors'
+
 export const init = (store, action) => {
   store.mutate((state) => {
     state.dices = action.payload
@@ -33,7 +35,7 @@ export const checkAndDispatch = (store, action) => {
   }
 
   const prevState = store.getState()
-  const player = prevState.players.find(({ name }) => action.payload.playerName)
+  const player = playerSelectors.findById(prevState, action)
   if (player && player.skills.some(({ type }) => type === 'experienced')) {
     value += 1
   }

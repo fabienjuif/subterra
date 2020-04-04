@@ -1,4 +1,5 @@
 import { isActionEquals, players as actions } from './actions'
+import { players as selectors } from './selectors'
 import {
   isCellEqual,
   getWrappingCells,
@@ -50,9 +51,7 @@ export const move = (store, action) => {
   store.mutate((state) => {
     if (!state.playerActions.possibilities.some(isActionEquals(action))) return
 
-    const player = state.players.find(
-      ({ name }) => name === action.payload.playerName,
-    )
+    const player = selectors.findById(state, action)
 
     player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
     player.x = action.payload.x
@@ -64,9 +63,7 @@ export const look = (store, action) => {
   store.mutate((state) => {
     if (!state.playerActions.possibilities.some(isActionEquals(action))) return
 
-    const player = state.players.find(
-      ({ name }) => name === action.payload.playerName,
-    )
+    const player = selectors.findById(state, action)
     const playerTile = state.grid.find(isCellEqual(player))
 
     // TODO: Should take the first tile of the deck Tile
@@ -94,9 +91,7 @@ export const rotate = (store, action) => {
   store.mutate((state) => {
     if (!state.playerActions.possibilities.some(isActionEquals(action))) return
 
-    const player = state.players.find(
-      ({ name }) => name === action.payload.playerName,
-    )
+    const player = selectors.findById(state, action)
     const playerTile = state.grid.find(isCellEqual(player))
     const rotatedTile = {
       ...state.playerActions.tile,
@@ -155,7 +150,7 @@ export const findPossibilities = (store, action) => {
       // this is already processed in common actions, we just lower the cost
       commonActions = commonActions.map((currAction) => {
         if (currAction.type !== '@players>heal') return currAction
-        if (currAction.payload.playerName === player.name) return currAction
+        if (currAction.payload.playerId === player.id) return currAction
         return {
           ...currAction,
           payload: {
@@ -177,7 +172,7 @@ export const findPossibilities = (store, action) => {
 export const damage = (store, action) => {
   const prevState = store.getState()
   const playerIndex = prevState.players.findIndex(
-    ({ name }) => name === action.payload.playerName,
+    ({ id }) => id === action.payload.playerId,
   )
   const prevPlayer = prevState.players[playerIndex]
 
@@ -197,8 +192,8 @@ export const damage = (store, action) => {
       store.dispatch({
         type: '@players>protected',
         payload: {
-          playerName: action.payload.playerName,
-          protectedBy: withProtect.name,
+          playerId: action.payload.playerId,
+          protectedBy: withProtect.id,
         },
       })
 
@@ -212,10 +207,7 @@ export const damage = (store, action) => {
     player.health = Math.max(0, player.health - action.payload.damage)
 
     if (player.health <= 0) {
-      store.dispatch({
-        type: '@players>death',
-        payload: { playerName: action.payload.playerName },
-      })
+      store.dispatch(actions.death(player))
     }
   })
 }
@@ -224,6 +216,7 @@ export const init = (store, action) => {
   store.mutate((state) => {
     state.players = action.payload.map((player) => ({
       ...player,
+      id: player.type, // type is unique for now and we can replace it by an UUID when needed.
       x: 0,
       y: 0,
       actionPoints: 2,
@@ -241,9 +234,7 @@ export const heal = (store, action) => {
   }
 
   store.mutate((state) => {
-    const player = state.players.find(
-      ({ name }) => name === action.payload.playerName,
-    )
+    const player = selectors.findById(state, action)
     player.health = Math.min(
       player.health + action.payload.amount,
       player.archetype.health,

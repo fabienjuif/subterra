@@ -1,5 +1,6 @@
 import getClosestPath from '@fabienjuif/astar'
 import { isCellEqual, canMoveFromTo } from './utils/tiles'
+import { enemies as actions } from './actions'
 
 const mapGridToAstarGraph = (grid) => {
   const graph = []
@@ -73,25 +74,15 @@ export const process = (store, action) => {
     })
 
     if (shortestPath && shortestPath.length > 1 && shortestPath.length < 7) {
-      store.dispatch({
-        type: '@enemies>move',
-        payload: {
-          enemy: {
-            x: enemy.x,
-            y: enemy.y,
-          },
-          path: shortestPath.map(([x, y]) => ({ x, y })),
-          playerName: closestPlayer.name,
-        },
-      })
+      store.dispatch(
+        actions.move(
+          enemy,
+          shortestPath.map(([x, y]) => ({ x, y })),
+          closestPlayer,
+        ),
+      )
     } else {
-      store.dispatch({
-        type: '@enemies>kill',
-        payload: {
-          x: enemy.x,
-          y: enemy.y,
-        },
-      })
+      store.dispatch(actions.kill(enemy))
     }
   })
 }

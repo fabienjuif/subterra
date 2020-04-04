@@ -4,13 +4,19 @@ export const players = {
     payload: {
       damage,
       from,
-      playerName: player.name,
+      playerId: player.id,
+    },
+  }),
+  death: (player) => ({
+    type: '@players>death',
+    payload: {
+      playerId: player.id,
     },
   }),
   move: (player, tile) => ({
     type: '@players>move',
     payload: {
-      playerName: player.name,
+      playerId: player.id,
       x: tile.x,
       y: tile.y,
       cost: 1, // TODO: Get this from the tile and block any action with a cost > pa
@@ -19,7 +25,7 @@ export const players = {
   look: (player, tile) => ({
     type: '@players>look',
     payload: {
-      playerName: player.name,
+      playerId: player.id,
       x: tile.x,
       y: tile.y,
       cost: 1,
@@ -28,7 +34,7 @@ export const players = {
   rotate: (player, rotation) => ({
     type: '@players>rotate',
     payload: {
-      playerName: player.name,
+      playerId: player.id,
       rotation,
       cost: 0,
     },
@@ -36,16 +42,37 @@ export const players = {
   drop: (player) => ({
     type: '@players>drop',
     payload: {
-      playerName: player.name,
+      playerId: player.id,
       cost: 0,
     },
   }),
   heal: (player, skill) => ({
     type: '@players>heal',
     payload: {
-      playerName: player.name,
+      playerId: player.id,
       cost: skill ? skill.cost : 2,
       amount: 1,
+    },
+  }),
+}
+
+export const enemies = {
+  move: (enemy, path, player) => ({
+    type: '@enemies>move',
+    payload: {
+      enemy: {
+        x: enemy.x,
+        y: enemy.y,
+      },
+      path,
+      playerId: player.id,
+    },
+  }),
+  kill: (enemy) => ({
+    type: '@enemies>kill',
+    payload: {
+      x: enemy.x,
+      y: enemy.y,
     },
   }),
 }
@@ -55,7 +82,7 @@ export const roll = {
     type: '@dices>roll',
     payload: {
       min,
-      playerName: player.name,
+      playerId: player.id,
       actionOnFail,
     },
   }),
