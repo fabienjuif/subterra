@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from 'react'
+import React, { useEffect, useRef, useCallback, useState } from 'react'
 import { useHistory, useParams, useLocation } from 'react-router-dom'
 import cn from 'classnames'
 import SockJS from 'sockjs-client'
@@ -11,6 +11,10 @@ const Lobby = () => {
   const location = useLocation()
   const history = useHistory()
   const { lobbyId } = useParams()
+  const [{ state, dispatch }, setStore] = useState({
+    state: {},
+    dispatch: () => {},
+  })
 
   useEffect(() => {
     if (sendRef.current) return
@@ -42,6 +46,10 @@ const Lobby = () => {
       } else if (type === '@server>redirect') {
         history.push(`/${payload.type}/${payload.id}`)
         return
+      } else if (type === '@server>setState') {
+        console.log(payload)
+        setStore((old) => ({ ...old, state: payload }))
+        return
       }
 
       console.warn('Unknown type from server', type)
@@ -54,6 +62,12 @@ const Lobby = () => {
     server.onopen = () => {
       sendToken()
       sendRef.current({ type: '@client>create' })
+      setStore((old) => ({
+        ...old,
+        dispatch: (action) => {
+          sendRef.current({ type: '@client>dispatch', payload: action })
+        },
+      }))
     }
   }, [location.state, history])
 
@@ -61,7 +75,17 @@ const Lobby = () => {
     sendRef.current({ type: '@client>start' })
   }, [])
 
-  if (!lobbyId) {
+  const onChooseArchetype = useCallback(
+    (type) => {
+      dispatch({
+        type: '@players>setArchetype',
+        payload: { archetypeType: type },
+      })
+    },
+    [dispatch],
+  )
+
+  if (!lobbyId || !state.players) {
     return <div>Creating lobby...</div>
   }
 
@@ -69,8 +93,8 @@ const Lobby = () => {
     <div className={cn('lobby')}>
       Lobby {lobbyId}
       <div className={cn('archetypes', classes.archetypes)}>
-        {archetypesData.map((archetype) => (
-          <Archetype {...archetype} />
+        {state.archetypes.map((archetype) => (
+          <Archetype {...archetype} onClick={onChooseArchetype} />
         ))}
       </div>
       <button type="button" onClick={onStart}>

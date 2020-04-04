@@ -27,9 +27,13 @@ const Archetype = ({ type, onClick, className, skills }) => {
     }
   }, [])
 
+  const onInnerClick = useCallback(() => {
+    if (onClick) onClick(type)
+  }, [onClick, type])
+
   return (
     <div
-      onClick={onClick}
+      onClick={onInnerClick}
       className={cn('archetype', className, classes.archetype)}
       onMouseLeave={cancelShowSkills}
       onMouseEnter={showSkillsAfterDelay}

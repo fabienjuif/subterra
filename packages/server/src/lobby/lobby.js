@@ -2,7 +2,8 @@ import got from 'got'
 import bodyParser from 'body-parser'
 import uuidPackage from 'uuid'
 import send from '@polka/send-type'
-import { create } from './sock'
+import { create } from '../sock'
+import createEngine from './engine'
 
 const { v4: uuid } = uuidPackage
 
@@ -124,13 +125,19 @@ const createOrJoinLobby = (join) => (client, action) => {
         id: uuid(),
         users: [client.user.userId],
         startedAt: Date.now(),
-        archetypes: new Map(),
+        engine: createEngine(),
       }
 
       lobbies = [...lobbies, lobby]
     }
   }
 
+  // TODO: use this shortcut in others reactions
+  client.lobby = lobby
+  lobby.engine.dispatch({
+    type: '@players>add',
+    payload: { name: client.user.name, id: client.user.userId },
+  })
   client.send({
     type: '@server>redirect',
     payload: {
@@ -138,17 +145,25 @@ const createOrJoinLobby = (join) => (client, action) => {
       id: lobby.id,
     },
   })
+
+  client.send({
+    type: '@server>setState',
+    payload: lobby.engine.getState(),
+  })
 }
 
 const leaveLobby = (client, action) => {
-  const lobby = lobbies.find(({ users }) => users.includes(client.user.userId))
-  if (!lobby) return
+  if (!client.lobby) return
 
-  lobby.users = lobby.users.filters((userId) => userId !== client.user.userId)
-  if (lobby.users.length === 0) {
-    lobbies = lobbies.filter((curr) => curr !== lobby)
-    waitingLobbies.delete(lobby.id)
+  client.lobby.users = client.lobby.users.filters(
+    (userId) => userId !== client.user.userId,
+  )
+  if (client.lobby.users.length === 0) {
+    lobbies = lobbies.filter((curr) => curr !== client.lobby)
+    waitingLobbies.delete(client.lobby.id)
   }
+
+  client.lobby = undefined
 }
 
 const startGame = (client, action) => {
@@ -184,12 +199,28 @@ const addClient = (client, action) => {
   // TODO: disconnected
 }
 
+const clientDispatch = (client, { payload }) => {
+  const { engine } = client.lobby
+  // TODO: copy state then dispatch, then check the client has the right to do this?
+  //      (anticheat)
+  engine.dispatch({ ...payload, userId: client.user.userId })
+
+  // TODO: better logs on server
+  console.log('\t-', typeof payload === 'string' ? payload : payload.type)
+
+  client.send({
+    type: '@server>setState',
+    payload: engine.getState(),
+  })
+}
+
 const listeners = [
   ['@server>user>verified', addClient],
   ['@client>create', createOrJoinLobby(false)],
   ['@client>join', createOrJoinLobby(true)],
   ['@client>leave', leaveLobby],
   ['@client>start', startGame],
+  ['@client>dispatch', clientDispatch],
 ]
 
 export default (polka, prefix) => {
