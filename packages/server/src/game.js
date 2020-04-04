@@ -58,7 +58,7 @@ const clientDispatch = (client, { payload }) => {
 
 const listeners = [
   ['@server>user>verified', verifyAndSendState],
-  ['client>dispatch', clientDispatch],
+  ['@client>dispatch', clientDispatch],
 ]
 
 export default (polka, prefix) => {
