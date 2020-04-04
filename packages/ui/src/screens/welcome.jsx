@@ -32,7 +32,7 @@ const Welcome = () => {
         <input name="password" type="password" placeholder="password" />
         <button type="submit">connect</button>
       </form>
-      <button onClick={() => alert('TODO:')}>local</button>
+      <button onClick={() => history.push('/local')}>local</button>
     </div>
   )
 }

@@ -12,6 +12,7 @@ const App = () => {
           <Route exact path="/" component={Welcome} />
           <Route exact path={['/lobby', '/lobby/:lobbyId']} component={Lobby} />
           <Route exact path={['/game', '/game/:gameId']} component={Game} />
+          <Route exact path="/local" component={Prepare} />
         </Switch>
       </BrowserRouter>
     </UserProvider>
