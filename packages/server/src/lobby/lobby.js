@@ -123,7 +123,7 @@ const createOrJoinLobby = (join) => (client, action) => {
       console.log('\tcreating a new lobby', client.user.userId)
       lobby = {
         id: uuid(),
-        users: [client.user.userId],
+        users: new Set([client.user.userId]),
         startedAt: Date.now(),
         engine: createEngine(),
       }
@@ -133,6 +133,7 @@ const createOrJoinLobby = (join) => (client, action) => {
   }
 
   // TODO: use this shortcut in others reactions
+  lobby.users.add(client.user.userId)
   client.lobby = lobby
   lobby.engine.dispatch({
     type: '@players>add',
@@ -153,12 +154,23 @@ const createOrJoinLobby = (join) => (client, action) => {
 }
 
 const leaveLobby = (client, action) => {
-  if (!client.lobby) return
+  if (!client.lobby) {
+    console.log(
+      '\tlobby not found (trying to leave), user:',
+      client.user.userId,
+    )
+    send({
+      type: '@server>error',
+      payload: {
+        message: 'lobby not found (trying to leave)',
+        userId: client.user.userId,
+      },
+    })
+    return
+  }
 
-  client.lobby.users = client.lobby.users.filters(
-    (userId) => userId !== client.user.userId,
-  )
-  if (client.lobby.users.length === 0) {
+  client.lobby.users.delete(client.user.userId)
+  if (client.lobby.users.size === 0) {
     lobbies = lobbies.filter((curr) => curr !== client.lobby)
     waitingLobbies.delete(client.lobby.id)
   }
@@ -170,12 +182,15 @@ const startGame = (client, action) => {
   const lobby = client.lobby
 
   if (!lobby) {
-    console.log('\tlobby not found', lobby.id)
+    console.log(
+      '\tlobby not found (trying to start game), user:',
+      client.user.userId,
+    )
     send({
       type: '@server>error',
       payload: {
-        message: 'lobby not found',
-        lobbyId: lobby.id,
+        message: 'lobby not found (trying to start game)',
+        userId: client.user.userId,
       },
     })
     return
