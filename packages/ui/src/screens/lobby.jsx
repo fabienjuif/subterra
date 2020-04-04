@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useCallback, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import cn from 'classnames'
 import SockJS from 'sockjs-client'
+import { wrapSubmit } from 'from-form-submit'
 import { Archetype } from '../components'
 import { useToken } from '../userContext'
 import classes from './lobby.module.scss'
@@ -60,7 +61,7 @@ const Lobby = () => {
 
     server.onopen = () => {
       sendToken()
-      sendRef.current({ type: '@client>create' })
+
       setStore((old) => ({
         ...old,
         dispatch: (action) => {
@@ -68,7 +69,7 @@ const Lobby = () => {
         },
       }))
     }
-  }, [token, history])
+  }, [token, history, lobbyId])
 
   const onStart = useCallback(() => {
     sendRef.current({ type: '@client>start' })
@@ -84,8 +85,39 @@ const Lobby = () => {
     [dispatch],
   )
 
-  if (!lobbyId || !state.players) {
-    return <div>Creating lobby...</div>
+  const onJoin = useCallback(
+    wrapSubmit(({ lobbyId }) => {
+      sendRef.current({
+        type: '@client>join',
+        payload: {
+          lobbyId,
+        },
+      })
+    }),
+    [],
+  )
+
+  const onCreate = useCallback(() => {
+    sendRef.current({ type: '@client>create' })
+  }, [])
+
+  if (!lobbyId) {
+    return (
+      <div>
+        online
+        <div>
+          <button onClick={onCreate}>create</button>
+          <form onSubmit={onJoin}>
+            <input type="text" placeholder="id" name="lobbyId" />
+            <button type="submit">join</button>
+          </form>
+        </div>
+      </div>
+    )
+  }
+
+  if (!state.players) {
+    return <div>Joining lobby...</div>
   }
 
   return (

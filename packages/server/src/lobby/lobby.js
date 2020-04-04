@@ -167,15 +167,15 @@ const leaveLobby = (client, action) => {
 }
 
 const startGame = (client, action) => {
-  const lobby = lobbies.find(({ users }) => users.includes(client.user.userId))
+  const lobby = client.lobby
 
   if (!lobby) {
-    console.log('\tlobby not found', action.payload.lobbyId)
+    console.log('\tlobby not found', lobby.id)
     send({
       type: '@server>error',
       payload: {
         message: 'lobby not found',
-        lobbyId: action.payload.lobbyId,
+        lobbyId: lobby.id,
       },
     })
     return

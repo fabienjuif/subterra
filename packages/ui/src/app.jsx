@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
-import { wrapSubmit } from 'from-form-submit'
 import { Prepare, Game, Lobby, Welcome } from './screens'
 import UserProvider from './userContext'
 import './variables.css'
