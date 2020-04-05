@@ -1,3 +1,4 @@
+import got from 'got'
 import {
   addClient,
   broadcastState,
@@ -13,6 +14,7 @@ jest.mock('./engine')
 jest.mock('nanoid', () => ({
   nanoid: () => 'genrerated-uuid-mocked',
 }))
+jest.mock('got')
 
 describe('lobby/reactions', () => {
   describe('addClient', () => {
@@ -455,4 +457,170 @@ describe('lobby/reactions', () => {
       })
     })
   })
+
+  describe('joinGameNode', () => {
+    it('should redirect all users to game node, and remove this game node from available list', async () => {
+      const context = {
+        waitingLobbies: new Set([2, 3]),
+        gameNodes: new Map([
+          ['game-1', { id: 'game-1', url: 'game-node-url' }],
+          ['game-2', { id: 'game-2', url: 'game-node-url-2' }],
+        ]),
+        clients: new Map(),
+      }
+
+      const lobby = {
+        id: 1,
+        users: ['client-1', 'client-2'],
+        engine: {
+          getState: () => ({
+            players: [{ id: 'client-1' }, { id: 'client-2' }],
+          }),
+        },
+      }
+      context.waitingLobbies.add(1)
+
+      const client = {
+        id: 'client-1',
+        lobby,
+        send: jest.fn(),
+      }
+      context.clients.set('client-1', client)
+      context.clients.set('client-2', { send: jest.fn() })
+
+      await joinGameNode(context)(client)
+
+      expect(context.waitingLobbies.size).toEqual(2)
+      expect(context.gameNodes.size).toEqual(1)
+      expect(got).toHaveBeenCalledTimes(1)
+      expect(got).toHaveBeenCalledWith(
+        'game-node-url',
+        expect.objectContaining({
+          body: JSON.stringify({
+            players: [{ id: 'client-1' }, { id: 'client-2' }],
+          }),
+        }),
+      )
+      expect(client.lobby.game).toEqual(
+        expect.objectContaining({ id: 'game-1' }),
+      )
+
+      Array.from(context.clients.values()).forEach((cl) => {
+        expect(cl.send).toHaveBeenCalledTimes(1)
+        expect(cl.send).toHaveBeenCalledWith({
+          type: '@server>redirect',
+          payload: expect.objectContaining({
+            id: 'game-1',
+            url: 'game-node-url',
+            type: 'game',
+          }),
+        })
+      })
+    })
+  })
+
+  describe('leaveLobby', () => {
+    it('should send an error if lobby is not found', () => {
+      const context = {
+        waitingLobbies: new Set(),
+      }
+
+      const client = {
+        send: jest.fn(),
+        user: {
+          userId: 1,
+        },
+      }
+
+      leaveLobby(context)(client)
+
+      expect(client.send).toHaveBeenCalledTimes(1)
+      expect(client.send).toHaveBeenCalledWith({
+        type: '@server>error',
+        payload: {
+          message: 'lobby not found (trying to leave)',
+          userId: 1,
+        },
+      })
+    })
+
+    it('leave lobby and broadcast state to clients', () => {
+      const context = {
+        waitingLobbies: new Set(),
+        clients: new Map(),
+      }
+
+      const dispatch = jest.fn()
+      const getState = () => ({ state: 'with data' })
+      const engine = { dispatch, getState }
+
+      const client = {
+        send: jest.fn(),
+        user: {
+          userId: 1,
+        },
+        lobby: {
+          users: new Set([1, 2]),
+          engine,
+        },
+      }
+      context.clients.set(1, client)
+      context.clients.set(2, { send: jest.fn() })
+
+      leaveLobby(context)(client)
+
+      expect(client.send).toHaveBeenCalledTimes(0)
+      expect(context.clients.get(2).send).toHaveBeenCalledWith({
+        type: '@server>setState',
+        payload: { state: 'with data' },
+      })
+      expect(engine.dispatch).toHaveBeenCalledTimes(1)
+      expect(engine.dispatch).toHaveBeenCalledWith({
+        type: '@players>remove',
+        payload: { id: 1 },
+      })
+
+      expect(client.lobby).toBeUndefined()
+    })
+
+    // TODO: it should remove lobby from waiting game node everytime
+    //      and a new event should be send so players can hit "start" again
+    it('should delete lobby from waiting lobbies when this is empty', () => {
+      const context = {
+        waitingLobbies: new Set(),
+        lobbies: [],
+        clients: new Map(),
+      }
+
+      const dispatch = jest.fn()
+      const getState = () => ({ state: 'with data' })
+      const engine = { dispatch, getState }
+
+      const client = {
+        send: jest.fn(),
+        user: {
+          userId: 1,
+        },
+        lobby: {
+          users: new Set([1]),
+          engine,
+        },
+      }
+      context.clients.set(1, client)
+      context.clients.set(2, { send: jest.fn() })
+      context.lobbies.push(client.lobby)
+
+      leaveLobby(context)(client)
+
+      expect(client.send).toHaveBeenCalledTimes(0)
+      expect(context.clients.get(1).send).toHaveBeenCalledTimes(0)
+      expect(engine.dispatch).toHaveBeenCalledTimes(0)
+      expect(client.lobby).toBeUndefined()
+      expect(context.waitingLobbies.size).toEqual(0)
+      expect(context.lobbies.length).toEqual(0)
+    })
+  })
+
+  // FIXME:
+  describe.skip('startGame')
 })

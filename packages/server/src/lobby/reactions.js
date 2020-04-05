@@ -210,14 +210,14 @@ export const leaveLobby = (context) => (client, action) => {
     const lobbyIndex = lobbies.findIndex((curr) => curr === client.lobby)
     lobbies.splice(lobbyIndex, 1)
     waitingLobbies.delete(client.lobby.id)
+  } else {
+    client.lobby.engine.dispatch({
+      type: '@players>remove',
+      payload: { id: client.user.userId },
+    })
+
+    broadcastState(context)(client, {})
   }
-
-  client.lobby.engine.dispatch({
-    type: '@players>remove',
-    payload: { id: client.user.userId },
-  })
-
-  broadcastState(context)(client, {})
 
   client.lobby = undefined
 }
