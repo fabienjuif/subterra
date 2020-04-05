@@ -621,6 +621,72 @@ describe('lobby/reactions', () => {
     })
   })
 
-  // FIXME:
-  describe.skip('startGame')
+  describe('startGame', () => {
+    it('should put lobby in waiting list because no game server is found', () => {
+      const context = {
+        gameNodes: new Map(),
+        waitingLobbies: new Set(),
+      }
+
+      const client = {
+        send: jest.fn(),
+        lobby: {
+          id: 1,
+        },
+      }
+
+      startGame(context)(client)
+
+      expect(context.gameNodes.size).toEqual(0)
+      expect(context.waitingLobbies).toEqual(new Set([1]))
+      expect(client.send).toHaveBeenCalledTimes(0)
+    })
+
+    it('should send an error because no lobby is found', () => {
+      const context = {
+        gameNodes: new Map(),
+        waitingLobbies: new Set(),
+      }
+
+      const client = {
+        user: {
+          userId: 'user-1',
+        },
+        send: jest.fn(),
+      }
+
+      startGame(context)(client)
+
+      expect(context.gameNodes.size).toEqual(0)
+      expect(context.waitingLobbies.size).toEqual(0)
+      expect(client.send).toHaveBeenCalledTimes(1)
+      expect(client.send).toHaveBeenCalledWith({
+        type: '@server>error',
+        payload: {
+          message: 'lobby not found (trying to start game)',
+          userId: 'user-1',
+        },
+      })
+    })
+
+    it('should join game node', () => {
+      const context = {
+        gameNodes: new Map([['game-1', { id: 'game-1', url: 'game-1-url' }]]),
+        waitingLobbies: new Set(),
+      }
+
+      const client = {
+        send: jest.fn(),
+        lobby: {
+          id: 1,
+        },
+      }
+
+      startGame(context)(client)
+
+      expect(context.gameNodes.size).toEqual(0)
+      expect(context.waitingLobbies.size).toEqual(0)
+      expect(client.send).toHaveBeenCalledTimes(0)
+    })
+  })
 })
