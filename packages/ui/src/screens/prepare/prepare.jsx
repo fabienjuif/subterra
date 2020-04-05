@@ -5,12 +5,14 @@ import {
   cards as cardsData,
 } from '@subterra/data'
 import { dices } from '@subterra/engine'
-import Archetype from './archetype'
+import { Archetype } from '../../components'
+import Game from '../game'
 import classes from './prepare.module.scss'
 
-const Prepare = ({ onStart }) => {
+const Prepare = () => {
   const [archetypesPool, setArchetypesPool] = useState(archetypesData)
   const [archetypes, setArchetypes] = useState([])
+  const [startInfos, setStartInfos] = useState(undefined)
 
   const innerOnStart = useCallback(() => {
     const cards = [
@@ -20,7 +22,7 @@ const Prepare = ({ onStart }) => {
       cardsData[0],
     ]
 
-    onStart({
+    setStartInfos({
       cards,
       dices: Array.from({ length: 5000 }).map(() => dices.roll6()),
       players: archetypes.map((archetype) => ({
@@ -29,7 +31,7 @@ const Prepare = ({ onStart }) => {
         name: archetype.type,
       })),
     })
-  }, [onStart, archetypes])
+  }, [archetypes])
 
   const onAddArchetype = useCallback((type) => {
     setArchetypesPool((old) => old.filter((a) => a.type !== type))
@@ -46,6 +48,10 @@ const Prepare = ({ onStart }) => {
       archetypesData.find((a) => a.type === type),
     ])
   }, [])
+
+  if (startInfos) {
+    return <Game {...startInfos} />
+  }
 
   return (
     <div>

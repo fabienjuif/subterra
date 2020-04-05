@@ -36,9 +36,11 @@
   display: flex;
   justify-content: space-evenly;
   transition: opacity var(--transition);
+  pointer-events: none;
 
   &.show {
     opacity: 1;
+    pointer-events: all;
   }
 }
 

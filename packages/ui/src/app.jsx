@@ -1,53 +1,22 @@
-import React, { useState, useCallback } from 'react'
-import { wrapSubmit } from 'from-form-submit'
-import { Prepare, Game } from './screens'
+import React from 'react'
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import { Prepare, Game, Lobby, Welcome } from './screens'
+import UserProvider from './userContext'
 import './variables.css'
 
 const App = () => {
-  const [mode, setMode] = useState()
-  const [init, setInit] = useState()
-
-  const connect = useCallback(
-    wrapSubmit(async (login) => {
-      const raw = await fetch('/auth', {
-        method: 'POST',
-        body: JSON.stringify(login),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      if (raw.ok) {
-        const token = await raw.text()
-        setInit({ token })
-        setMode('online')
-      }
-    }),
-    [],
+  return (
+    <UserProvider>
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/" component={Welcome} />
+          <Route exact path={['/lobby', '/lobby/:lobbyId']} component={Lobby} />
+          <Route exact path={['/game', '/game/:gameId']} component={Game} />
+          <Route exact path="/local" component={Prepare} />
+        </Switch>
+      </BrowserRouter>
+    </UserProvider>
   )
-
-  const onStart = useCallback((init) => {
-    setInit(init)
-  }, [])
-
-  if (!mode) {
-    return (
-      <div>
-        <form onSubmit={connect}>
-          <input name="username" type="text" placeholder="username" />
-          <input name="password" type="password" placeholder="password" />
-          <button type="submit">connect</button>
-        </form>
-        <button onClick={() => setMode('local')}>local</button>
-      </div>
-    )
-  }
-
-  if (mode === 'local') {
-    if (!init) return <Prepare onStart={onStart} />
-    return <Game {...init} mode={mode} />
-  }
-
-  return <Game {...init} mode={mode} />
 }
 
 export default App
