@@ -1,8 +1,6 @@
 import got from 'got'
-import uuidPackage from 'uuid'
+import { nanoid } from 'nanoid'
 import createEngine from './engine'
-
-const { v4: uuid } = uuidPackage
 
 /* //////////////////////////////////////////////////////////////////////
  
@@ -156,7 +154,7 @@ export const createOrJoinLobby = (context) => (join) => (client, action) => {
     } else {
       console.log('\tcreating a new lobby', client.user.userId)
       lobby = {
-        id: uuid(),
+        id: nanoid(),
         users: new Set([client.user.userId]),
         startedAt: Date.now(),
         engine: createEngine(),

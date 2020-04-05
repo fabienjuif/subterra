@@ -41,4 +41,6 @@ export default (polka, prefix) => {
 
   const sockServer = create(listeners(context))
   sockServer.installHandlers(polka.server, { prefix: `${prefix}/ws` })
+
+  console.log('[lobby] bound to', prefix)
 }

@@ -111,4 +111,6 @@ export default (polka, prefix) => {
       url: URL,
     }),
   })
+
+  console.log('[game] bound to', prefix)
 }

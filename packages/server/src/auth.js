@@ -75,5 +75,5 @@ export default (server, prefix) => {
       }
     })
 
-  console.log('[auth] bounded to', prefix)
+  console.log('[auth] bound to', prefix)
 }
