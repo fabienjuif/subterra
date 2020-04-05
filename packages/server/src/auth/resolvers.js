@@ -5,18 +5,24 @@ import jwt from 'jsonwebtoken'
 const sign = promisify(jwt.sign)
 const verify = promisify(jwt.verify)
 
-let { PRIVATE_KEY } = process.env
-if (!PRIVATE_KEY) {
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('PRIVATE_KEY must be assigned for security reasons')
+const getPrivateKey = () => {
+  let { PRIVATE_KEY } = process.env
+  if (!PRIVATE_KEY) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('PRIVATE_KEY must be assigned for security reasons')
+    }
+
+    PRIVATE_KEY = 'devmode'
   }
 
-  PRIVATE_KEY = 'devmode'
+  return PRIVATE_KEY
 }
 
 export const getToken = (context) => async (req, res) => {
   const { username, password } = req.body
   const { users } = context
+
+  console.log({ username, password })
 
   const user = users.find(
     (user) => user.username === username && user.password === password,
@@ -24,7 +30,7 @@ export const getToken = (context) => async (req, res) => {
   if (!user) {
     send(res, 401)
   } else {
-    const token = await sign({ userId: user.id }, PRIVATE_KEY)
+    const token = await sign({ userId: user.id }, getPrivateKey())
 
     send(res, 200, token)
   }
@@ -47,7 +53,7 @@ export const verifyAndGetInfos = (context) => async (req, res) => {
   }
 
   try {
-    const decoded = await verify(token, PRIVATE_KEY)
+    const decoded = await verify(token, getPrivateKey())
 
     // filters what we send to the user
     const { userId } = decoded
