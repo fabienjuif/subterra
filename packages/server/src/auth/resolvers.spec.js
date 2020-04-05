@@ -79,9 +79,51 @@ describe('auth/resolvers', () => {
   })
 
   describe('verifyAndGetInfos', () => {
-    it.todo('should retrieve informations from query param')
-    it.todo('should retrieve informations from header')
-    it.todo('should send error because JWT is not valid')
-    it.todo('should send error because no token is found')
+    it('should retrieve informations from query param', async () => {
+      const token = await sign({ userId: 2 }, 'test')
+
+      await verifyAndGetInfos()(
+        { query: { token }, headers: {} },
+        { res: true },
+      )
+
+      expect(send).toHaveBeenCalledTimes(1)
+      expect(send).toHaveBeenCalledWith({ res: true }, 200, {
+        userId: 2,
+      })
+    })
+
+    it('should retrieve informations from header', async () => {
+      const token = await sign({ userId: 2 }, 'test')
+
+      await verifyAndGetInfos()(
+        { query: {}, headers: { authorization: `Bearer ${token}` } },
+        { res: true },
+      )
+
+      expect(send).toHaveBeenCalledTimes(1)
+      expect(send).toHaveBeenCalledWith({ res: true }, 200, {
+        userId: 2,
+      })
+    })
+
+    it('should send error because JWT is not valid', async () => {
+      const token = await sign({ userId: 2 }, 'test2')
+
+      await verifyAndGetInfos()(
+        { query: {}, headers: { authorization: `Bearer ${token}` } },
+        { res: true },
+      )
+
+      expect(send).toHaveBeenCalledTimes(1)
+      expect(send).toHaveBeenCalledWith({ res: true }, 401)
+    })
+
+    it('should send error because no token is found', async () => {
+      await verifyAndGetInfos()({ query: {}, headers: {} }, { res: true })
+
+      expect(send).toHaveBeenCalledTimes(1)
+      expect(send).toHaveBeenCalledWith({ res: true }, 401)
+    })
   })
 })
