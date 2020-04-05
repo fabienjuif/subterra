@@ -299,13 +299,160 @@ describe('lobby/reactions', () => {
       })
     })
 
-    it.todo(
-      'should redirect to existing lobby on join, add user to engine and broadcast state',
-    )
-    it.todo(
-      'should redirect to existing lobby on create, add user to engine and broadcast state',
-    )
-    it.todo('should redirect to existing game on join')
-    it.todo('should redirect to existing game on create')
+    it('should redirect to existing game on join', () => {
+      const context = {
+        lobbies: [{ id: 1, game: { id: 'game-id' }, users: new Set([1]) }],
+      }
+
+      const client = {
+        user: {
+          userId: 1,
+        },
+        send: jest.fn(),
+      }
+
+      createOrJoinLobby(context)(true)(client, { payload: { lobbyId: 1 } })
+      expect(client.send).toHaveBeenCalledTimes(1)
+      expect(client.send).toHaveBeenCalledWith({
+        type: '@server>redirect',
+        payload: {
+          id: 'game-id',
+          type: 'game',
+        },
+      })
+    })
+
+    it('should redirect to existing game on create', () => {
+      const context = {
+        lobbies: [{ id: 1, game: { id: 'game-id' }, users: new Set([1]) }],
+      }
+
+      const client = {
+        user: {
+          userId: 1,
+        },
+        send: jest.fn(),
+      }
+
+      createOrJoinLobby(context)(false)(client, { payload: { lobbyId: 1 } })
+      expect(client.send).toHaveBeenCalledTimes(1)
+      expect(client.send).toHaveBeenCalledWith({
+        type: '@server>redirect',
+        payload: {
+          id: 'game-id',
+          type: 'game',
+        },
+      })
+    })
+
+    it('should redirect to existing lobby on join, add user to engine and broadcast state', () => {
+      const dispatch = jest.fn()
+      const getState = jest.fn(() => ({ state: 'with data' }))
+      const engine = {
+        dispatch,
+        getState,
+      }
+
+      const context = {
+        lobbies: [{ id: 1, users: new Set([1, 2]), engine }],
+        clients: new Map(),
+      }
+
+      const client = {
+        user: {
+          userId: 2,
+        },
+        send: jest.fn(),
+      }
+
+      context.clients.set(1, { send: jest.fn() })
+      context.clients.set(2, client)
+
+      createOrJoinLobby(context)(true)(client, {})
+
+      expect(context.lobbies).toEqual([
+        { id: 1, users: new Set([1, 2]), engine },
+      ])
+      expect(dispatch).toHaveBeenCalledTimes(1)
+      expect(dispatch).toHaveBeenCalledWith({
+        type: '@players>add',
+        payload: {
+          name: 2,
+          id: 2,
+        },
+      })
+      expect(client.send).toHaveBeenCalledTimes(2)
+      expect(client.send).toHaveBeenCalledWith({
+        type: '@server>redirect',
+        payload: {
+          type: 'lobby',
+          id: 1,
+        },
+      })
+      expect(client.send).toHaveBeenCalledWith({
+        type: '@server>setState',
+        payload: { state: 'with data' },
+      })
+      expect(context.clients.get(1).send).toHaveReturnedTimes(1)
+      expect(context.clients.get(1).send).toHaveBeenCalledWith({
+        type: '@server>setState',
+        payload: { state: 'with data' },
+      })
+    })
+
+    it('should redirect to existing lobby on create, add user to engine and broadcast state', () => {
+      const dispatch = jest.fn()
+      const getState = jest.fn(() => ({ state: 'with data' }))
+      const engine = {
+        dispatch,
+        getState,
+      }
+
+      const context = {
+        lobbies: [{ id: 1, users: new Set([1, 2]), engine }],
+        clients: new Map(),
+      }
+
+      const client = {
+        user: {
+          userId: 2,
+        },
+        send: jest.fn(),
+      }
+
+      context.clients.set(1, { send: jest.fn() })
+      context.clients.set(2, client)
+
+      createOrJoinLobby(context)(false)(client, {})
+
+      expect(context.lobbies).toEqual([
+        { id: 1, users: new Set([1, 2]), engine },
+      ])
+      expect(dispatch).toHaveBeenCalledTimes(1)
+      expect(dispatch).toHaveBeenCalledWith({
+        type: '@players>add',
+        payload: {
+          name: 2,
+          id: 2,
+        },
+      })
+      expect(client.send).toHaveBeenCalledTimes(2)
+      expect(client.send).toHaveBeenCalledWith({
+        type: '@server>redirect',
+        payload: {
+          type: 'lobby',
+          id: 1,
+        },
+      })
+      expect(client.send).toHaveBeenCalledWith({
+        type: '@server>setState',
+        payload: { state: 'with data' },
+      })
+      expect(context.clients.get(1).send).toHaveReturnedTimes(1)
+      expect(context.clients.get(1).send).toHaveBeenCalledWith({
+        type: '@server>setState',
+        payload: { state: 'with data' },
+      })
+    })
   })
 })
