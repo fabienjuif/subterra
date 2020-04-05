@@ -104,7 +104,7 @@ describe('lobby/reactions', () => {
     expect(client.lobby.engine.dispatch).toHaveBeenCalledWith({
       type: 'action to dispatch',
       payload: { message: 'payload in payload' },
-      userId: 1, // TODO: check if this is necessary?
+      userId: 1,
     })
     expect(client.send).toHaveBeenCalledTimes(1)
     expect(client.send).toHaveBeenCalledWith({
