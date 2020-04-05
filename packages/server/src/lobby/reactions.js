@@ -137,7 +137,7 @@ export const createOrJoinLobby = (context) => (join) => (client, action) => {
         return
       }
 
-      if (lobby.users.length >= 6) {
+      if (lobby.users.size >= 6) {
         console.log('\tlobby is full', action.payload.lobbyId)
 
         client.send({

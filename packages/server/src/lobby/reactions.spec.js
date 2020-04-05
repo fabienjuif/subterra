@@ -168,8 +168,137 @@ describe('lobby/reactions', () => {
       })
     })
 
-    it.todo('should join lobby add user to engine and broadcast state')
-    it.todo('should NOT join lobby because it is full')
+    it('should join lobby add user to engine and broadcast state', () => {
+      const dispatch = jest.fn()
+      const getState = jest.fn(() => ({ state: 'with data' }))
+      const engine = {
+        dispatch,
+        getState,
+      }
+
+      const context = {
+        lobbies: [{ id: 1, users: new Set([1]), engine }],
+        clients: new Map(),
+      }
+
+      const client = {
+        user: {
+          userId: 2,
+        },
+        send: jest.fn(),
+      }
+
+      context.clients.set(1, { send: jest.fn() })
+      context.clients.set(2, client)
+
+      createOrJoinLobby(context)(true)(client, { payload: { lobbyId: 1 } })
+
+      expect(context.lobbies).toEqual([
+        { id: 1, users: new Set([1, 2]), engine },
+      ])
+      expect(dispatch).toHaveBeenCalledTimes(1)
+      expect(dispatch).toHaveBeenCalledWith({
+        type: '@players>add',
+        payload: {
+          name: 2,
+          id: 2,
+        },
+      })
+      expect(client.send).toHaveBeenCalledTimes(2)
+      expect(client.send).toHaveBeenCalledWith({
+        type: '@server>redirect',
+        payload: {
+          type: 'lobby',
+          id: 1,
+        },
+      })
+      expect(client.send).toHaveBeenCalledWith({
+        type: '@server>setState',
+        payload: { state: 'with data' },
+      })
+      expect(context.clients.get(1).send).toHaveReturnedTimes(1)
+      expect(context.clients.get(1).send).toHaveBeenCalledWith({
+        type: '@server>setState',
+        payload: { state: 'with data' },
+      })
+    })
+
+    it('should NOT join lobby because it is full', () => {
+      const context = {
+        lobbies: [{ id: 1, users: new Set([1, 2, 3, 4, 5, 6]) }],
+        clients: new Map(),
+      }
+
+      const client = {
+        user: {
+          userId: 7,
+        },
+        send: jest.fn(),
+      }
+
+      createOrJoinLobby(context)(true)(client, { payload: { lobbyId: 1 } })
+
+      expect(context.lobbies[0].users.size).toEqual(6)
+      expect(client.send).toHaveBeenCalledTimes(1)
+      expect(client.send).toHaveBeenCalledWith({
+        type: '@server>error',
+        payload: {
+          message: 'lobby is full',
+          lobbyId: 1,
+        },
+      })
+    })
+
+    it('should send an error because lobby does not exists', () => {
+      const context = {
+        lobbies: [],
+      }
+
+      const client = {
+        user: {
+          userId: 7,
+        },
+        send: jest.fn(),
+      }
+
+      createOrJoinLobby(context)(true)(client, { payload: { lobbyId: 1 } })
+
+      expect(context.lobbies.length).toEqual(0)
+      expect(client.send).toHaveBeenCalledTimes(1)
+      expect(client.send).toHaveBeenCalledWith({
+        type: '@server>error',
+        payload: {
+          message: 'lobby not found or game already started',
+          lobbyId: 1,
+        },
+      })
+    })
+
+    it('should send an error because game is started', () => {
+      const context = {
+        lobbies: [{ id: 1, game: {}, users: new Set() }],
+      }
+
+      const client = {
+        user: {
+          userId: 7,
+        },
+        send: jest.fn(),
+      }
+
+      createOrJoinLobby(context)(true)(client, { payload: { lobbyId: 1 } })
+
+      expect(context.lobbies[0].users.size).toEqual(0)
+      expect(client.send).toHaveBeenCalledTimes(1)
+      expect(client.send).toHaveBeenCalledWith({
+        type: '@server>error',
+        payload: {
+          message: 'lobby not found or game already started',
+          lobbyId: 1,
+        },
+      })
+    })
+
     it.todo(
       'should redirect to existing lobby on join, add user to engine and broadcast state',
     )
@@ -178,7 +307,5 @@ describe('lobby/reactions', () => {
     )
     it.todo('should redirect to existing game on join')
     it.todo('should redirect to existing game on create')
-    it.todo('should send an error because lobby does not exists')
-    it.todo('should send an error because game is started')
   })
 })
