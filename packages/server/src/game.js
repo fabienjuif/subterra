@@ -18,8 +18,36 @@ const ENDPOINT_LOBBY_REGISTERS =
 let engine
 let users = []
 
+const markServerReady = async () => {
+  await got(ENDPOINT_LOBBY_REGISTERS, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      id: ID,
+      url: URL,
+      lastGameInfos: engine
+        ? {
+            users,
+            lastState: engine.getState(),
+          }
+        : undefined,
+    }),
+  })
+
+  users = []
+  engine = undefined
+}
+
 const sendState = (client, action) => {
-  client.broadcast({ type: '@server>setState', payload: engine.getState() })
+  const state = engine.getState()
+
+  client.broadcast({ type: '@server>setState', payload: state })
+
+  if (state.gameOver !== undefined) {
+    markServerReady()
+  }
 }
 
 const verifyAndSendState = (client, action) => {
@@ -100,15 +128,5 @@ export default (polka, prefix) => {
   sockServer.installHandlers(polka.server, { prefix: `${prefix}/ws` })
 
   // send the lobby that this server is ready to be called
-
-  got(ENDPOINT_LOBBY_REGISTERS, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      id: ID,
-      url: URL,
-    }),
-  })
+  markServerReady()
 }
