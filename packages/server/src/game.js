@@ -1,14 +1,12 @@
 import bodyParser from 'body-parser'
-import uuidPackage from 'uuid'
 import got from 'got'
 import send from '@polka/send-type'
+import { nanoid } from 'nanoid'
 import { cards } from '@subterra/data'
 import { createEngine, dices } from '@subterra/engine'
 import { create } from './sock'
 
-const { v4: uuid } = uuidPackage
-
-const ID = process.env.NODE_ID || uuid()
+const ID = process.env.NODE_ID || nanoid()
 const PORT = process.env.PORT || 9999
 const URL = process.env.URL || `http://localhost:${PORT}/game`
 const ENDPOINT_LOBBY_REGISTERS =
@@ -97,7 +95,7 @@ export default (polka, prefix) => {
     //       should give a GPG public key
     const { players } = req.body
 
-    // add authorized users uuid
+    // add authorized users id
     users = players.map(({ id }) => id)
 
     // create game engine and init it

@@ -8,8 +8,7 @@
     "@fabienjuif/astar": "^0.1.0",
     "@myrtille/mutate": "^0.8.1",
     "@subterra/data": "^0.1.0",
-    "immer": "^6.0.2",
-    "uuid": "^7.0.2"
+    "immer": "^6.0.2"
   },
   "scripts": {}
 }
