@@ -22,8 +22,6 @@ export const getToken = (context) => async (req, res) => {
   const { username, password } = req.body
   const { users } = context
 
-  console.log({ username, password })
-
   const user = users.find(
     (user) => user.username === username && user.password === password,
   )

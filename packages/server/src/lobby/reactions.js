@@ -1,8 +1,6 @@
 import got from 'got'
-import uuidPackage from 'uuid'
+import { nanoid } from 'nanoid'
 import createEngine from './engine'
-
-const { v4: uuid } = uuidPackage
 
 /* //////////////////////////////////////////////////////////////////////
  
@@ -139,7 +137,7 @@ export const createOrJoinLobby = (context) => (join) => (client, action) => {
         return
       }
 
-      if (lobby.users.length >= 6) {
+      if (lobby.users.size >= 6) {
         console.log('\tlobby is full', action.payload.lobbyId)
 
         client.send({
@@ -156,7 +154,7 @@ export const createOrJoinLobby = (context) => (join) => (client, action) => {
     } else {
       console.log('\tcreating a new lobby', client.user.userId)
       lobby = {
-        id: uuid(),
+        id: nanoid(),
         users: new Set([client.user.userId]),
         startedAt: Date.now(),
         engine: createEngine(),
@@ -212,14 +210,14 @@ export const leaveLobby = (context) => (client, action) => {
     const lobbyIndex = lobbies.findIndex((curr) => curr === client.lobby)
     lobbies.splice(lobbyIndex, 1)
     waitingLobbies.delete(client.lobby.id)
+  } else {
+    client.lobby.engine.dispatch({
+      type: '@players>remove',
+      payload: { id: client.user.userId },
+    })
+
+    broadcastState(context)(client, {})
   }
-
-  client.lobby.engine.dispatch({
-    type: '@players>remove',
-    payload: { id: client.user.userId },
-  })
-
-  broadcastState(context)(client, {})
 
   client.lobby = undefined
 }

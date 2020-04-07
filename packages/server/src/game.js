@@ -129,4 +129,6 @@ export default (polka, prefix) => {
 
   // send the lobby that this server is ready to be called
   markServerReady()
+
+  console.log('[game] bound to', prefix)
 }
