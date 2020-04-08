@@ -3,13 +3,12 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { Prepare, Game, Lobby, Welcome } from './screens'
 import UserProvider from './userContext'
 import './variables.css'
-import { nanoid } from 'nanoid'
 import firebase from 'firebase/app'
 import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
 import 'firebase/analytics'
-import 'firebase/firebase'
-import 'firebase/database'
+// import 'firebase/firebase'
+import 'firebase/firestore'
 
 // Initialize Firebase
 firebase.initializeApp({
@@ -72,11 +71,12 @@ const App = () => {
 
               console.log('trying to listen to', id)
               firebase
-                .database()
-                .ref(`lobby/${id}`)
-                .on('value', (snapshot) => {
+                .firestore()
+                .collection('lobby')
+                .doc(id)
+                .onSnapshot((doc) => {
                   console.log('new value?')
-                  console.log(snapshot.val())
+                  console.log(doc.data())
                 })
             }}
           >
