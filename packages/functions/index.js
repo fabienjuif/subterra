@@ -7,199 +7,9 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var functions = _interopDefault(require('firebase-functions'));
 var firebase = _interopDefault(require('firebase-admin'));
 var express = _interopDefault(require('express'));
+var bodyParser = _interopDefault(require('body-parser'));
+var createStore = _interopDefault(require('@myrtille/mutate'));
 var nanoid = require('nanoid');
-
-function n(n){for(var t=arguments.length,r=Array(t>1?t-1:0),e=1;e<t;e++)r[e-1]=arguments[e];if("production"!==process.env.NODE_ENV){var i=H[n],o=i?"function"==typeof i?i.apply(null,r):i:"unknown error nr: "+n;throw Error("[Immer] "+o)}throw Error("[Immer] minified error nr: "+n+(r.length?" "+r.join(","):"")+". Find the full error at: https://bit.ly/3cXEKWf")}function t(n){return !!n&&!!n[B]}function r(n){return !!n&&(function(n){if(!n||"object"!=typeof n)return !1;var t=Object.getPrototypeOf(n);return !t||t===Object.prototype}(n)||Array.isArray(n)||!!n[q]||!!n.constructor[q]||c(n)||s(n))}function i(n,t){0===o(n)?L(n).forEach((function(r){return t(r,n[r],n)})):n.forEach((function(r,e){return t(e,r,n)}));}function o(n){var t=n[B];return t?t.i>3?t.i-4:t.i:Array.isArray(n)?1:c(n)?2:s(n)?3:0}function u(n,t){return 2===o(n)?n.has(t):Object.prototype.hasOwnProperty.call(n,t)}function a(n,t){return 2===o(n)?n.get(t):n[t]}function f(n,t){return n===t?0!==n||1/n==1/t:n!=n&&t!=t}function c(n){return $&&n instanceof Map}function s(n){return U&&n instanceof Set}function v(n){return n.o||n.t}function p(t,r){if(void 0===r&&(r=!1),Array.isArray(t))return t.slice();var e=Object.create(Object.getPrototypeOf(t));return i(t,(function(i){if(i!==B){var o=Object.getOwnPropertyDescriptor(t,i),u=o.value;o.get&&(r||n(1),u=o.get.call(t)),o.enumerable?e[i]=u:Object.defineProperty(e,i,{value:u,writable:!0,configurable:!0});}})),e}function d(n,e){t(n)||Object.isFrozen(n)||!r(n)||(o(n)>1&&(n.set=n.add=n.clear=n.delete=l),Object.freeze(n),e&&i(n,(function(n,t){return d(t,!0)})));}function l(){n(2);}function h(t){var r=Q[t];return r||n("production"!==process.env.NODE_ENV?18:19,t),r}function m(){return "production"===process.env.NODE_ENV||J||n(0),J}function b(n,t){t&&(h("Patches"),n.u=[],n.s=[],n.v=t);}function _(n){j(n),n.p.forEach(g),n.p=null;}function j(n){n===J&&(J=n.l);}function O(n){return J={p:[],l:J,h:n,m:!0,_:0}}function g(n){var t=n[B];0===t.i||1===t.i?t.j():t.O=!0;}function w(t,e){e._=e.p.length;var i=e.p[0],o=void 0!==t&&t!==i;return e.h.g||h("ES5").S(e,t,o),o?(i[B].P&&(_(e),n(4)),r(t)&&(t=S(e,t),e.l||M(e,t)),e.u&&h("Patches").M(i[B],t,e.u,e.s)):t=S(e,i,[]),_(e),e.u&&e.v(e.u,e.s),t!==X?t:void 0}function S(n,t,r){if(Object.isFrozen(t))return t;var e=t[B];if(!e)return i(t,(function(i,o){return P(n,e,t,i,o,r)})),t;if(e.A!==n)return t;if(!e.P)return M(n,e.t,!0),e.t;if(!e.I){e.I=!0,e.A._--;var o=4===e.i||5===e.i?e.o=p(e.k,!0):e.o;i(o,(function(t,i){return P(n,e,o,t,i,r)})),M(n,o,!1),r&&n.u&&h("Patches").R(e,r,n.u,n.s);}return e.o}function P(e,i,c,s,v,p){if("production"!==process.env.NODE_ENV&&v===c&&n(5),t(v)){var d=S(e,v,p&&i&&3!==i.i&&!u(i.D,s)?p.concat(s):void 0);if(h=s,y=d,2===(m=o(l=c))?l.set(h,y):3===m?(l.delete(h),l.add(y)):l[h]=y,!t(d))return;e.m=!1;}var l,h,y,m;if((!i||!f(v,a(i.t,s)))&&r(v)){if(!e.h.N&&e._<1)return;S(e,v),i&&i.A.l||M(e,v);}}function M(n,t,r){void 0===r&&(r=!1),n.h.N&&n.m&&d(t,r);}function A(n,t){var r=n[B],e=Reflect.getOwnPropertyDescriptor(r?v(r):n,t);return e&&e.value}function z(n){if(!n.P){if(n.P=!0,0===n.i||1===n.i){var t=n.o=p(n.t);i(n.p,(function(n,r){t[n]=r;})),n.p=void 0;}n.l&&z(n.l);}}function x(n){n.o||(n.o=p(n.t));}function I(n,t,r){var e=c(t)?h("MapSet").T(t,r):s(t)?h("MapSet").F(t,r):n.g?function(n,t){var r=Array.isArray(n),e={i:r?1:0,A:t?t.A:m(),P:!1,I:!1,D:{},l:t,t:n,k:null,p:{},o:null,j:null,C:!1},i=e,o=V;r&&(i=[e],o=Y);var u=Proxy.revocable(i,o),a=u.revoke,f=u.proxy;return e.k=f,e.j=a,f}(t,r):h("ES5").J(t,r);return (r?r.A:m()).p.push(e),e}var C,J,K="undefined"!=typeof Symbol,$="undefined"!=typeof Map,U="undefined"!=typeof Set,W="undefined"!=typeof Proxy&&void 0!==Proxy.revocable&&"undefined"!=typeof Reflect,X=K?Symbol("immer-nothing"):((C={})["immer-nothing"]=!0,C),q=K?Symbol("immer-draftable"):"__$immer_draftable",B=K?Symbol("immer-state"):"__$immer_state",H={0:"Illegal state",1:"Immer drafts cannot have computed properties",2:"This object has been frozen and should not be mutated",3:function(n){return "Cannot use a proxy that has been revoked. Did you pass an object from inside an immer function to an async process? "+n},4:"An immer producer returned a new value *and* modified its draft. Either return a new value *or* modify the draft.",5:"Immer forbids circular references",6:"The first or second argument to `produce` must be a function",7:"The third argument to `produce` must be a function or undefined",8:"First argument to `createDraft` must be a plain object, an array, or an immerable object",9:"First argument to `finishDraft` must be a draft returned by `createDraft`",10:"The given draft is already finalized",11:"Object.defineProperty() cannot be used on an Immer draft",12:"Object.setPrototypeOf() cannot be used on an Immer draft",13:"Immer only supports deleting array indices",14:"Immer only supports setting array indices and the 'length' property",15:function(n){return "Cannot apply patch, path doesn't resolve: "+n},16:'Sets cannot have "replace" patches.',17:function(n){return "Unsupported patch operation: "+n},18:function(n){return "The plugin for '"+n+"' has not been loaded into Immer. To enable the plugin, import and call `enable"+n+"()` when initializing your application."},19:"plugin not loaded",20:"Cannot use proxies if Proxy, Proxy.revocable or Reflect are not available"},L="undefined"!=typeof Reflect&&Reflect.ownKeys?Reflect.ownKeys:void 0!==Object.getOwnPropertySymbols?function(n){return Object.getOwnPropertyNames(n).concat(Object.getOwnPropertySymbols(n))}:Object.getOwnPropertyNames,Q={},V={get:function(n,t){if(t===B)return n;var e=n.p;if(!n.P&&u(e,t))return e[t];var i=v(n)[t];if(n.I||!r(i))return i;if(n.P){if(i!==A(n.t,t))return i;e=n.o;}return e[t]=I(n.A.h,i,n)},has:function(n,t){return t in v(n)},ownKeys:function(n){return Reflect.ownKeys(v(n))},set:function(n,t,r){if(!n.P){var e=A(n.t,t);if(r?f(e,r)||r===n.p[t]:f(e,r)&&t in n.t)return !0;x(n),z(n);}return n.D[t]=!0,n.o[t]=r,!0},deleteProperty:function(n,t){return void 0!==A(n.t,t)||t in n.t?(n.D[t]=!1,x(n),z(n)):n.D[t]&&delete n.D[t],n.o&&delete n.o[t],!0},getOwnPropertyDescriptor:function(n,t){var r=v(n),e=Reflect.getOwnPropertyDescriptor(r,t);return e&&(e.writable=!0,e.configurable=1!==n.i||"length"!==t),e},defineProperty:function(){n(11);},getPrototypeOf:function(n){return Object.getPrototypeOf(n.t)},setPrototypeOf:function(){n(12);}},Y={};i(V,(function(n,t){Y[n]=function(){return arguments[0]=arguments[0][0],t.apply(this,arguments)};})),Y.deleteProperty=function(t,r){return "production"!==process.env.NODE_ENV&&isNaN(parseInt(r))&&n(13),V.deleteProperty.call(this,t[0],r)},Y.set=function(t,r,e){return "production"!==process.env.NODE_ENV&&"length"!==r&&isNaN(parseInt(r))&&n(14),V.set.call(this,t[0],r,e,t[0])};var Z=function(){function e(n){this.g=W,this.N="production"!==process.env.NODE_ENV,"boolean"==typeof(null==n?void 0:n.useProxies)&&this.setUseProxies(n.useProxies),"boolean"==typeof(null==n?void 0:n.autoFreeze)&&this.setAutoFreeze(n.autoFreeze),this.produce=this.produce.bind(this),this.produceWithPatches=this.produceWithPatches.bind(this);}var i=e.prototype;return i.produce=function(t,e,i){if("function"==typeof t&&"function"!=typeof e){var o=e;e=t;var u=this;return function(n){var t=this;void 0===n&&(n=o);for(var r=arguments.length,i=Array(r>1?r-1:0),a=1;a<r;a++)i[a-1]=arguments[a];return u.produce(n,(function(n){var r;return (r=e).call.apply(r,[t,n].concat(i))}))}}var a;if("function"!=typeof e&&n(6),void 0!==i&&"function"!=typeof i&&n(7),r(t)){var f=O(this),c=I(this,t,void 0),s=!0;try{a=e(c),s=!1;}finally{s?_(f):j(f);}return "undefined"!=typeof Promise&&a instanceof Promise?a.then((function(n){return b(f,i),w(n,f)}),(function(n){throw _(f),n})):(b(f,i),w(a,f))}if((a=e(t))!==X)return void 0===a&&(a=t),this.N&&d(a,!0),a},i.produceWithPatches=function(n,t){var r,e,i=this;return "function"==typeof n?function(t){for(var r=arguments.length,e=Array(r>1?r-1:0),o=1;o<r;o++)e[o-1]=arguments[o];return i.produceWithPatches(t,(function(t){return n.apply(void 0,[t].concat(e))}))}:[this.produce(n,t,(function(n,t){r=n,e=t;})),r,e]},i.createDraft=function(t){r(t)||n(8);var e=O(this),i=I(this,t,void 0);return i[B].C=!0,j(e),i},i.finishDraft=function(t,r){var e=t&&t[B];"production"!==process.env.NODE_ENV&&(e&&e.C||n(9),e.I&&n(10));var i=e.A;return b(i,r),w(void 0,i)},i.setAutoFreeze=function(n){this.N=n;},i.setUseProxies=function(t){W||n(20),this.g=t;},i.applyPatches=function(n,r){var e;for(e=r.length-1;e>=0;e--){var i=r[e];if(0===i.path.length&&"replace"===i.op){n=i.value;break}}var o=h("Patches").U;return t(n)?o(n,r):this.produce(n,(function(n){return o(n,r.slice(e+1))}))},e}(),nn=new Z,tn=nn.produce,rn=nn.produceWithPatches.bind(nn),en=nn.setAutoFreeze.bind(nn),on=nn.setUseProxies.bind(nn),un=nn.applyPatches.bind(nn),an=nn.createDraft.bind(nn),fn=nn.finishDraft.bind(nn);
-
-var util = {
-  getFromPath: (data, path) => {
-    if (!path) return data
-
-    return path.split('.').reduce(
-      (curr, sub) => curr && curr[sub],
-      data,
-    )
-  },
-};
-
-/* eslint-env browser */
-/* eslint-disable no-param-reassign */
-// https://github.com/developit/unistore/blob/master/devtools.js
-var devtools = (store) => {
-  if (typeof window === 'undefined') return store
-
-  // eslint-disable-next-line no-underscore-dangle
-  const extension = window.__REDUX_DEVTOOLS_EXTENSION__ || window.top.__REDUX_DEVTOOLS_EXTENSION__;
-
-  if (!extension) {
-    store.devtools = null;
-    return store
-  }
-
-  if (!store.devtools) {
-    let ignoreState = false;
-
-    store.devtools = extension.connect();
-    store.devtools.subscribe((message) => {
-      if (message.type === 'DISPATCH' && message.state) {
-        ignoreState = true;
-        store.setState(JSON.parse(message.state));
-      } else if (message.type === 'ACTION') store.dispatch(JSON.parse(message.payload));
-    });
-    store.devtools.init(store.getState());
-    store.subscribe((_, oldState, action) => {
-      if (ignoreState) {
-        ignoreState = false;
-        return
-      }
-
-      const actionName = (action && action.type) || '🤔 UNKNOWN';
-      store.devtools.send({ ...action, type: actionName }, store.getState());
-    });
-  }
-
-  return store
-};
-
-const { getFromPath } = util;
-
-
-const matchListener = (matcher, reaction) => (store, action, ...args) => {
-  if (
-    // string matcher
-    (typeof matcher === 'string' && matcher === action.type)
-    // function matcher
-    || (typeof matcher === 'function' && matcher(action, store))
-    // object matcher (regexp or object)
-    || ((typeof matcher === 'object') && (
-      // object
-      matcher.type === action.type
-      // regexp
-      || (typeof matcher.test === 'function' && matcher.test(action.type))
-    ))
-  ) reaction(store, action, ...args);
-};
-
-const matchSubscriber = (path, callback) => (store, oldState, ...args) => {
-  const call = () => callback(store, oldState, ...args);
-
-  if (path === undefined || path.trim() === '') {
-    if (oldState !== store.getState()) call();
-  } else if (getFromPath(oldState, path) !== getFromPath(store.getState(), path)) {
-    call();
-  }
-};
-
-const createStore = (init) => {
-  let store;
-  let state = init;
-  let subscribers = [];
-  let reactions = [];
-  let dispatching = false;
-  const nextDispatchs = [];
-
-  const runAndNotify = (implementation, action = { type: '@@DIRECT_MUTATION' }) => {
-    const oldState = store.getState();
-
-    implementation();
-
-    if (dispatching) return
-
-    for (let i = 0; i < subscribers.length; i += 1) {
-      subscribers[i](store, oldState, action);
-    }
-  };
-
-  const dispatch = (action) => {
-    let innerAction = action;
-    if (typeof action === 'string') innerAction = { type: action };
-
-    if (dispatching) {
-      nextDispatchs.push(innerAction);
-      return
-    }
-
-    runAndNotify(() => {
-      dispatching = true;
-
-      for (let i = 0; i < reactions.length; i += 1) {
-        reactions[i](store, innerAction);
-      }
-
-      dispatching = false;
-    }, innerAction);
-
-    if (nextDispatchs.length) {
-      const nextAction = nextDispatchs.shift();
-      dispatch(nextAction);
-    }
-  };
-
-  const removeListener = (callback) => {
-    reactions = reactions.filter((reaction) => reaction !== callback);
-  };
-
-  const removeSubscriber = (callback) => {
-    subscribers = subscribers.filter((subscriber) => subscriber !== callback);
-  };
-
-  const getState = () => state;
-
-  const setState = (newState) => {
-    runAndNotify(() => {
-      state = newState;
-    });
-  };
-
-  store = {
-    contexts: {},
-    setState,
-    getState,
-    dispatch,
-    addListener: (event, callback) => {
-      let newReaction;
-      if (callback === undefined) {
-        newReaction = event;
-      } else {
-        newReaction = matchListener(event, callback);
-      }
-
-      reactions = reactions.concat(newReaction);
-
-      return () => removeListener(newReaction)
-    },
-    subscribe: (path, callback) => {
-      let newSubscriber;
-      if (callback === undefined) {
-        newSubscriber = path;
-      } else {
-        newSubscriber = matchSubscriber(path, callback);
-      }
-
-      subscribers = subscribers.concat(newSubscriber);
-
-      return () => removeSubscriber(newSubscriber)
-    },
-  };
-
-  devtools(store);
-  return store
-};
-
-var core = createStore;
-
-const produce = tn.default;
-
-
-var mutate = (...args) => {
-  const store = core(...args);
-
-  store.mutate = (callback) => {
-    store.setState(produce(store.getState(), (draft) => { callback(draft); }));
-  };
-
-  return store
-};
 
 const players = {
   damage: (player, damage, from) => ({
@@ -1155,7 +965,7 @@ const mapGridToAstarGraph = (grid) => {
   return graph
 };
 
-const process$1 = (store, action) => {
+const process = (store, action) => {
   const previousState = store.getState();
   const { grid, players } = previousState;
 
@@ -1544,7 +1354,7 @@ var listeners = [
   ['@cards>end', end],
   ['@players>death', checkLoose],
   ['@enemies>kill', kill],
-  ['@enemies>process', process$1],
+  ['@enemies>process', process],
   ['@enemies>move', move],
   // "random"
   ['@dices>init', init$1],
@@ -1591,7 +1401,7 @@ const saveAction = (store, action) => {
 
 var createEngine = (state = initState()) => {
   // creating store
-  let store = mutate(state);
+  let store = createStore(state);
 
   // adding all game listeners
   listeners.forEach((args) => store.addListener(...args));
@@ -1614,7 +1424,7 @@ const create = (firestore) => async (playerDoc) => {
     .set({
       id: gameId,
       createdAt: new Date(Date.now()),
-      state: createEngine().getState(),
+      state: JSON.parse(JSON.stringify(createEngine().getState())),
     });
 
   await playerDoc.ref.set(
@@ -1627,6 +1437,33 @@ const create = (firestore) => async (playerDoc) => {
   // TODO: for all players unset lobby
 
   return gameId
+};
+
+// TODO: should be exceptions
+const dispatch = (firestore) => async (playerDoc, action) => {
+  const player = playerDoc.data();
+  if (!player.gameId) {
+    console.warn('Game does not exist on player', player.uid);
+    return
+  }
+
+  const gameDoc = await firestore.collection('games').doc(player.gameId).get();
+  if (!gameDoc.exists) {
+    console.warn('Game does not exist on id', player.gameId);
+    console.warn('\tremoving its reference on player', player.uid);
+    await playerDoc.ref.update({
+      gameId: firestore.FieldValue.delete(),
+    });
+
+    return
+  }
+
+  const { state } = gameDoc.data();
+  const engine = createEngine(state);
+  engine.dispatch(action);
+  await gameDoc.ref.update({
+    state: JSON.parse(JSON.stringify(engine.getState())),
+  });
 };
 
 const create$1 = (firestore) => async (playerDoc) => {
@@ -1653,6 +1490,8 @@ const create$1 = (firestore) => async (playerDoc) => {
 firebase.initializeApp();
 const firestore = firebase.firestore();
 const app = express();
+
+app.use(bodyParser.json());
 
 app.post('/lobby', async (req, res) => {
   // check that the UID is known
@@ -1695,7 +1534,7 @@ app.post('/lobby/start', async (req, res) => {
   }
 
   const player = playerDoc.data();
-  const gameId = player.gameId || (await create());
+  const gameId = player.gameId || (await create(firestore)(playerDoc));
 
   res.send({
     id: gameId,
@@ -1703,6 +1542,24 @@ app.post('/lobby/start', async (req, res) => {
   });
 });
 
+app.post('/game/dispatch', async (req, res) => {
+  // check that the UID is known
+  // TODO: move this in a middleware?
+  const idToken = (req.headers.authorization || '').replace('Bearer ', '');
+  const { uid } = await firebase.auth().verifyIdToken(idToken, true);
+  let playerRef = firestore.collection('players').doc(uid);
+  const playerDoc = await playerRef.get();
+  if (!playerDoc.exists) {
+    throw new Error('User is not known')
+  }
+
+  await dispatch(firestore)(playerDoc, req.body);
+
+  res.sendStatus(200);
+});
+
 const api = functions.region('europe-west1').https.onRequest(app);
+
+// createEngine().dispatch('@players>pass')
 
 exports.api = api;

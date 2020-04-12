@@ -7,7 +7,17 @@ import commonjs from '@rollup/plugin-commonjs'
 
 export default {
   input: 'src/index.js',
-  external: ['firebase-functions', 'firebase-admin', 'nanoid', 'express'],
+  // TODO: should get this from package.json
+  external: [
+    'firebase-functions',
+    'firebase-admin',
+    'nanoid',
+    'express',
+    'body-parser',
+    'immer',
+    '@myrtille/mutate',
+    '@myrtille/core',
+  ],
   plugins: [resolve(), commonjs()],
   output: {
     file: 'index.js',
