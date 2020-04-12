@@ -1,5 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react'
 
+// TODO: remove
+
 const UserContext = createContext({ token: undefined, setToken: () => {} })
 
 const Provider = ({ children }) => {

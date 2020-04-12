@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import cn from 'classnames'
-import SockJS from 'sockjs-client'
 import { motion } from 'framer-motion'
 import { useParams, useHistory } from 'react-router-dom'
-import createStore from '@myrtille/core'
 import { createEngine, initState } from '@subterra/engine'
 import { tiles as tilesHelpers } from '@subterra/engine'
-import { Grid, UIPlayer, CardsDeck, Logs, MovableGrid } from '../components'
-import { useToken } from '../userContext'
+import {
+  Grid,
+  UIPlayer,
+  CardsDeck,
+  Logs,
+  MovableGrid,
+  FirebaseContext,
+} from '../components'
 import classes from './game.module.scss'
 
 const Game = ({ cards, players, tiles, dices }) => {
   const { gameId } = useParams()
   const history = useHistory()
-  const [token] = useToken()
+  const { fetch, firebase } = useContext(FirebaseContext)
 
   const [cells, setCells] = useState([])
   const [orderedPlayers, setOrderedPlayers] = useState([])
@@ -24,68 +28,26 @@ const Game = ({ cards, players, tiles, dices }) => {
 
   useEffect(() => {
     if (gameId) {
-      if (!token) {
-        history.push('/')
-        return
-      }
-
-      const server = new SockJS('/game/ws')
-
-      const send = (action) => server.send(JSON.stringify(action))
-
-      // send our token
-      const sendToken = () =>
-        send({
-          type: '@client>token',
-          payload: token,
+      firebase
+        .firestore()
+        .collection('games')
+        .doc(gameId)
+        .onSnapshot((doc) => {
+          setStore((old) => ({
+            ...old,
+            state: doc.data().state,
+          }))
         })
 
-      // this is just for DEBUG purpose in redux-devtools
-      let store = { state: {}, dispatch: () => {} }
-      if (process.env.NODE_ENV === 'development') {
-        store = createStore()
-        // TODO: server should send state and the player action that did this state
-        //      so we can better debug
-        store.addListener('@server>setState', (store, action) => {
-          store.setState(action.payload)
-        })
-
-        store.addListener('@server>askToken', sendToken)
-      }
-
-      server.onmessage = function (e) {
-        const action = JSON.parse(e.data)
-        store.dispatch(action)
-
-        const { type, payload } = action
-
-        if (type === '@server>setState') {
-          setStore((old) => ({ ...old, state: payload }))
-          return
-        }
-
-        if (type === '@server>error') {
-          console.error(action)
-          return
-        }
-
-        console.warn('Unknown type from server', type)
-      }
-
-      server.onclose = function () {
-        console.log('TODO: close server socket')
-      }
-
-      server.onopen = () => {
-        sendToken()
-
-        setStore((old) => ({
-          ...old,
-          dispatch: (action) => {
-            send({ type: '@client>dispatch', payload: action })
-          },
-        }))
-      }
+      setStore((old) => ({
+        ...old,
+        dispatch: (action) =>
+          fetch('/api/lobby/dispatch', {
+            method: 'POST',
+            body: JSON.stringify(action),
+            headers: { 'content-type': 'application/json' },
+          }),
+      }))
     } else {
       const engine = createEngine()
       // connects engine to react
@@ -103,7 +65,7 @@ const Game = ({ cards, players, tiles, dices }) => {
       engine.dispatch({ type: '@tiles>init', payload: tiles })
       engine.dispatch({ type: '@players>init', payload: players })
     }
-  }, [cards, dices, gameId, history, players, tiles, token])
+  }, [cards, dices, fetch, firebase, gameId, history, players, tiles])
 
   useEffect(() => {
     let cells = tilesHelpers.getWrappingCells(state.grid)

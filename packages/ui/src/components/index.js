@@ -1,5 +1,6 @@
 export { default as Archetype } from './archetype'
 export { default as CardsDeck } from './cardsDeck'
+export { default as Firebase, FirebaseContext } from './firebase'
 export { default as Grid } from './grid'
 export { default as Logs } from './logs'
 export { default as MovableGrid } from './movableGrid'

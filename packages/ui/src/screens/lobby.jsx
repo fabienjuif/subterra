@@ -1,79 +1,64 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react'
+import React, { useEffect, useCallback, useState, useContext } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import cn from 'classnames'
-import SockJS from 'sockjs-client'
-import { wrapSubmit } from 'from-form-submit'
-import { Archetype } from '../components'
-import { useToken } from '../userContext'
+// TODO: remove from deps import SockJS from 'sockjs-client'
+import { Archetype, FirebaseContext } from '../components'
 import classes from './lobby.module.scss'
 
 const Lobby = () => {
-  const [token] = useToken()
-  const sendRef = useRef()
+  const { firebase, fetch } = useContext(FirebaseContext)
   const history = useHistory()
   const { lobbyId } = useParams()
-  const [{ state, dispatch }, setStore] = useState({
-    state: {},
-    dispatch: () => {},
-  })
+  const [state, setState] = useState({})
 
   useEffect(() => {
-    if (sendRef.current) return
+    if (!lobbyId) return
 
-    if (!token) {
-      history.push('/')
-      return
-    }
-
-    const server = new SockJS('/lobby/ws')
-
-    sendRef.current = (action) => server.send(JSON.stringify(action))
-
-    // send our token
-    const sendToken = () =>
-      sendRef.current({
-        type: '@client>token',
-        payload: token,
+    firebase
+      .firestore()
+      .collection('lobby')
+      .doc(lobbyId)
+      .onSnapshot((doc) => {
+        setState(doc.data().state)
       })
+  }, [firebase, lobbyId])
 
-    server.onmessage = function (e) {
-      const action = JSON.parse(e.data)
-
-      const { type, payload } = action
-
-      if (type === '@server>error') {
-        console.error(action)
-        return
-      } else if (type === '@server>redirect') {
-        history.push(`/${payload.type}/${payload.id}`)
-        return
-      } else if (type === '@server>setState') {
-        setStore((old) => ({ ...old, state: payload }))
+  const callAndRedirect = useCallback(
+    (url) => async () => {
+      const res = await fetch(url, { method: 'POST' })
+      if (res.ok) {
+        const { type, id } = await res.json()
+        history.push(`/${type}/${id}`)
         return
       }
 
-      console.warn('Unknown type from server', type)
-    }
+      // TODO: handle KO
+      console.error(await res.text())
+    },
+    [history, fetch],
+  )
 
-    server.onclose = function () {
-      console.log('TODO: close server socket')
-    }
+  const onStart = useCallback(callAndRedirect('/api/lobby/start'), [
+    callAndRedirect,
+  ])
+  const onJoin = useCallback(callAndRedirect('/api/lobby/join'), [
+    callAndRedirect,
+  ])
+  const onCreate = useCallback(callAndRedirect('/api/lobby'), [callAndRedirect])
+  const onLeave = useCallback(callAndRedirect('/api/lobby/leave'), [
+    callAndRedirect,
+  ])
 
-    server.onopen = () => {
-      sendToken()
-
-      setStore((old) => ({
-        ...old,
-        dispatch: (action) => {
-          sendRef.current({ type: '@client>dispatch', payload: action })
-        },
-      }))
-    }
-  }, [token, history, lobbyId])
-
-  const onStart = useCallback(() => {
-    sendRef.current({ type: '@client>start' })
-  }, [])
+  const dispatch = useCallback(
+    async (action) => {
+      await fetch('/api/lobby/dispatch', {
+        method: 'POST',
+        body: JSON.stringify(action),
+        headers: { 'content-type': 'application/json' },
+      })
+    },
+    [fetch],
+  )
 
   const onChooseArchetype = useCallback(
     (type) => {
@@ -84,27 +69,6 @@ const Lobby = () => {
     },
     [dispatch],
   )
-
-  const onJoin = useCallback(
-    wrapSubmit(({ lobbyId }) => {
-      sendRef.current({
-        type: '@client>join',
-        payload: {
-          lobbyId,
-        },
-      })
-    }),
-    [],
-  )
-
-  const onCreate = useCallback(() => {
-    sendRef.current({ type: '@client>create' })
-  }, [])
-
-  const onLeave = useCallback(() => {
-    sendRef.current({ type: '@client>leave' })
-    history.push('/lobby')
-  }, [history])
 
   if (!lobbyId) {
     return (

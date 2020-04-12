@@ -9,6 +9,10 @@ service cloud.firestore {
     	allow read: if get(/databases/$(database)/documents/players/$(request.auth.uid)).data.lobbyId == lobbyId;
       allow write: if false;
     }
+    match /games/{gameId}/{document=**} {
+    	allow read: if get(/databases/$(database)/documents/players/$(request.auth.uid)).data.gameId == gameId;
+      allow write: if false;
+    }
     match /{document=**} {
       allow read, write: if false;
     }
