@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback, useState, useContext } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import cn from 'classnames'
+import { wrapSubmit } from 'from-form-submit'
 // TODO: remove from deps import SockJS from 'sockjs-client'
 import { Archetype, FirebaseContext } from '../components'
 import classes from './lobby.module.scss'
@@ -24,8 +25,8 @@ const Lobby = () => {
   }, [firebase, lobbyId])
 
   const callAndRedirect = useCallback(
-    (url) => async () => {
-      const res = await fetch(url, { method: 'POST' })
+    (url) => async (params = {}) => {
+      const res = await fetch(url, { method: 'POST', ...params })
       if (res.ok) {
         const { type, id } = await res.json()
         history.push(`/${type}/${id}`)
@@ -41,9 +42,14 @@ const Lobby = () => {
   const onStart = useCallback(callAndRedirect('/api/lobby/start'), [
     callAndRedirect,
   ])
-  const onJoin = useCallback(callAndRedirect('/api/lobby/join'), [
-    callAndRedirect,
-  ])
+  const onJoin = useCallback(
+    wrapSubmit(async ({ lobbyId }) => {
+      await callAndRedirect('/api/lobby/join')({
+        body: JSON.stringify({ id: lobbyId }),
+      })
+    }),
+    [callAndRedirect],
+  )
   const onCreate = useCallback(callAndRedirect('/api/lobby'), [callAndRedirect])
   const onLeave = useCallback(callAndRedirect('/api/lobby/leave'), [
     callAndRedirect,
@@ -54,7 +60,6 @@ const Lobby = () => {
       await fetch('/api/lobby/dispatch', {
         method: 'POST',
         body: JSON.stringify(action),
-        headers: { 'content-type': 'application/json' },
       })
     },
     [fetch],

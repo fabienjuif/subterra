@@ -29,6 +29,7 @@ const Firebase = ({ children }) => {
     firebase.analytics()
 
     firebase.auth().onAuthStateChanged((user) => {
+      console.log(user.uid)
       setValue((old) => ({
         ...old,
         user,
@@ -48,8 +49,9 @@ const Firebase = ({ children }) => {
             fetch(url, {
               ...options,
               headers: {
+                Authorization: `Bearer ${idToken}`,
+                'Content-Type': 'application/json',
                 ...options.headers,
-                authorization: `Bearer ${idToken}`,
               },
             }),
           ),

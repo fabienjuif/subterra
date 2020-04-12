@@ -9,7 +9,7 @@ export const create = (firestore) => async (playerDoc) => {
   engine.dispatch({
     type: '@players>add',
     payload: {
-      id: player.id,
+      id: player.userId,
       name: player.pseudo || player.name,
     },
   })
@@ -23,12 +23,48 @@ export const create = (firestore) => async (playerDoc) => {
       state: JSON.parse(JSON.stringify(engine.getState())),
     })
 
-  await playerDoc.ref.set(
-    {
-      lobbyId,
+  await playerDoc.ref.update({
+    lobbyId,
+  })
+
+  return lobbyId
+}
+
+export const join = (firestore) => async (playerDoc, lobbyId) => {
+  const lobbyDoc = await firestore.collection('lobby').doc(lobbyId).get()
+
+  if (!lobbyDoc.exists) {
+    const error = new Error('Lobby does not exist')
+    error.code = 'LOBBY_NOT_FOUND'
+    error.lobbyId = lobbyId
+    throw error
+  }
+
+  const { state } = lobbyDoc.data()
+  if (!state || state.players.length > 6) {
+    const error = new Error('Lobby is full')
+    error.code = 'LOBBY_FULL'
+    error.lobbyId = lobbyId
+    throw error
+  }
+
+  const player = playerDoc.data()
+  const engine = createLobbyEngine(state)
+  engine.dispatch({
+    type: '@players>add',
+    payload: {
+      id: player.userId,
+      name: player.pseudo || player.name,
     },
-    { merge: true },
-  )
+  })
+
+  await lobbyDoc.ref.update({
+    state: JSON.parse(JSON.stringify(engine.getState())),
+  })
+
+  await playerDoc.ref.update({
+    lobbyId,
+  })
 
   return lobbyId
 }
@@ -43,7 +79,7 @@ export const dispatch = (firestore) => async (playerDoc, action) => {
   const lobbyDoc = await firestore.collection('lobby').doc(player.lobbyId).get()
   if (!lobbyDoc.exists) {
     console.warn('Lobby does not exist on id', player.lobbyId)
-    console.warn('\tremoving its reference on player', player.uid)
+    console.warn('\tremoving its reference on player', player.userId)
     await playerDoc.ref.update({
       lobbyId: firestore.FieldValue.delete(),
     })
@@ -53,7 +89,7 @@ export const dispatch = (firestore) => async (playerDoc, action) => {
 
   const { state } = lobbyDoc.data()
   const engine = createLobbyEngine(state)
-  engine.dispatch({ ...action, userId: player.id })
+  engine.dispatch({ ...action, userId: player.userId })
   await lobbyDoc.ref.update({
     state: JSON.parse(JSON.stringify(engine.getState())),
   })

@@ -15,7 +15,9 @@ app.use(async (req, res, next) => {
   let playerRef = firestore.collection('players').doc(uid)
   const playerDoc = await playerRef.get()
   if (!playerDoc.exists) {
-    next(new Error('User is not known'))
+    const error = new Error('User is not known')
+    error.uid = uid
+    next(error)
     return
   }
 
@@ -37,6 +39,26 @@ app.post('/lobby', async (req, res) => {
 
   const lobbyId =
     player.lobbyId || (await lobby.create(firestore)(req.playerDoc))
+
+  res.send({
+    id: lobbyId,
+    type: 'lobby',
+  })
+})
+
+app.post('/lobby/join', async (req, res) => {
+  const player = req.playerDoc.data()
+  if (player.gameId) {
+    res.send({
+      id: player.gameId,
+      type: 'game',
+    })
+
+    return
+  }
+
+  const lobbyId =
+    player.lobbyId || (await lobby.join(firestore)(req.playerDoc, req.body.id))
 
   res.send({
     id: lobbyId,

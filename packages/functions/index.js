@@ -1708,7 +1708,7 @@ const create$2 = (firestore) => async (playerDoc) => {
   engine.dispatch({
     type: '@players>add',
     payload: {
-      id: player.id,
+      id: player.userId,
       name: player.pseudo || player.name,
     },
   })
@@ -1722,12 +1722,48 @@ const create$2 = (firestore) => async (playerDoc) => {
       state: JSON.parse(JSON.stringify(engine.getState())),
     })
 
-  await playerDoc.ref.set(
-    {
-      lobbyId,
+  await playerDoc.ref.update({
+    lobbyId,
+  })
+
+  return lobbyId
+}
+
+const join = (firestore) => async (playerDoc, lobbyId) => {
+  const lobbyDoc = await firestore.collection('lobby').doc(lobbyId).get()
+
+  if (!lobbyDoc.exists) {
+    const error = new Error('Lobby does not exist')
+    error.code = 'LOBBY_NOT_FOUND'
+    error.lobbyId = lobbyId
+    throw error
+  }
+
+  const { state } = lobbyDoc.data()
+  if (!state || state.players.length > 6) {
+    const error = new Error('Lobby is full')
+    error.code = 'LOBBY_FULL'
+    error.lobbyId = lobbyId
+    throw error
+  }
+
+  const player = playerDoc.data()
+  const engine = create$1(state)
+  engine.dispatch({
+    type: '@players>add',
+    payload: {
+      id: player.userId,
+      name: player.pseudo || player.name,
     },
-    { merge: true },
-  )
+  })
+
+  await lobbyDoc.ref.update({
+    state: JSON.parse(JSON.stringify(engine.getState())),
+  })
+
+  await playerDoc.ref.update({
+    lobbyId,
+  })
 
   return lobbyId
 }
@@ -1742,7 +1778,7 @@ const dispatch$1 = (firestore) => async (playerDoc, action) => {
   const lobbyDoc = await firestore.collection('lobby').doc(player.lobbyId).get()
   if (!lobbyDoc.exists) {
     console.warn('Lobby does not exist on id', player.lobbyId)
-    console.warn('\tremoving its reference on player', player.uid)
+    console.warn('\tremoving its reference on player', player.userId)
     await playerDoc.ref.update({
       lobbyId: firestore.FieldValue.delete(),
     })
@@ -1752,7 +1788,7 @@ const dispatch$1 = (firestore) => async (playerDoc, action) => {
 
   const { state } = lobbyDoc.data()
   const engine = create$1(state)
-  engine.dispatch({ ...action, userId: player.id })
+  engine.dispatch({ ...action, userId: player.userId })
   await lobbyDoc.ref.update({
     state: JSON.parse(JSON.stringify(engine.getState())),
   })
@@ -1769,7 +1805,9 @@ app.use(async (req, res, next) => {
   let playerRef = firestore.collection('players').doc(uid)
   const playerDoc = await playerRef.get()
   if (!playerDoc.exists) {
-    next(new Error('User is not known'))
+    const error = new Error('User is not known')
+    error.uid = uid
+    next(error)
     return
   }
 
@@ -1790,6 +1828,26 @@ app.post('/lobby', async (req, res) => {
   }
 
   const lobbyId = player.lobbyId || (await create$2(firestore)(req.playerDoc))
+
+  res.send({
+    id: lobbyId,
+    type: 'lobby',
+  })
+})
+
+app.post('/lobby/join', async (req, res) => {
+  const player = req.playerDoc.data()
+  if (player.gameId) {
+    res.send({
+      id: player.gameId,
+      type: 'game',
+    })
+
+    return
+  }
+
+  const lobbyId =
+    player.lobbyId || (await join(firestore)(req.playerDoc, req.body.id))
 
   res.send({
     id: lobbyId,
