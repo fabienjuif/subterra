@@ -29,7 +29,6 @@ const Firebase = ({ children }) => {
     firebase.analytics()
 
     firebase.auth().onAuthStateChanged((user) => {
-      console.log(user.uid)
       setValue((old) => ({
         ...old,
         user,
