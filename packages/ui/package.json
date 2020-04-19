@@ -4,6 +4,7 @@
   "private": true,
   "proxy": "http://localhost:9999",
   "dependencies": {
+    "@auth0/auth0-spa-js": "^1.7.0",
     "@myrtille/react": "^0.8.1",
     "@subterra/data": "^0.1.0",
     "@subterra/engine": "^0.1.0",

@@ -1,3 +1,5 @@
+const fetch = require('node-fetch')
+const { pick } = require('lodash')
 const AWS = require('aws-sdk')
 
 AWS.config.update({ region: 'eu-west-3' })
@@ -5,41 +7,55 @@ const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
 
 exports.arn = 'arn:aws:lambda:eu-west-3:427962677004:function:wsSubterraConnect'
 
-// TODO: retrieve this
-const USER = {
-  id: '1',
-  name: 'Fabien JUIF',
-  pseudo: 'Sutat',
-}
-
 // TODO: env variable
-const WS_API_ENDPOINT =
-  'https://iv082u46jh.execute-api.eu-west-3.amazonaws.com/beta'
-
-const api = new AWS.ApiGatewayManagementApi({ endpoint: WS_API_ENDPOINT })
+const AUTH0_API_ENDPOINT = 'https://crawlandsurvive.eu.auth0.com'
 
 exports.handler = async (event) => {
-  const { requestContext, headers } = event
+  console.log(JSON.stringify(event, null, 2))
+  const { requestContext, headers, queryStringParameters } = event
   if (!requestContext) return
   const { connectionId } = requestContext
   const { Authorization } = headers
 
+  if (!queryStringParameters || !queryStringParameters.token) {
+    const error = new Error('Token should be provided in queryParams (token)')
+    throw error
+  }
+
+  const auth0User = await fetch(`${AUTH0_API_ENDPOINT}/userinfo`, {
+    headers: { Authorization: `Bearer ${queryStringParameters.token}` },
+  }).then((d) => d.json())
+
   // TODO: test jwt token from headers
 
-  const { Item: user } = await docClient
+  let { Item: user } = await docClient
     .get({
       TableName: 'users',
       Key: {
-        id: USER.id,
+        id: auth0User.sub,
       },
       ProjectionExpression: 'id, connectionId',
     })
     .promise()
 
-  const deletePreviousConnection = !!user.connectionId
+  user = {
+    id: auth0User.sub,
+    ...pick(auth0User, ['name', 'email', 'picture']),
+    pseudo: auth0User.nickname,
+    ...user,
+    [auth0User.sub]: auth0User,
+  }
+
+  await docClient
+    .put({
+      TableName: 'users',
+      Item: user,
+    })
+    .promise()
+
   let hasPreviousLobby = false
 
-  if (deletePreviousConnection) {
+  if (user.connectionId) {
     const { Item: wsConnection } = await docClient
       .get({
         TableName: 'wsConnections',
@@ -57,7 +73,7 @@ exports.handler = async (event) => {
       .update({
         TableName: 'users',
         Key: {
-          id: USER.id,
+          id: user.id,
         },
         UpdateExpression: 'set connectionId = :connectionId',
         ExpressionAttributeValues: {
@@ -70,7 +86,7 @@ exports.handler = async (event) => {
       .update({
         TableName: 'users',
         Key: {
-          id: USER.id,
+          id: user.id,
         },
         UpdateExpression:
           'set lobbyId = :lobbyId, connectionId = :connectionId',
@@ -88,15 +104,11 @@ exports.handler = async (event) => {
       TableName: 'wsConnections',
       Item: {
         id: connectionId,
-        userId: USER.id,
+        userId: user.id,
         lobbyId: '1',
       },
     })
     .promise()
-
-  if (deletePreviousConnection) {
-    // TODO: call disconnect lambda
-  }
 
   const { Item: lobby } = await docClient
     .get({
@@ -118,14 +130,10 @@ exports.handler = async (event) => {
           ),
           connectionId,
         ],
-        users: Array.from(new Set([...(lobby.users || []), USER.pseudo])),
+        users: Array.from(new Set([...(lobby.users || []), user.pseudo])),
       },
     })
     .promise()
-
-  console.log({
-    deletePreviousConnection,
-  })
 
   return {
     statusCode: 200,
