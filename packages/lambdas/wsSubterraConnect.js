@@ -26,8 +26,6 @@ exports.handler = async (event) => {
     headers: { Authorization: `Bearer ${queryStringParameters.token}` },
   }).then((d) => d.json())
 
-  // TODO: test jwt token from headers
-
   let { Item: user } = await docClient
     .get({
       TableName: 'users',
