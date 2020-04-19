@@ -1,141 +1,49 @@
-const fetch = require('node-fetch')
-const { pick } = require('lodash')
 const AWS = require('aws-sdk')
 
-AWS.config.update({ region: 'eu-west-3' })
-const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
-
-exports.arn = 'arn:aws:lambda:eu-west-3:427962677004:function:wsSubterraConnect'
+exports.arn = 'arn:aws:lambda:eu-west-3:427962677004:function:wsSendLobbyState'
 
 // TODO: env variable
-const AUTH0_API_ENDPOINT = 'https://crawlandsurvive.eu.auth0.com'
+const WS_API_ENDPOINT =
+  'https://iv082u46jh.execute-api.eu-west-3.amazonaws.com/beta'
 
-exports.handler = async (event) => {
-  console.log(JSON.stringify(event, null, 2))
-  const { requestContext, headers, queryStringParameters } = event
-  if (!requestContext) return
-  const { connectionId } = requestContext
-  const { Authorization } = headers
+const api = new AWS.ApiGatewayManagementApi({ endpoint: WS_API_ENDPOINT })
+const lambda = new AWS.Lambda()
 
-  if (!queryStringParameters || !queryStringParameters.token) {
-    const error = new Error('Token should be provided in queryParams (token)')
-    throw error
-  }
+exports.handler = async (event, context) => {
+  const { Records } = event
+  console.log(JSON.stringify(Records, null, 2))
+  const lobby = Records[0].dynamodb.NewImage
 
-  const auth0User = await fetch(`${AUTH0_API_ENDPOINT}/userinfo`, {
-    headers: { Authorization: `Bearer ${queryStringParameters.token}` },
-  }).then((d) => d.json())
+  try {
+    await Promise.all(
+      lobby.connectionsIds.L.map(({ S: connectionId }) =>
+        api
+          .postToConnection({
+            ConnectionId: connectionId,
+            Data: JSON.stringify({
+              type: '@server>setState',
+              payload: JSON.parse(lobby.state.S),
+            }),
+          })
+          .promise()
+          .catch((ex) => {
+            console.error(ex)
 
-  // TODO: test jwt token from headers
-
-  let { Item: user } = await docClient
-    .get({
-      TableName: 'users',
-      Key: {
-        id: auth0User.sub,
-      },
-      ProjectionExpression: 'id, connectionId',
-    })
-    .promise()
-
-  user = {
-    id: auth0User.sub,
-    ...pick(auth0User, ['name', 'email', 'picture']),
-    pseudo: auth0User.nickname,
-    ...user,
-    [auth0User.sub]: auth0User,
-  }
-
-  await docClient
-    .put({
-      TableName: 'users',
-      Item: user,
-    })
-    .promise()
-
-  let hasPreviousLobby = false
-
-  if (user.connectionId) {
-    const { Item: wsConnection } = await docClient
-      .get({
-        TableName: 'wsConnections',
-        Key: {
-          id: user.connectionId,
-        },
-      })
-      .promise()
-
-    hasPreviousLobby = !!(wsConnection && wsConnection.lobbyId)
-  }
-
-  if (hasPreviousLobby) {
-    await docClient
-      .update({
-        TableName: 'users',
-        Key: {
-          id: user.id,
-        },
-        UpdateExpression: 'set connectionId = :connectionId',
-        ExpressionAttributeValues: {
-          ':connectionId': connectionId,
-        },
-      })
-      .promise()
-  } else {
-    await docClient
-      .update({
-        TableName: 'users',
-        Key: {
-          id: user.id,
-        },
-        UpdateExpression:
-          'set lobbyId = :lobbyId, connectionId = :connectionId',
-        ExpressionAttributeValues: {
-          ':lobbyId': '1',
-          ':connectionId': connectionId,
-        },
-      })
-      .promise()
-  }
-
-  // create connections
-  await docClient
-    .put({
-      TableName: 'wsConnections',
-      Item: {
-        id: connectionId,
-        userId: user.id,
-        lobbyId: '1',
-      },
-    })
-    .promise()
-
-  const { Item: lobby } = await docClient
-    .get({
-      TableName: 'lobby',
-      Key: {
-        id: '1',
-      },
-    })
-    .promise()
-
-  await docClient
-    .put({
-      TableName: 'lobby',
-      Item: {
-        ...lobby,
-        connectionsIds: [
-          ...(lobby.connectionsIds || []).filter(
-            (id) => id !== user.connectionId,
-          ),
-          connectionId,
-        ],
-        users: Array.from(new Set([...(lobby.users || []), user.pseudo])),
-      },
-    })
-    .promise()
-
-  return {
-    statusCode: 200,
+            return lambda
+              .invokeAsync({
+                FunctionName:
+                  'arn:aws:lambda:eu-west-3:427962677004:function:wsSubterraDisconnect',
+                InvokeArgs: JSON.stringify({
+                  connectionId,
+                }),
+              })
+              .promise()
+          }),
+      ),
+    )
+  } catch (err) {
+    console.trace(err)
+    if (err.response) console.error(err.response.body)
+    throw err
   }
 }

@@ -20,7 +20,10 @@ exports.handler = async (event, context) => {
         api
           .postToConnection({
             ConnectionId: connectionId,
-            Data: lobby.state.S,
+            Data: JSON.stringify({
+              type: '@server>setState',
+              payload: JSON.parse(lobby.state.S),
+            }),
           })
           .promise()
           .catch((ex) => {

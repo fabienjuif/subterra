@@ -11,11 +11,9 @@ exports.arn = 'arn:aws:lambda:eu-west-3:427962677004:function:wsSubterraConnect'
 const AUTH0_API_ENDPOINT = 'https://crawlandsurvive.eu.auth0.com'
 
 exports.handler = async (event) => {
-  console.log(JSON.stringify(event, null, 2))
-  const { requestContext, headers, queryStringParameters } = event
+  const { requestContext, queryStringParameters } = event
   if (!requestContext) return
   const { connectionId } = requestContext
-  const { Authorization } = headers
 
   if (!queryStringParameters || !queryStringParameters.token) {
     const error = new Error('Token should be provided in queryParams (token)')
