@@ -14,20 +14,19 @@ ws.onopen = function (event) {
   console.log(event)
   ws.send(
     JSON.stringify({
-      domain: 'lobby',
-      type: '@players>setArchetype',
-      payload: { archetypeType: 'medic' },
+      type: '@client>getState',
     }),
   )
 
-  setTimeout(() => {
-    ws.close()
-  }, 2000)
+  // setTimeout(() => {
+  //   ws.close()
+  // }, 2000)
 }
 
 ws.onmessage = function (event) {
   console.log('new message:')
   console.log(event)
+  console.log(JSON.parse(event.data))
 }
 
 // setTimeout(() => {
