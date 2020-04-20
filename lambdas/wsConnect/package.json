@@ -1,0 +1,11 @@
+{
+  "name": "@subterra/lambdas-ws-connect",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "arn": "arn:aws:lambda:eu-west-3:427962677004:function:wsConnect",
+  "dependencies": {
+    "lodash": "^4.17.15",
+    "node-fetch": "^2.6.0"
+  }
+}

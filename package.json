@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "lambdas/*"
   ],
   "dependencies": {},
   "scripts": {
@@ -16,7 +17,8 @@
     "format": "prettier \"**/*.{ts,tsx,js,jsx,md,json}\" --write",
     "format:check": "prettier \"**/*.{ts,tsx,js,jsx,md,json}\" --check",
     "ci": "CI=1 run-p format:check 'test --watchAll=false'",
-    "coverage:engine": "run-s 'test --coverage --all --watchAll=false'"
+    "coverage:engine": "run-s 'test --coverage --all --watchAll=false'",
+    "publish-lambda": "node packages/cli publish"
   },
   "eslintConfig": {
     "extends": "react-app"
