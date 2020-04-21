@@ -4,6 +4,8 @@ const path = require('path')
 const { spawn } = require('child_process')
 
 const readFile = promisify(fs.readFile)
+const readdir = promisify(fs.readdir)
+const stat = promisify(fs.stat)
 
 const asyncSpawn = (...args) =>
   new Promise((resolve, reject) => {
@@ -27,38 +29,52 @@ const asyncSpawn = (...args) =>
   })
 
 module.exports = async ({ lambdaName, cleanAll }) => {
-  if (!lambdaName) {
-    console.log('TODO: deploy all')
-    return
-  }
+  let names = []
 
-  const cwd = path.resolve(__dirname, '../../lambdas', lambdaName)
-  const { arn } = JSON.parse(await readFile(path.resolve(cwd, 'package.json')))
-
-  await asyncSpawn('npm', ['i'], { cwd })
-  await asyncSpawn('zip', ['-r', 'lambdas.zip', '.'], { cwd })
-  try {
-    await asyncSpawn(
-      'aws',
-      [
-        'lambda',
-        'update-function-code',
-        '--zip-file',
-        'fileb://lambdas.zip',
-        '--function-name',
-        arn,
-      ],
-      { cwd },
+  if (lambdaName) {
+    names = [lambdaName]
+  } else {
+    const items = await readdir(path.resolve(__dirname, '../../lambdas'))
+    const stats = await Promise.all(
+      items.map((item) => stat(path.resolve(__dirname, '../../lambdas', item))),
     )
 
-    console.log(`${lambdaName} is published.`)
-  } finally {
-    const files = ['lambdas.zip']
-
-    if (cleanAll) {
-      files.push('node_modules', 'package-lock.json')
-    }
-
-    await asyncSpawn('rm', ['-R', ...files], { cwd })
+    names = items.filter((name, index) => stats[index].isDirectory())
   }
+
+  await Promise.all(
+    names.map(async (name) => {
+      const cwd = path.resolve(__dirname, '../../lambdas', name)
+      const { arn } = JSON.parse(
+        await readFile(path.resolve(cwd, 'package.json')),
+      )
+
+      await asyncSpawn('npm', ['i'], { cwd })
+      await asyncSpawn('zip', ['-r', 'lambdas.zip', '.'], { cwd })
+      try {
+        await asyncSpawn(
+          'aws',
+          [
+            'lambda',
+            'update-function-code',
+            '--zip-file',
+            'fileb://lambdas.zip',
+            '--function-name',
+            arn,
+          ],
+          { cwd },
+        )
+
+        console.log(`${name} is published.`)
+      } finally {
+        const files = ['lambdas.zip']
+
+        if (cleanAll) {
+          files.push('node_modules', 'package-lock.json')
+        }
+
+        await asyncSpawn('rm', ['-Rf', ...files], { cwd })
+      }
+    }),
+  )
 }
