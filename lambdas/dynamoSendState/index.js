@@ -9,18 +9,17 @@ const lambda = new AWS.Lambda()
 
 exports.handler = async (event, context) => {
   const { Records } = event
-  console.log(JSON.stringify(Records, null, 2))
-  const lobby = Records[0].dynamodb.NewImage
+  const newImage = Records[0].dynamodb.NewImage
 
   try {
     await Promise.all(
-      lobby.connectionsIds.L.map(({ S: connectionId }) =>
+      newImage.connectionsIds.L.map(({ S: connectionId }) =>
         api
           .postToConnection({
             ConnectionId: connectionId,
             Data: JSON.stringify({
               type: '@server>setState',
-              payload: JSON.parse(lobby.state.S),
+              payload: JSON.parse(newImage.state.S),
             }),
           })
           .promise()
@@ -29,8 +28,9 @@ exports.handler = async (event, context) => {
 
             return lambda
               .invokeAsync({
+                // TODO: env var
                 FunctionName:
-                  'arn:aws:lambda:eu-west-3:427962677004:function:wsSubterraDisconnect',
+                  'arn:aws:lambda:eu-west-3:427962677004:function:wsDisconnect',
                 InvokeArgs: JSON.stringify({
                   connectionId,
                 }),
