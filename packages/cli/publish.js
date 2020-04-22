@@ -45,11 +45,28 @@ module.exports = async ({ lambdaName, cleanAll }) => {
   await Promise.all(
     names.map(async (name) => {
       const cwd = path.resolve(__dirname, '../../lambdas', name)
-      const { arn } = JSON.parse(
+      const { arn, workspaceDependencies } = JSON.parse(
         await readFile(path.resolve(cwd, 'package.json')),
       )
 
       await asyncSpawn('npm', ['i'], { cwd })
+      if (workspaceDependencies) {
+        await asyncSpawn('mkdir', ['-p', 'node_modules/@subterra'], { cwd })
+        await Promise.all(
+          Object.keys(workspaceDependencies).map((dep) =>
+            asyncSpawn(
+              'cp',
+              [
+                '-r',
+                `../../packages/${dep.split('/')[1]}/`,
+                `node_modules/${dep}`,
+              ],
+              { cwd },
+            ),
+          ),
+        )
+      }
+      // TODO: ignore (gitignore)
       await asyncSpawn('zip', ['-r', 'lambdas.zip', '.'], { cwd })
       try {
         await asyncSpawn(

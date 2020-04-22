@@ -52,7 +52,12 @@ const App = () => {
       console.log(event)
       ws.send(
         JSON.stringify({
-          type: '@client>getState',
+          domain: 'lobby',
+          type: '@players>add',
+          payload: {
+            id: 1,
+            name: 'Sutat',
+          },
         }),
       )
     }

@@ -1238,7 +1238,7 @@
   dependencies:
     "@myrtille/util" "^0.8.1"
 
-"@myrtille/mutate@^0.8.1":
+"@myrtille/mutate@^0.8.1", "@myrtille/mutate@^0.8.2":
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/@myrtille/mutate/-/mutate-0.8.2.tgz#cf75f7d81e4b4191646d5670c25d70e1669553d7"
   integrity sha512-o1kwU/d9oXV13YiYVHxZDvtI01RVrhFeWTfEugxo5NoHNQca2fGfKtIIUUI9sTTPsoWfAqFibNgeXkQdnsH0Hg==

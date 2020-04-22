@@ -1,0 +1,13 @@
+{
+  "name": "@subterra/lambdas-ws-get-lobby-dispatch",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "arn": "arn:aws:lambda:eu-west-3:427962677004:function:wsLobbyDispatch",
+  "dependencies": {
+    "@myrtille/mutate": "^0.8.2"
+  },
+  "workspaceDependencies": {
+    "@subterra/data": "^1.0.0"
+  }
+}

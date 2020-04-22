@@ -1,8 +1,8 @@
 const AWS = require('aws-sdk')
 
 AWS.config.update({ region: 'eu-west-3' })
-const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
 
+// TODO: env variable
 const WS_API_ENDPOINT =
   'https://iv082u46jh.execute-api.eu-west-3.amazonaws.com/beta'
 
@@ -12,51 +12,20 @@ exports.handler = async (event) => {
   const { requestContext, body } = event
   const { connectionId } = requestContext
 
-  const action = JSON.parse(body)
-  console.log(JSON.stringify(action, null, 2))
-
-  if (action.type === '@client>getState') {
-    const { Item: connection } = await docClient
-      .get({
-        TableName: 'wsConnections',
-        Key: {
-          id: connectionId,
-        },
-        ProjectionExpression: 'id, lobbyId',
-      })
-      .promise()
-
-    let state
-    if (connection.lobbyId) {
-      const { Item: lobby } = await docClient
-        .get({
-          TableName: 'lobby',
-          Key: {
-            id: connection.lobbyId,
-          },
-          ProjectionExpression: '#s',
-          // we have to do this because state is reserved...
-          ExpressionAttributeNames: {
-            '#s': 'state',
-          },
-        })
-        .promise()
-
-      state = lobby.state
-    }
-
-    await api
-      .postToConnection({
-        ConnectionId: connectionId,
-        Data: JSON.stringify({
-          type: '@server>setState',
-          payload: JSON.parse(state),
-        }),
-      })
-      .promise()
+  const error = {
+    code: 'no_domain',
+    message: 'domain is not set on body or is not known',
   }
+  console.error(JSON.stringify({ ...error, body }, null, 2))
+
+  await api
+    .postToConnection({
+      ConnectionId: connectionId,
+      Data: JSON.stringify({ type: '@server>error', payload: error }),
+    })
+    .promise()
 
   return {
-    statusCode: 200,
+    statusCode: 400,
   }
 }

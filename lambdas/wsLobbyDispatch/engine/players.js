@@ -1,6 +1,6 @@
-import { archetypes } from '@subterra/data'
+const { archetypes } = require('@subterra/data')
 
-export const addPlayer = (store, action) => {
+exports.addPlayer = (store, action) => {
   const prevState = store.getState()
   if (prevState.players.some(({ id }) => id === action.payload.id)) return
 
@@ -9,7 +9,7 @@ export const addPlayer = (store, action) => {
   })
 }
 
-export const removePlayer = (store, action) => {
+exports.removePlayer = (store, action) => {
   const prevState = store.getState()
   const playerIndex = prevState.players.findIndex(
     ({ id }) => id === action.payload.id,
@@ -26,7 +26,7 @@ export const removePlayer = (store, action) => {
   })
 }
 
-export const setArchetype = (store, action) => {
+exports.setArchetype = (store, action) => {
   const prevState = store.getState()
 
   const archetypeIndex = prevState.archetypes.findIndex(
