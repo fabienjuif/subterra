@@ -1,5 +1,5 @@
-const AWS = require('aws-sdk')
-const { create } = require('./engine')
+import AWS from 'aws-sdk'
+import create from './engine'
 
 AWS.config.update({ region: 'eu-west-3' })
 const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
@@ -9,7 +9,7 @@ const WS_API_ENDPOINT =
 
 const api = new AWS.ApiGatewayManagementApi({ endpoint: WS_API_ENDPOINT })
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   const { requestContext, body } = event
   const { connectionId } = requestContext
 
@@ -74,7 +74,7 @@ exports.handler = async (event) => {
       Key: {
         id: wsConnection.lobbyId,
       },
-      ProjectionExpression: '#s',
+      ProjectionExpression: 'id, #s',
       // we have to do this because state is reserved...
       ExpressionAttributeNames: {
         '#s': 'state',
@@ -93,7 +93,10 @@ exports.handler = async (event) => {
       Key: {
         id: lobby.id,
       },
-      UpdateExpression: 'set state = :state',
+      UpdateExpression: 'set #s = :state',
+      ExpressionAttributeNames: {
+        '#s': 'state',
+      },
       ExpressionAttributeValues: {
         ':state': JSON.stringify(engine.getState()),
       },

@@ -10,6 +10,8 @@ node_modules
 
 # production
 /build
+/packages/ui/build
+/lambdas/*/index.js
 
 # misc
 .DS_Store

@@ -1,7 +1,7 @@
-const messages = require('./messages')
-const players = require('./players')
+import * as messages from './messages'
+import * as players from './players'
 
-exports.listeners = [
+export default [
   ['@message>add', messages.addMessage],
   ['@players>add', players.addPlayer],
   ['@players>remove', players.removePlayer],
