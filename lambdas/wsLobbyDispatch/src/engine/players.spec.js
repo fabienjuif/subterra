@@ -13,17 +13,20 @@ describe('lobby/players', () => {
     it('should add a player', () => {
       const store = createStore({ players: [] })
 
-      addPlayer(store, { payload: { id: 2 } })
+      addPlayer(store, {
+        userId: 2,
+        payload: { name: 'name', should: 'not be there' },
+      })
 
-      expect(store.getState()).toEqual({ players: [{ id: 2 }] })
+      expect(store.getState()).toEqual({ players: [{ id: 2, name: 'name' }] })
     })
 
     it('should not add player because it already exists', () => {
-      const store = createStore({ players: [{ id: 2, old: true }] })
+      const store = createStore({ players: [{ id: 2, name: 'old' }] })
 
-      addPlayer(store, { payload: { id: 2, old: false } })
+      addPlayer(store, { userId: 2, payload: { name: 'new' } })
 
-      expect(store.getState()).toEqual({ players: [{ id: 2, old: true }] })
+      expect(store.getState()).toEqual({ players: [{ id: 2, name: 'old' }] })
     })
   })
 
@@ -31,7 +34,7 @@ describe('lobby/players', () => {
     it('should remove player', () => {
       const store = createStore({ players: [{ id: 2, old: true }] })
 
-      removePlayer(store, { payload: { id: 2 } })
+      removePlayer(store, { userId: 2 })
 
       expect(store.getState()).toEqual({ players: [] })
     })
@@ -42,7 +45,7 @@ describe('lobby/players', () => {
         archetypes: [{ type: 'bodyguard', health: 5 }],
       })
 
-      removePlayer(store, { payload: { id: 2 } })
+      removePlayer(store, { userId: 2 })
 
       expect(store.getState()).toEqual({
         players: [],
@@ -58,7 +61,7 @@ describe('lobby/players', () => {
         players: [{ id: 3 }],
       })
 
-      removePlayer(store, { payload: { id: 2 } })
+      removePlayer(store, { userId: 2 })
 
       expect(store.getState()).toEqual({
         players: [{ id: 3 }],

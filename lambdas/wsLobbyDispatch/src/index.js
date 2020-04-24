@@ -22,7 +22,7 @@ export const handler = async (event) => {
       Key: {
         id: connectionId,
       },
-      ProjectionExpression: 'id, lobbyId',
+      ProjectionExpression: 'id, lobbyId, userId',
     })
     .promise()
 
@@ -84,7 +84,10 @@ export const handler = async (event) => {
 
   // dispatch action
   const engine = create(JSON.parse(lobby.state))
-  engine.dispatch(action)
+  engine.dispatch({
+    ...action,
+    userId: wsConnection.userId,
+  })
 
   // update dynamo
   await docClient

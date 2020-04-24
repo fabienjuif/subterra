@@ -5,7 +5,8 @@
   "private": true,
   "arn": "arn:aws:lambda:eu-west-3:427962677004:function:wsLobbyDispatch",
   "dependencies": {
-    "@myrtille/mutate": "^0.8.2"
+    "@myrtille/mutate": "^0.8.2",
+    "lodash": "^4.17.15"
   },
   "workspaceDependencies": {
     "@subterra/data": "^1.0.0"

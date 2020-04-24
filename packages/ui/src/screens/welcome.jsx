@@ -1,37 +1,20 @@
-import React, { useCallback } from 'react'
+import React from 'react'
+import { useUser } from '../components'
 import { useHistory } from 'react-router-dom'
-import { wrapSubmit } from 'from-form-submit'
-import { useToken } from '../userContext'
+import { useEffect } from 'react'
 
 const Welcome = () => {
   const history = useHistory()
-  const [, setToken] = useToken()
+  const user = useUser()
 
-  const connect = useCallback(
-    wrapSubmit(async (login) => {
-      const raw = await fetch('/auth', {
-        method: 'POST',
-        body: JSON.stringify(login),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      if (raw.ok) {
-        setToken(await raw.text())
-
-        history.push('/lobby')
-      }
-    }),
-    [],
-  )
+  useEffect(() => {
+    if (!user.logged) return
+    history.push('/lobby')
+  }, [history, user.logged])
 
   return (
     <div>
-      <form onSubmit={connect}>
-        <input name="username" type="text" placeholder="username" />
-        <input name="password" type="password" placeholder="password" />
-        <button type="submit">connect</button>
-      </form>
+      <button onClick={user.connect}>online</button>
       <button onClick={() => history.push('/local')}>local</button>
     </div>
   )

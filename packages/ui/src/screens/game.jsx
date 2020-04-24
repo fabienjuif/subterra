@@ -7,13 +7,12 @@ import createStore from '@myrtille/core'
 import { createEngine, initState } from '@subterra/engine'
 import { tiles as tilesHelpers } from '@subterra/engine'
 import { Grid, UIPlayer, CardsDeck, Logs, MovableGrid } from '../components'
-import { useToken } from '../userContext'
 import classes from './game.module.scss'
 
 const Game = ({ cards, players, tiles, dices }) => {
   const { gameId } = useParams()
   const history = useHistory()
-  const [token] = useToken()
+  const token = undefined // TODO: fix this
 
   const [cells, setCells] = useState([])
   const [orderedPlayers, setOrderedPlayers] = useState([])

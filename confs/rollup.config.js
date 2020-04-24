@@ -15,6 +15,7 @@ export default {
     'express',
     'body-parser',
     'immer',
+    'lodash',
     '@myrtille/mutate',
     '@myrtille/core',
   ],

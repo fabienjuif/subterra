@@ -1,18 +1,22 @@
+import { pick } from 'lodash'
 import { archetypes } from '@subterra/data'
 
 export const addPlayer = (store, action) => {
   const prevState = store.getState()
-  if (prevState.players.some(({ id }) => id === action.payload.id)) return
+  if (prevState.players.some(({ id }) => id === action.userId)) return
 
   store.mutate((state) => {
-    state.players.push(action.payload)
+    state.players.push({
+      ...pick(action.payload, ['name']),
+      id: action.userId,
+    })
   })
 }
 
 export const removePlayer = (store, action) => {
   const prevState = store.getState()
   const playerIndex = prevState.players.findIndex(
-    ({ id }) => id === action.payload.id,
+    ({ id }) => id === action.userId,
   )
 
   if (playerIndex < 0) return
