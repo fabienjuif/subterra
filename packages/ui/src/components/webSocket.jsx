@@ -35,12 +35,26 @@ export const useWebSocket = (domain, listener) => {
 }
 
 const WebSocketProvider = ({ children, url }) => {
+  const waitingActionRef = useRef([])
   const listenersRef = useRef([])
-  const [value, setValue] = useState(defaultValue)
+  const [value, setValue] = useState({
+    ...defaultValue,
+    dispatch: (action) => {
+      waitingActionRef.current.push(action)
+    },
+  })
   const { token } = useUser()
 
   useEffect(() => {
-    const close = () => setValue(defaultValue)
+    const close = () => {
+      waitingActionRef.current = []
+      setValue({
+        ...defaultValue,
+        dispatch: (action) => {
+          waitingActionRef.current.push(action)
+        },
+      })
+    }
 
     if (!token) {
       close()
@@ -50,6 +64,10 @@ const WebSocketProvider = ({ children, url }) => {
     const fullUrl = `${url}?token=${token}`
     const ws = new WebSocket(fullUrl)
     ws.onopen = () => {
+      const dispatch = (action) => {
+        ws.send(JSON.stringify(action))
+      }
+
       setValue((old) => ({
         ...old,
         ready: true,
@@ -61,10 +79,13 @@ const WebSocketProvider = ({ children, url }) => {
             )
           }
         },
-        dispatch: (action) => {
-          ws.send(JSON.stringify(action))
-        },
+        dispatch,
       }))
+
+      // dispatch all waiting actions
+      const waitingActions = waitingActionRef.current
+      waitingActionRef.current = []
+      waitingActions.forEach(dispatch)
     }
     ws.onclose = close
     ws.onerror = console.trace
@@ -72,6 +93,7 @@ const WebSocketProvider = ({ children, url }) => {
       let action
       try {
         action = JSON.parse(event.data)
+        console.log(action.type, action)
       } catch (ex) {
         console.trace(ex)
       }

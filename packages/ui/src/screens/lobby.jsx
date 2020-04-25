@@ -22,6 +22,10 @@ const Lobby = () => {
   const { lobbyId } = useParams()
 
   useEffect(() => {
+    dispatch({ type: '@lobby>getState' })
+  }, [dispatch])
+
+  useEffect(() => {
     if (state.id && state.id !== lobbyId) {
       history.push(`/lobby/${state.id}`)
     }

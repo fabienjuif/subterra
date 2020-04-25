@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk'
 import { nanoid } from 'nanoid'
+import { broadcast } from '@subterra/ws-utils'
 import create from './engine'
 
 AWS.config.update({ region: 'eu-west-3' })
@@ -28,7 +29,7 @@ const sendError = async (connectionId, error) => {
   throw err
 }
 
-const dispatchAndUpdate = (lobbyId, userId) => async (state, actions) => {
+const dispatch = (lobby, userId) => async (state, actions) => {
   // dispatch actions
   const engine = create(state)
   ;[].concat(actions).forEach((action) =>
@@ -37,23 +38,31 @@ const dispatchAndUpdate = (lobbyId, userId) => async (state, actions) => {
       userId,
     }),
   )
+  const newState = { ...engine.getState(), id: lobby.id }
 
-  // update dynamo
-  await docClient
-    .update({
-      TableName: 'lobby',
-      Key: {
-        id: lobbyId,
-      },
-      UpdateExpression: 'set #s = :state',
-      ExpressionAttributeNames: {
-        '#s': 'state',
-      },
-      ExpressionAttributeValues: {
-        ':state': JSON.stringify({ ...engine.getState(), id: lobbyId }),
-      },
-    })
-    .promise()
+  return await Promise.all([
+    // broadcast new state
+    broadcast(
+      lobby.connectionsIds,
+      JSON.stringify({ type: '@server>setState', payload: newState }),
+    ),
+    // update dynamo
+    docClient
+      .update({
+        TableName: 'lobby',
+        Key: {
+          id: lobby.id,
+        },
+        UpdateExpression: 'set #s = :state',
+        ExpressionAttributeNames: {
+          '#s': 'state',
+        },
+        ExpressionAttributeValues: {
+          ':state': JSON.stringify(newState),
+        },
+      })
+      .promise(),
+  ])
 }
 
 export const handler = async (event) => {
@@ -61,7 +70,7 @@ export const handler = async (event) => {
   const { connectionId } = requestContext
 
   const action = JSON.parse(body)
-  console.log(JSON.stringify(action, null, 2))
+  console.log(connectionId, JSON.stringify(action, null, 2))
 
   const { Item: wsConnection } = await docClient
     .get({
@@ -74,7 +83,7 @@ export const handler = async (event) => {
     .promise()
 
   if (!wsConnection) {
-    return sendError({
+    return sendError(connectionId, {
       code: 'websocket_not_found',
       message: 'Websocket was not found',
       connectionId,
@@ -83,7 +92,7 @@ export const handler = async (event) => {
 
   if (action.type === '@lobby>create') {
     if (wsConnection.lobbyId) {
-      return sendError({
+      return sendError(connectionId, {
         code: 'already_in_lobby',
         message: 'user is already in a lobby',
         lobbyId: wsConnection.lobbyId,
@@ -93,7 +102,12 @@ export const handler = async (event) => {
     }
 
     const lobbyId = nanoid()
-    const [{ pseudo }] = await Promise.all([
+    const lobby = {
+      id: lobbyId,
+      connectionsIds: [connectionId],
+      state: JSON.stringify({ ...create(), id: lobbyId }),
+    }
+    const [{ Item: user }] = await Promise.all([
       // get the user (to have its pseudo)
       docClient
         .get({
@@ -109,11 +123,7 @@ export const handler = async (event) => {
       docClient
         .put({
           TableName: 'lobby',
-          Item: {
-            id: lobbyId,
-            connectionsIds: [connectionId],
-            state: JSON.stringify({ ...create(), id: lobbyId }),
-          },
+          Item: lobby,
         })
         .promise(),
 
@@ -126,20 +136,20 @@ export const handler = async (event) => {
           },
           UpdateExpression: 'set lobbyId = :lobbyId',
           ExpressionAttributeValues: {
-            ':lobbyId': lobbyId,
+            ':lobbyId': lobby.id,
           },
         })
         .promise(),
     ])
 
     // add the user to the lobby
-    await dispatchAndUpdate(lobbyId, wsConnection.userId)(undefined, {
+    await dispatch(lobby, wsConnection.userId)(undefined, {
       type: '@players>add',
-      payload: { name: pseudo },
+      payload: { name: user.pseudo },
     })
   } else {
     if (!wsConnection.lobbyId) {
-      return sendError({
+      return sendError(connectionId, {
         code: 'user_not_in_lobby_state',
         message: 'the user is not in a lobby state',
         connectionId,
@@ -152,7 +162,7 @@ export const handler = async (event) => {
         Key: {
           id: wsConnection.lobbyId,
         },
-        ProjectionExpression: 'id, #s',
+        ProjectionExpression: 'id, #s, connectionsIds',
         // we have to do this because state is reserved...
         ExpressionAttributeNames: {
           '#s': 'state',
@@ -160,10 +170,22 @@ export const handler = async (event) => {
       })
       .promise()
 
-    await dispatchAndUpdate(lobby.id, wsConnection.userId)(
-      JSON.parse(lobby.state),
-      action,
-    )
+    if (action.type === '@lobby>getState') {
+      await api
+        .postToConnection({
+          ConnectionId: connectionId,
+          Data: JSON.stringify({
+            type: '@server>setState',
+            payload: JSON.parse(lobby.state),
+          }),
+        })
+        .promise()
+    } else {
+      await dispatch(lobby, wsConnection.userId)(
+        JSON.parse(lobby.state),
+        action,
+      )
+    }
   }
 
   return {

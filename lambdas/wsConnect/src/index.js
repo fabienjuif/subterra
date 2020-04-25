@@ -61,31 +61,33 @@ exports.handler = async (event) => {
     previousWsConnection = wsConnection
   }
 
-  // set websocket connectionId to user
-  await docClient
-    .update({
-      TableName: 'users',
-      Key: {
-        id: user.id,
-      },
-      UpdateExpression: 'set connectionId = :connectionId',
-      ExpressionAttributeValues: {
-        ':connectionId': connectionId,
-      },
-    })
-    .promise()
+  await Promise.all([
+    // set websocket connectionId to user
+    docClient
+      .update({
+        TableName: 'users',
+        Key: {
+          id: user.id,
+        },
+        UpdateExpression: 'set connectionId = :connectionId',
+        ExpressionAttributeValues: {
+          ':connectionId': connectionId,
+        },
+      })
+      .promise(),
 
-  // create connections
-  await docClient
-    .put({
-      TableName: 'wsConnections',
-      Item: {
-        ...(previousWsConnection || {}),
-        id: connectionId,
-        userId: user.id,
-      },
-    })
-    .promise()
+    // create connections
+    docClient
+      .put({
+        TableName: 'wsConnections',
+        Item: {
+          ...(previousWsConnection || {}),
+          id: connectionId,
+          userId: user.id,
+        },
+      })
+      .promise(),
+  ])
 
   if (previousWsConnection && previousWsConnection.lobbyId) {
     const { Item: lobby } = await docClient
@@ -96,6 +98,8 @@ exports.handler = async (event) => {
         },
       })
       .promise()
+
+    if (!lobby) return
 
     await docClient
       .put({
