@@ -9,7 +9,11 @@ const lambda = new AWS.Lambda()
 
 exports.handler = async (event, context) => {
   const { Records } = event
-  const newImage = Records[0].dynamodb.NewImage
+  const [firstRecord] = Records
+
+  if (firstRecord.eventName === 'REMOVE') return
+
+  const newImage = firstRecord.dynamodb.NewImage
 
   try {
     await Promise.all(

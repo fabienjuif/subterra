@@ -47,8 +47,7 @@ exports.handler = async (event) => {
     })
     .promise()
 
-  let hasPreviousLobby = false
-
+  let previousWsConnection
   if (user.connectionId) {
     const { Item: wsConnection } = await docClient
       .get({
@@ -59,75 +58,60 @@ exports.handler = async (event) => {
       })
       .promise()
 
-    hasPreviousLobby = !!(wsConnection && wsConnection.lobbyId)
+    previousWsConnection = wsConnection
   }
 
-  if (hasPreviousLobby) {
-    await docClient
-      .update({
-        TableName: 'users',
-        Key: {
-          id: user.id,
-        },
-        UpdateExpression: 'set connectionId = :connectionId',
-        ExpressionAttributeValues: {
-          ':connectionId': connectionId,
-        },
-      })
-      .promise()
-  } else {
-    await docClient
-      .update({
-        TableName: 'users',
-        Key: {
-          id: user.id,
-        },
-        UpdateExpression:
-          'set lobbyId = :lobbyId, connectionId = :connectionId',
-        ExpressionAttributeValues: {
-          ':lobbyId': '1',
-          ':connectionId': connectionId,
-        },
-      })
-      .promise()
-  }
+  // set websocket connectionId to user
+  await docClient
+    .update({
+      TableName: 'users',
+      Key: {
+        id: user.id,
+      },
+      UpdateExpression: 'set connectionId = :connectionId',
+      ExpressionAttributeValues: {
+        ':connectionId': connectionId,
+      },
+    })
+    .promise()
 
   // create connections
   await docClient
     .put({
       TableName: 'wsConnections',
       Item: {
+        ...(previousWsConnection || {}),
         id: connectionId,
         userId: user.id,
-        lobbyId: '1',
       },
     })
     .promise()
 
-  const { Item: lobby } = await docClient
-    .get({
-      TableName: 'lobby',
-      Key: {
-        id: '1',
-      },
-    })
-    .promise()
+  if (previousWsConnection && previousWsConnection.lobbyId) {
+    const { Item: lobby } = await docClient
+      .get({
+        TableName: 'lobby',
+        Key: {
+          id: previousWsConnection.lobbyId,
+        },
+      })
+      .promise()
 
-  await docClient
-    .put({
-      TableName: 'lobby',
-      Item: {
-        ...lobby,
-        connectionsIds: [
-          ...(lobby.connectionsIds || []).filter(
-            (id) => id !== user.connectionId,
-          ),
-          connectionId,
-        ],
-        users: Array.from(new Set([...(lobby.users || []), user.pseudo])),
-      },
-    })
-    .promise()
+    await docClient
+      .put({
+        TableName: 'lobby',
+        Item: {
+          ...lobby,
+          connectionsIds: [
+            ...(lobby.connectionsIds || []).filter(
+              (id) => id !== user.connectionId,
+            ),
+            connectionId,
+          ],
+        },
+      })
+      .promise()
+  }
 
   return {
     statusCode: 200,

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import cn from 'classnames'
 // TODO: remove this dependency import SockJS from 'sockjs-client'
@@ -20,6 +20,12 @@ const Lobby = () => {
   )
   const history = useHistory()
   const { lobbyId } = useParams()
+
+  useEffect(() => {
+    if (state.id && state.id !== lobbyId) {
+      history.push(`/lobby/${state.id}`)
+    }
+  }, [history, lobbyId, state.id])
 
   const onStart = useCallback(() => {
     dispatch({ type: '@client>start' })
@@ -48,7 +54,7 @@ const Lobby = () => {
   )
 
   const onCreate = useCallback(() => {
-    dispatch({ type: '@client>create' })
+    dispatch({ type: '@lobby>create' })
   }, [dispatch])
 
   const onLeave = useCallback(() => {

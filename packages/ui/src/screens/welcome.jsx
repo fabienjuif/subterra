@@ -14,7 +14,7 @@ const Welcome = () => {
 
   return (
     <div>
-      <button onClick={user.connect}>online</button>
+      <button onClick={user.login}>online</button>
       <button onClick={() => history.push('/local')}>local</button>
     </div>
   )

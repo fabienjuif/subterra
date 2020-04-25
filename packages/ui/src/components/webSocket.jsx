@@ -21,9 +21,13 @@ const defaultValue = {
 const WebSocketContext = createContext(defaultValue)
 
 export const useWebSocket = (domain, listener) => {
-  const { addListener, dispatch } = useContext(WebSocketContext)
+  const { addListener, dispatch, ready } = useContext(WebSocketContext)
 
-  useEffect(() => addListener(listener), [addListener, listener])
+  useEffect(() => {
+    if (!ready) return
+    addListener(listener)
+  }, [addListener, listener, ready])
+
   return useCallback((action) => dispatch({ ...action, domain }), [
     dispatch,
     domain,
@@ -44,7 +48,6 @@ const WebSocketProvider = ({ children, url }) => {
     }
 
     const fullUrl = `${url}?token=${token}`
-    console.log({ fullUrl, token })
     const ws = new WebSocket(fullUrl)
     ws.onopen = () => {
       setValue((old) => ({
@@ -78,7 +81,6 @@ const WebSocketProvider = ({ children, url }) => {
     }
   }, [token, url])
 
-  if (!value.ready) return null
   return (
     <WebSocketContext.Provider value={value}>
       {children}

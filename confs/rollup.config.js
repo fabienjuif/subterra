@@ -16,6 +16,7 @@ export default {
     'body-parser',
     'immer',
     'lodash',
+    'node-fetch',
     '@myrtille/mutate',
     '@myrtille/core',
   ],
