@@ -31,7 +31,7 @@ exports.handler = async (event) => {
         TableName: 'lobby',
         Item: {
           ...lobby,
-          connectionsId: lobby.connectionsId.filter(
+          connectionsIds: (lobby.connectionsIds || []).filter(
             (id) => id !== connectionId,
           ),
         },

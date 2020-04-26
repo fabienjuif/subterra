@@ -3,6 +3,7 @@ import { create } from './create'
 import { dispatch } from './dispatch'
 import { webSocketNotFound, userNotInLobby } from './errors'
 import { getState } from './getState'
+import { leave } from './leave'
 
 AWS.config.update({ region: 'eu-west-3' })
 const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
@@ -44,13 +45,21 @@ export const handler = async (event) => {
       })
       .promise()
 
-    if (action.type === '@lobby>getState')
+    if (action.type === '@lobby>getState') {
       return getState(connectionId, lobby.state)
+    }
+
+    if (action.type === '@lobby>leave') {
+      return leave(wsConnection, lobby)
+    }
 
     // use engine in all other cases
     return dispatch(lobby, wsConnection.userId)(lobby.state, action)
   })().then(
     () => ({ statusCode: 200 }),
-    (err) => ({ statusCode: 500, err }),
+    (err) => {
+      console.trace(err)
+      return { statusCode: 500, err }
+    },
   )
 }

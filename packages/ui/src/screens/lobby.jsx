@@ -68,7 +68,7 @@ const Lobby = () => {
   }, [dispatch])
 
   const onLeave = useCallback(() => {
-    dispatch({ type: '@client>leave' })
+    dispatch({ type: '@lobby>leave' })
     history.push('/lobby')
   }, [dispatch, history])
 
