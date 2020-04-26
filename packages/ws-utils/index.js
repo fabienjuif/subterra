@@ -9,13 +9,15 @@ const DISCONNECT_ARN_LAMBDA =
 const api = new AWS.ApiGatewayManagementApi({ endpoint: WS_API_ENDPOINT })
 const lambda = new AWS.Lambda()
 
-export const broadcast = (connectionsIds, data) =>
-  Promise.all(
+export const broadcast = (connectionsIds, data) => {
+  const Data = JSON.stringify(data)
+
+  return Promise.all(
     connectionsIds.map((connectionId) =>
       api
         .postToConnection({
           ConnectionId: connectionId,
-          Data: JSON.stringify(data),
+          Data,
         })
         .promise()
         .catch((ex) => {
@@ -36,3 +38,4 @@ export const broadcast = (connectionsIds, data) =>
     if (err.response) console.error(err.response.body)
     throw err
   })
+}

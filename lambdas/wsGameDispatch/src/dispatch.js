@@ -21,7 +21,7 @@ export const dispatch = (game, userId) => async (
     }),
   )
 
-  // if no midification does nothing
+  // if no modification does nothing
   if (engine.getState() === prevState) {
     return Promise.resolve([prevState])
   }
