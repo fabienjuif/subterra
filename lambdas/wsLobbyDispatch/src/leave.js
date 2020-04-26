@@ -1,4 +1,4 @@
-import { createClient } from '@subterra/dynamodb'
+import { createClient } from '@fabienjuif/dynamo-client'
 import { dispatch } from './dispatch'
 
 const dynamoClient = createClient()

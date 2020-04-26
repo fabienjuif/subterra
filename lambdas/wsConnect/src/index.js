@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import { pick } from 'lodash'
-import { createClient } from '@subterra/dynamodb'
+import { createClient } from '@fabienjuif/dynamo-client'
 import { updateLobby } from './updateLobby'
 
 const dynamoClient = createClient()

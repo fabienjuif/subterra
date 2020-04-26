@@ -1,4 +1,4 @@
-import { createClient } from '@subterra/dynamodb'
+import { createClient } from '@fabienjuif/dynamo-client'
 import { nanoid } from 'nanoid'
 import createEngine from './engine'
 import { dispatch } from './dispatch'

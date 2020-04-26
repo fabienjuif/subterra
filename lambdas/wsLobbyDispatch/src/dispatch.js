@@ -1,4 +1,4 @@
-import { createClient } from '@subterra/dynamodb'
+import { createClient } from '@fabienjuif/dynamo-client'
 import { broadcast } from '@subterra/ws-utils'
 import createEngine, { initState } from './engine'
 

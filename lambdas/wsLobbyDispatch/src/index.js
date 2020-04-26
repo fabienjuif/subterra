@@ -1,4 +1,4 @@
-import { createClient } from '@subterra/dynamodb'
+import { createClient } from '@fabienjuif/dynamo-client'
 import { create } from './create'
 import { dispatch } from './dispatch'
 import { webSocketNotFound, userNotInLobby } from './errors'

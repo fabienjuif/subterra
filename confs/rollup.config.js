@@ -16,6 +16,7 @@ export default {
     '@myrtille/mutate',
     '@myrtille/core',
     'aws-sdk',
+    '@fabienjuif/dynamo-client',
   ],
   plugins: [resolve(), commonjs()],
   output: {

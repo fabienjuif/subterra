@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk'
-import { createClient } from '@subterra/dynamodb'
+import { createClient } from '@fabienjuif/dynamo-client'
 import { webSocketNotFound } from './errors'
 
 AWS.config.update({ region: 'eu-west-3' })
