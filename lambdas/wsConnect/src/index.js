@@ -1,17 +1,13 @@
-const fetch = require('node-fetch')
-const { pick } = require('lodash')
-const AWS = require('aws-sdk')
+import fetch from 'node-fetch'
+import { pick } from 'lodash'
+import AWS from 'aws-sdk'
+import { updateLobby } from './updateLobby'
 
 AWS.config.update({ region: 'eu-west-3' })
 const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
 
 // TODO: env variable
 const AUTH0_API_ENDPOINT = 'https://crawlandsurvive.eu.auth0.com'
-// TODO: env var
-const WS_API_ENDPOINT =
-  'https://iv082u46jh.execute-api.eu-west-3.amazonaws.com/beta'
-
-const api = new AWS.ApiGatewayManagementApi({ endpoint: WS_API_ENDPOINT })
 
 exports.handler = async (event) => {
   const { requestContext, queryStringParameters } = event
@@ -94,32 +90,18 @@ exports.handler = async (event) => {
       .promise(),
   ])
 
-  if (previousWsConnection && previousWsConnection.lobbyId) {
-    const { Item: lobby } = await docClient
-      .get({
-        TableName: 'lobby',
-        Key: {
-          id: previousWsConnection.lobbyId,
-        },
-      })
-      .promise()
-
-    if (!lobby) return
-
-    await docClient
-      .put({
-        TableName: 'lobby',
-        Item: {
-          ...lobby,
-          connectionsIds: [
-            ...(lobby.connectionsIds || []).filter(
-              (id) => id !== user.connectionId,
-            ),
-            connectionId,
-          ],
-        },
-      })
-      .promise()
+  if (previousWsConnection) {
+    await Promise.all([
+      updateLobby(connectionId, user, previousWsConnection.lobbyId),
+      docClient
+        .delete({
+          TableName: 'wsConnections',
+          Key: {
+            id: previousWsConnection.id,
+          },
+        })
+        .promise(),
+    ])
   }
 
   return {

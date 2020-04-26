@@ -18,5 +18,4 @@ sudo ./aws/install
 - Test serverless to replace our custom util CLI
 - How to tests lambdas ?
 - Env var
-- clean up wsConnections when we reconnect
 - add timestamps to tables
