@@ -13,7 +13,6 @@ const notReady = async () => {
 }
 
 const defaultValue = {
-  ready: false,
   addListener: notReady,
   dispatch: notReady,
 }
@@ -21,12 +20,11 @@ const defaultValue = {
 const WebSocketContext = createContext(defaultValue)
 
 export const useWebSocket = (domain, listener) => {
-  const { addListener, dispatch, ready } = useContext(WebSocketContext)
+  const { addListener, dispatch } = useContext(WebSocketContext)
 
   useEffect(() => {
-    if (!ready) return
     addListener(listener)
-  }, [addListener, listener, ready])
+  }, [addListener, listener])
 
   return useCallback(
     (action, withDomain = true) =>
@@ -36,69 +34,63 @@ export const useWebSocket = (domain, listener) => {
 }
 
 const WebSocketProvider = ({ children, url }) => {
-  const waitingActionRef = useRef([])
+  const readyRef = useRef(false)
+  const wsRef = useRef(undefined)
+  const waitingActions = useRef([])
   const listenersRef = useRef([])
-  const [value, setValue] = useState({
+  const [value] = useState({
     ...defaultValue,
     dispatch: (action) => {
-      waitingActionRef.current.push(action)
+      if (readyRef.current && wsRef.current) {
+        console.debug('<<<', action.type, action)
+        wsRef.current.send(JSON.stringify(action))
+      } else {
+        console.debug('[waiting]', action.type, action)
+        waitingActions.current.push(action)
+      }
+    },
+    addListener: (listener) => {
+      listenersRef.current.push(listener)
+      return () => {
+        listenersRef.current = listenersRef.current.filter(
+          (curr) => curr !== listener,
+        )
+      }
     },
   })
+
+  // debug purpose only
+  useEffect(() => {
+    window._dispatch = value.dispatch
+  }, [value.dispatch])
+
   const { token } = useUser()
 
   useEffect(() => {
     const close = () => {
-      waitingActionRef.current = []
-      setValue({
-        ...defaultValue,
-        dispatch: (action) => {
-          waitingActionRef.current.push(action)
-        },
-      })
+      wsRef.current = undefined
+      readyRef.current = false
     }
 
-    if (!token) {
-      close()
-      return
-    }
+    if (!token) return close()
 
     const fullUrl = `${url}?token=${token}`
-    const ws = new WebSocket(fullUrl)
-    ws.onopen = () => {
-      const dispatch = (action) => {
-        console.debug('>>>', action.type, action)
-        ws.send(JSON.stringify(action))
-      }
-
-      // debug purpose only
-      window._dispatch = dispatch
-
-      setValue((old) => ({
-        ...old,
-        ready: true,
-        addListener: (listener) => {
-          listenersRef.current.push(listener)
-          return () => {
-            listenersRef.current = listenersRef.current.filter(
-              (curr) => curr !== listener,
-            )
-          }
-        },
-        dispatch,
-      }))
+    wsRef.current = new WebSocket(fullUrl)
+    wsRef.current.onopen = () => {
+      // mark socket as ready
+      readyRef.current = true
 
       // dispatch all waiting actions
-      const waitingActions = waitingActionRef.current
-      waitingActionRef.current = []
-      waitingActions.forEach(dispatch)
+      waitingActions.current.forEach(value.dispatch)
+      waitingActions.current = []
     }
-    ws.onclose = close
-    ws.onerror = console.trace
-    ws.onmessage = (event) => {
+    wsRef.current.onclose = close
+    wsRef.current.onerror = console.trace
+    wsRef.current.onmessage = (event) => {
       let action
       try {
         action = JSON.parse(event.data)
-        console.log(action.type, action)
+        console.debug('>>>', action.type, action)
       } catch (ex) {
         console.trace(ex)
       }
@@ -106,7 +98,7 @@ const WebSocketProvider = ({ children, url }) => {
 
       listenersRef.current.forEach((listener) => listener(action))
     }
-  }, [token, url])
+  }, [token, url, value.dispatch])
 
   return (
     <WebSocketContext.Provider value={value}>
