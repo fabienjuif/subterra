@@ -67,7 +67,7 @@ export const join = async (wsConnection, lobbyId) => {
   ])
 
   // add the user to the lobby
-  await dispatch(lobby, wsConnection.userId)(lobby.state, {
+  await dispatch(newLobby, wsConnection.userId)(lobby.state, {
     type: '@players>add',
     payload: { name: user.pseudo },
   })

@@ -33,9 +33,10 @@ const Lobby = () => {
 
   useEffect(() => {
     if (lobbyId !== state.id) {
-      dispatch({ type: '@lobby>getState' })
+      if (lobbyId) dispatch({ type: '@lobby>getState' })
+      if (state.id) history.push(`/lobby/${state.id}`)
     }
-  }, [lobbyId, dispatch, state.id])
+  }, [lobbyId, dispatch, state.id, history])
 
   const onStart = useCallback(() => {
     dispatch({ type: '@client>start' })
