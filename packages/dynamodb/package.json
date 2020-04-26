@@ -1,0 +1,10 @@
+{
+  "name": "@subterra/dynamodb",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "aws-sdk": "^2.663.0"
+  }
+}

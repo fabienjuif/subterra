@@ -1,51 +1,39 @@
-import AWS from 'aws-sdk'
+import { createClient } from '@subterra/dynamodb'
 import { dispatch } from './dispatch'
 
-AWS.config.update({ region: 'eu-west-3' })
-const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
+const dynamoClient = createClient()
 
 export const leave = async (wsConnection, lobby) => {
+  const lobbyCollection = dynamoClient.collection('lobby')
+  const wsConnections = dynamoClient.collection('wsConnections')
+
   let newLobby = {
     ...lobby,
     connectionsIds: lobby.connectionsIds.filter((id) => id !== wsConnection.id),
   }
 
-  // if there is no more user in lobby we just remove it
-  if (newLobby.connectionsIds.length === 0) {
-    return docClient
-      .delete({
-        TableName: 'lobby',
-        Key: {
-          id: newLobby.id,
-        },
-      })
-      .promise()
-  }
+  const mustRemoveLobby = newLobby.connectionsIds.length === 0
 
   // if there still has users we just update the lobby
   await Promise.all([
-    // update lobby to remove connectionId
-    docClient
-      .put({
-        TableName: 'lobby',
-        Item: newLobby,
-      })
-      .promise(),
-
+    // update lobby to remove connectionId or remove it if this is empty
+    mustRemoveLobby
+      ? lobbyCollection.delete(newLobby.id)
+      : lobbyCollection.update({
+          id: newLobby.id,
+          connectionsIds: newLobby.connectionsIds,
+        }),
     // update wsConnection to remove the lobbyId
-    docClient
-      .update({
-        TableName: 'wsConnections',
-        Key: {
-          id: wsConnection.id,
-        },
-        UpdateExpression: 'remove lobbyId',
-      })
-      .promise(),
+    wsConnections.update({
+      id: wsConnection.id,
+      lobbyId: undefined,
+    }),
   ])
 
   // remove user from the lobby state
-  await dispatch(newLobby, wsConnection.userId)(newLobby.state, {
-    type: '@players>remove',
-  })
+  if (!mustRemoveLobby) {
+    await dispatch(newLobby, wsConnection.userId)(newLobby.state, {
+      type: '@players>remove',
+    })
+  }
 }

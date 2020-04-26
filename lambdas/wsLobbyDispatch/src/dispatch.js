@@ -1,9 +1,8 @@
-import AWS from 'aws-sdk'
+import { createClient } from '@subterra/dynamodb'
 import { broadcast } from '@subterra/ws-utils'
 import createEngine, { initState } from './engine'
 
-AWS.config.update({ region: 'eu-west-3' })
-const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
+const dynamoClient = createClient()
 
 export const dispatch = (lobby, userId) => async (
   state = initState(),
@@ -38,20 +37,9 @@ export const dispatch = (lobby, userId) => async (
       }),
     ),
     // update dynamo
-    docClient
-      .update({
-        TableName: 'lobby',
-        Key: {
-          id: lobby.id,
-        },
-        UpdateExpression: 'set #s = :state',
-        ExpressionAttributeNames: {
-          '#s': 'state',
-        },
-        ExpressionAttributeValues: {
-          ':state': JSON.stringify(engine.getState()),
-        },
-      })
-      .promise(),
+    dynamoClient.collection('lobby').update({
+      id: lobby.id,
+      state: JSON.stringify(engine.getState()),
+    }),
   ])
 }

@@ -1,11 +1,10 @@
-import AWS from 'aws-sdk'
+import { createClient } from '@subterra/dynamodb'
 import { nanoid } from 'nanoid'
 import createEngine from './engine'
 import { dispatch } from './dispatch'
 import { alreadyInLobby } from './errors'
 
-AWS.config.update({ region: 'eu-west-3' })
-const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
+const dynamoClient = createClient()
 
 export const create = async (wsConnection, connectionId) => {
   if (wsConnection.lobbyId) {
@@ -15,45 +14,23 @@ export const create = async (wsConnection, connectionId) => {
     })
   }
 
+  const users = dynamoClient.collection('users')
+  const lobbyCollection = dynamoClient.collection('lobby')
+  const wsConnections = dynamoClient.collection('wsConnections')
+
   const lobbyId = nanoid()
   const lobby = {
     id: lobbyId,
     connectionsIds: [connectionId],
     state: JSON.stringify({ ...createEngine(), id: lobbyId }),
   }
-  const [{ Item: user }] = await Promise.all([
+  const [user] = await Promise.all([
     // get the user (to have its pseudo)
-    docClient
-      .get({
-        TableName: 'users',
-        Key: {
-          id: wsConnection.userId,
-        },
-        ProjectionExpression: 'pseudo',
-      })
-      .promise(),
-
+    users.get(wsConnection.userId, ['pseudo']),
     // create new lobby
-    docClient
-      .put({
-        TableName: 'lobby',
-        Item: lobby,
-      })
-      .promise(),
-
+    lobbyCollection.put(lobby),
     // update wsConnection to match this new lobbyId
-    docClient
-      .update({
-        TableName: 'wsConnections',
-        Key: {
-          id: connectionId,
-        },
-        UpdateExpression: 'set lobbyId = :lobbyId',
-        ExpressionAttributeValues: {
-          ':lobbyId': lobby.id,
-        },
-      })
-      .promise(),
+    wsConnections.update({ id: connectionId, lobbyId: lobby.id }),
   ])
 
   // add the user to the lobby

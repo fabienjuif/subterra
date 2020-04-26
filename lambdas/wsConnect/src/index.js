@@ -1,10 +1,9 @@
 import fetch from 'node-fetch'
 import { pick } from 'lodash'
-import AWS from 'aws-sdk'
+import { createClient } from '@subterra/dynamodb'
 import { updateLobby } from './updateLobby'
 
-AWS.config.update({ region: 'eu-west-3' })
-const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
+const dynamoClient = createClient()
 
 // TODO: env variable
 const AUTH0_API_ENDPOINT = 'https://crawlandsurvive.eu.auth0.com'
@@ -23,15 +22,10 @@ exports.handler = async (event) => {
     headers: { Authorization: `Bearer ${queryStringParameters.token}` },
   }).then((d) => d.json())
 
-  let { Item: user } = await docClient
-    .get({
-      TableName: 'users',
-      Key: {
-        id: auth0User.sub,
-      },
-      ProjectionExpression: 'id, connectionId',
-    })
-    .promise()
+  const users = dynamoClient.collection('users')
+  const wsConnections = dynamoClient.collection('wsConnections')
+
+  let user = await users.get(auth0User.sub, ['id', 'connectionId'])
 
   user = {
     id: auth0User.sub,
@@ -41,66 +35,31 @@ exports.handler = async (event) => {
     [auth0User.sub.split('|')[0]]: auth0User,
   }
 
-  await docClient
-    .put({
-      TableName: 'users',
-      Item: user,
-    })
-    .promise()
+  await users.put(user)
 
   let previousWsConnection
   if (user.connectionId) {
-    const { Item: wsConnection } = await docClient
-      .get({
-        TableName: 'wsConnections',
-        Key: {
-          id: user.connectionId,
-        },
-      })
-      .promise()
+    const wsConnection = await wsConnections.get(user.connectionId)
 
     previousWsConnection = wsConnection
   }
 
   await Promise.all([
     // set websocket connectionId to user
-    docClient
-      .update({
-        TableName: 'users',
-        Key: {
-          id: user.id,
-        },
-        UpdateExpression: 'set connectionId = :connectionId',
-        ExpressionAttributeValues: {
-          ':connectionId': connectionId,
-        },
-      })
-      .promise(),
+    users.update({ id: user.id, connectionId }),
 
     // create connections
-    docClient
-      .put({
-        TableName: 'wsConnections',
-        Item: {
-          ...(previousWsConnection || {}),
-          id: connectionId,
-          userId: user.id,
-        },
-      })
-      .promise(),
+    wsConnections.put({
+      ...(previousWsConnection || {}),
+      id: connectionId,
+      userId: user.id,
+    }),
   ])
 
   if (previousWsConnection) {
     await Promise.all([
       updateLobby(connectionId, user, previousWsConnection.lobbyId),
-      docClient
-        .delete({
-          TableName: 'wsConnections',
-          Key: {
-            id: previousWsConnection.id,
-          },
-        })
-        .promise(),
+      wsConnections.delete(previousWsConnection.id),
     ])
   }
 

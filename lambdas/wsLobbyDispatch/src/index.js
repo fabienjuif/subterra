@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk'
+import { createClient } from '@subterra/dynamodb'
 import { create } from './create'
 import { dispatch } from './dispatch'
 import { webSocketNotFound, userNotInLobby } from './errors'
@@ -6,8 +6,7 @@ import { getState } from './getState'
 import { join } from './join'
 import { leave } from './leave'
 
-AWS.config.update({ region: 'eu-west-3' })
-const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
+const dynamoClient = createClient()
 
 export const handler = async (event) => {
   const { requestContext, body } = event
@@ -16,18 +15,17 @@ export const handler = async (event) => {
   const action = JSON.parse(body)
   console.log(connectionId, JSON.stringify(action, null, 2))
 
-  return (async () => {
-    const { Item: wsConnection } = await docClient
-      .get({
-        TableName: 'wsConnections',
-        Key: {
-          id: connectionId,
-        },
-        ProjectionExpression: 'id, lobbyId, userId',
-      })
-      .promise()
+  const wsConnections = dynamoClient.collection('wsConnections')
+  const lobbyCollection = dynamoClient.collection('lobby')
 
+  return (async () => {
+    const wsConnection = await wsConnections.get(connectionId, [
+      'id',
+      'lobbyId',
+      'userId',
+    ])
     if (!wsConnection) return webSocketNotFound(connectionId)
+
     if (action.type === '@lobby>create')
       return create(wsConnection, connectionId)
     if (action.type === '@lobby>join') {
@@ -35,19 +33,11 @@ export const handler = async (event) => {
     }
     if (!wsConnection.lobbyId) return userNotInLobby(connectionId)
 
-    const { Item: lobby } = await docClient
-      .get({
-        TableName: 'lobby',
-        Key: {
-          id: wsConnection.lobbyId,
-        },
-        ProjectionExpression: 'id, #s, connectionsIds',
-        // we have to do this because state is reserved...
-        ExpressionAttributeNames: {
-          '#s': 'state',
-        },
-      })
-      .promise()
+    const lobby = await lobbyCollection.get(wsConnection.lobbyId, [
+      'id',
+      'state',
+      'connectionsIds',
+    ])
 
     if (action.type === '@lobby>getState') {
       return getState(connectionId, lobby.state)

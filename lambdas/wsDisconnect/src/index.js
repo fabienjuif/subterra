@@ -1,42 +1,25 @@
-const AWS = require('aws-sdk')
+import { createClient } from '@subterra/dynamodb'
 
-AWS.config.update({ region: 'eu-west-3' })
-const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
+const dynamoClient = createClient()
 
 exports.handler = async (event) => {
   const connectionId = event.connectionId || event.requestContext.connectionId
 
   if (connectionId) {
-    const { Item: connection } = await docClient
-      .get({
-        TableName: 'wsConnections',
-        Key: {
-          id: connectionId,
-        },
-      })
-      .promise()
+    const connection = await dynamoClient
+      .collection('wsConnections')
+      .get(connectionId)
 
     if (!connection || !connection.lobbyId) return
-    const { Item: lobby } = await docClient
-      .get({
-        TableName: 'lobby',
-        Key: {
-          id: connection.lobbyId,
-        },
-      })
-      .promise()
 
-    await docClient
-      .put({
-        TableName: 'lobby',
-        Item: {
-          ...lobby,
-          connectionsIds: (lobby.connectionsIds || []).filter(
-            (id) => id !== connectionId,
-          ),
-        },
-      })
-      .promise()
+    const lobbyCollection = dynamoClient.collection('lobby')
+    const lobby = await lobbyCollection.get(connection.lobbyId)
+    await lobbyCollection.put({
+      ...lobby,
+      connectionsIds: (lobby.connectionsIds || []).filter(
+        (id) => id !== connectionId,
+      ),
+    })
   }
 
   return {

@@ -1,8 +1,10 @@
 import AWS from 'aws-sdk'
+import { createClient } from '@subterra/dynamodb'
 import { webSocketNotFound } from './errors'
 
 AWS.config.update({ region: 'eu-west-3' })
-const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
+
+const dynamoClient = createClient()
 
 // TODO: env variable
 const WS_API_ENDPOINT =
@@ -25,16 +27,9 @@ exports.handler = async (event) => {
   // this is the only action this file will accept
   // - it will redirect the user to the right domain
   if (action && action.type === '@client>init') {
-    const { Item: wsConnection } = await docClient
-      .get({
-        TableName: 'wsConnections',
-        Key: {
-          id: connectionId,
-        },
-        ProjectionExpression: 'id, lobbyId, userId',
-      })
-      .promise()
-
+    const wsConnection = await dynamoClient
+      .collection('wsConnections')
+      .get(connectionId, ['id', 'lobbyId', 'userId'])
     if (!wsConnection) return webSocketNotFound(connectionId)
 
     let responseAction = {

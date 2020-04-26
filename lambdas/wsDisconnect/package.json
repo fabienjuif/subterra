@@ -4,5 +4,8 @@
   "main": "index.js",
   "private": true,
   "arn": "arn:aws:lambda:eu-west-3:427962677004:function:wsDisconnect",
-  "dependencies": {}
+  "dependencies": {},
+  "workspaceDependencies": {
+    "@subterra/dynamodb": "^1.0.0"
+  }
 }

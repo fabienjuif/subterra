@@ -1,9 +1,8 @@
-import AWS from 'aws-sdk'
+import { createClient } from '@subterra/dynamodb'
 import { dispatch } from './dispatch'
 import { alreadyInLobby, lobbyNotFound } from './errors'
 
-AWS.config.update({ region: 'eu-west-3' })
-const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
+const dynamoClient = createClient()
 
 export const join = async (wsConnection, lobbyId) => {
   if (wsConnection.lobbyId) {
@@ -13,15 +12,12 @@ export const join = async (wsConnection, lobbyId) => {
     })
   }
 
+  const users = dynamoClient.collection('users')
+  const wsConnections = dynamoClient.collection('wsConnections')
+  const lobbyCollection = dynamoClient.collection('lobby')
+
   // read lobby
-  const { Item: lobby } = await docClient
-    .get({
-      TableName: 'lobby',
-      Key: {
-        id: lobbyId,
-      },
-    })
-    .promise()
+  const lobby = await lobbyCollection.get(lobbyId)
   if (!lobby) {
     return lobbyNotFound(wsConnection.id, lobbyId)
   }
@@ -31,39 +27,16 @@ export const join = async (wsConnection, lobbyId) => {
     connectionsIds: [...lobby.connectionsIds, wsConnection.id],
   }
 
-  const [{ Item: user }] = await Promise.all([
+  const [user] = await Promise.all([
     // get the user (to have its pseudo)
-    docClient
-      .get({
-        TableName: 'users',
-        Key: {
-          id: wsConnection.userId,
-        },
-        ProjectionExpression: 'pseudo',
-      })
-      .promise(),
-
+    users.get(wsConnection.userId, ['pseudo']),
     // update the lobby
-    docClient
-      .put({
-        TableName: 'lobby',
-        Item: newLobby,
-      })
-      .promise(),
-
+    lobbyCollection.put(newLobby),
     // update wsConnection to match this new lobbyId
-    docClient
-      .update({
-        TableName: 'wsConnections',
-        Key: {
-          id: wsConnection.id,
-        },
-        UpdateExpression: 'set lobbyId = :lobbyId',
-        ExpressionAttributeValues: {
-          ':lobbyId': newLobby.id,
-        },
-      })
-      .promise(),
+    wsConnections.update({
+      id: wsConnection.id,
+      lobbyId: newLobby.id,
+    }),
   ])
 
   // add the user to the lobby

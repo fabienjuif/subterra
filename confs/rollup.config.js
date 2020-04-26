@@ -15,6 +15,7 @@ export default {
     'node-fetch',
     '@myrtille/mutate',
     '@myrtille/core',
+    'aws-sdk',
   ],
   plugins: [resolve(), commonjs()],
   output: {
