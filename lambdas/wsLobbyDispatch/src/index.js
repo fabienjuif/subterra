@@ -3,6 +3,7 @@ import { create } from './create'
 import { dispatch } from './dispatch'
 import { webSocketNotFound, userNotInLobby } from './errors'
 import { getState } from './getState'
+import { join } from './join'
 import { leave } from './leave'
 
 AWS.config.update({ region: 'eu-west-3' })
@@ -29,6 +30,9 @@ export const handler = async (event) => {
     if (!wsConnection) return webSocketNotFound(connectionId)
     if (action.type === '@lobby>create')
       return create(wsConnection, connectionId)
+    if (action.type === '@lobby>join') {
+      return join(wsConnection, action.payload.id)
+    }
     if (!wsConnection.lobbyId) return userNotInLobby(connectionId)
 
     const { Item: lobby } = await docClient

@@ -54,9 +54,9 @@ const Lobby = () => {
   const onJoin = useCallback(
     wrapSubmit(({ lobbyId }) => {
       dispatch({
-        type: '@client>join',
+        type: '@lobby>join',
         payload: {
-          lobbyId,
+          id: lobbyId,
         },
       })
     }),

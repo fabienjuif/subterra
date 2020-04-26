@@ -20,3 +20,11 @@ export const userNotInLobby = (connectionId) =>
     message: 'the user is not in a lobby state',
     connectionId,
   })
+
+export const lobbyNotFound = (connectionId, lobbyId) =>
+  sendError(connectionId, {
+    code: 'lobby_not_found',
+    message: 'the lobby is not found',
+    connectionId,
+    lobbyId,
+  })
