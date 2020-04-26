@@ -7,8 +7,8 @@ An util CLI is writed to help deploying these functions :
 
 ## TODO:
 
-- Use rollup to prepare packages (es modules)
 - Test serverless to replace our custom util CLI
-- Move all packages/lambdas in lambdas
 - How to tests lambdas ?
 - Env var
+- clean up wsConnections when we reconnect
+- add timestamps to tables
