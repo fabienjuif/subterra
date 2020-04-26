@@ -7,29 +7,35 @@ import { Archetype, useWebSocket } from '../components'
 import classes from './lobby.module.scss'
 
 const Lobby = () => {
-  const [state, setState] = useState({})
-  const dispatch = useWebSocket(
-    'lobby',
-    useCallback((action) => {
-      if (action.type === '@server>setState') {
-        setState(action.payload)
-      } else {
-        console.trace('Action unknown: ', action)
-      }
-    }, []),
-  )
   const history = useHistory()
+  const [state, setState] = useState({})
   const { lobbyId } = useParams()
 
+  const dispatch = useWebSocket(
+    'lobby',
+    useCallback(
+      (action) => {
+        if (action.type === '@server>setState') {
+          setState(action.payload)
+        } else if (action.type === '@server>redirect') {
+          history.push(`/${action.payload.domain}/${action.payload.id}`)
+        } else {
+          console.trace('Action unknown: ', action)
+        }
+      },
+      [history],
+    ),
+  )
+
   useEffect(() => {
-    dispatch({ type: '@lobby>getState' })
+    dispatch({ type: '@client>init' }, false)
   }, [dispatch])
 
   useEffect(() => {
-    if (state.id && state.id !== lobbyId) {
-      history.push(`/lobby/${state.id}`)
+    if (lobbyId !== state.id) {
+      dispatch({ type: '@lobby>getState' })
     }
-  }, [history, lobbyId, state.id])
+  }, [lobbyId, dispatch, state.id])
 
   const onStart = useCallback(() => {
     dispatch({ type: '@client>start' })

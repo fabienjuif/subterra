@@ -7,6 +7,11 @@ const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
 
 // TODO: env variable
 const AUTH0_API_ENDPOINT = 'https://crawlandsurvive.eu.auth0.com'
+// TODO: env var
+const WS_API_ENDPOINT =
+  'https://iv082u46jh.execute-api.eu-west-3.amazonaws.com/beta'
+
+const api = new AWS.ApiGatewayManagementApi({ endpoint: WS_API_ENDPOINT })
 
 exports.handler = async (event) => {
   const { requestContext, queryStringParameters } = event

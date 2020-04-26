@@ -28,10 +28,11 @@ export const useWebSocket = (domain, listener) => {
     addListener(listener)
   }, [addListener, listener, ready])
 
-  return useCallback((action) => dispatch({ ...action, domain }), [
-    dispatch,
-    domain,
-  ])
+  return useCallback(
+    (action, withDomain = true) =>
+      dispatch({ ...action, domain: withDomain ? domain : undefined }),
+    [dispatch, domain],
+  )
 }
 
 const WebSocketProvider = ({ children, url }) => {
@@ -65,8 +66,12 @@ const WebSocketProvider = ({ children, url }) => {
     const ws = new WebSocket(fullUrl)
     ws.onopen = () => {
       const dispatch = (action) => {
+        console.debug('>>>', action.type, action)
         ws.send(JSON.stringify(action))
       }
+
+      // debug purpose only
+      window._dispatch = dispatch
 
       setValue((old) => ({
         ...old,

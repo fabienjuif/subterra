@@ -61,8 +61,4 @@ export const create = async (wsConnection, connectionId) => {
     type: '@players>add',
     payload: { name: user.pseudo },
   })
-
-  return {
-    statusCode: 200,
-  }
 }

@@ -1,6 +1,8 @@
-const AWS = require('aws-sdk')
+import AWS from 'aws-sdk'
+import { webSocketNotFound } from './errors'
 
 AWS.config.update({ region: 'eu-west-3' })
+const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
 
 // TODO: env variable
 const WS_API_ENDPOINT =
@@ -11,6 +13,51 @@ const api = new AWS.ApiGatewayManagementApi({ endpoint: WS_API_ENDPOINT })
 exports.handler = async (event) => {
   const { requestContext, body } = event
   const { connectionId } = requestContext
+
+  let action
+  try {
+    action = JSON.parse(body)
+    console.log(connectionId, JSON.stringify(action, null, 2))
+  } catch {
+    /* ignore error */
+  }
+
+  // this is the only action this file will accept
+  // - it will redirect the user to the right domain
+  if (action && action.type === '@client>init') {
+    const { Item: wsConnection } = await docClient
+      .get({
+        TableName: 'wsConnections',
+        Key: {
+          id: connectionId,
+        },
+        ProjectionExpression: 'id, lobbyId, userId',
+      })
+      .promise()
+
+    if (!wsConnection) return webSocketNotFound(connectionId)
+
+    let responseAction = {
+      type: '@server>init',
+      payload: { domain: undefined },
+    }
+    if (wsConnection.lobbyId) {
+      responseAction = {
+        type: '@server>redirect',
+        payload: {
+          domain: 'lobby',
+          id: wsConnection.lobbyId,
+        },
+      }
+    }
+
+    return api
+      .postToConnection({
+        ConnectionId: connectionId,
+        Data: JSON.stringify(responseAction),
+      })
+      .promise()
+  }
 
   const error = {
     code: 'no_domain',
