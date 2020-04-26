@@ -2,6 +2,7 @@ import fetch from 'node-fetch'
 import { pick } from 'lodash'
 import { createClient } from '@fabienjuif/dynamo-client'
 import { updateLobby } from './updateLobby'
+import { updateGame } from './updateGame'
 
 const dynamoClient = createClient()
 
@@ -59,6 +60,7 @@ exports.handler = async (event) => {
   if (previousWsConnection) {
     await Promise.all([
       updateLobby(connectionId, user, previousWsConnection.lobbyId),
+      updateGame(connectionId, user, previousWsConnection.gameId),
       wsConnections.delete(previousWsConnection.id),
     ])
   }

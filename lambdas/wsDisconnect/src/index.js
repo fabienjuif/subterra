@@ -10,16 +10,29 @@ exports.handler = async (event) => {
       .collection('wsConnections')
       .get(connectionId)
 
-    if (!connection || !connection.lobbyId) return
+    if (!connection) return
 
-    const lobbyCollection = dynamoClient.collection('lobby')
-    const lobby = await lobbyCollection.get(connection.lobbyId)
-    await lobbyCollection.put({
-      ...lobby,
-      connectionsIds: (lobby.connectionsIds || []).filter(
-        (id) => id !== connectionId,
-      ),
-    })
+    if (connection.lobbyId) {
+      const lobbyCollection = dynamoClient.collection('lobby')
+      const lobby = await lobbyCollection.get(connection.lobbyId)
+      await lobbyCollection.put({
+        ...lobby,
+        connectionsIds: (lobby.connectionsIds || []).filter(
+          (id) => id !== connectionId,
+        ),
+      })
+    }
+
+    if (connection.gameId) {
+      const games = dynamoClient.collection('games')
+      const game = await games.get(connection.gameId)
+      await games.put({
+        ...game,
+        connectionsIds: (game.connectionsIds || []).filter(
+          (id) => id !== connectionId,
+        ),
+      })
+    }
   }
 
   return {
