@@ -22,6 +22,7 @@ export const create = async (wsConnection, connectionId) => {
   const lobby = {
     id: lobbyId,
     connectionsIds: [connectionId],
+    createdAt: Date.now(),
     state: JSON.stringify({ ...createEngine(), id: lobbyId }),
   }
   const [user] = await Promise.all([
@@ -30,7 +31,11 @@ export const create = async (wsConnection, connectionId) => {
     // create new lobby
     lobbyCollection.put(lobby),
     // update wsConnection to match this new lobbyId
-    wsConnections.update({ id: connectionId, lobbyId: lobby.id }),
+    wsConnections.update({
+      id: connectionId,
+      lobbyId: lobby.id,
+      updatedAt: Date.now(),
+    }),
   ])
 
   // add the user to the lobby

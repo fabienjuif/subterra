@@ -36,6 +36,7 @@ export const dispatch = (lobby, userId) => async (
     // update dynamo
     dynamoClient.collection('lobby').update({
       id: lobby.id,
+      updatedAt: Date.now(),
       state: JSON.stringify(engine.getState()),
     }),
   ])

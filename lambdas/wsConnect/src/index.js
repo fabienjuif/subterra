@@ -26,13 +26,15 @@ exports.handler = async (event) => {
   const users = dynamoClient.collection('users')
   const wsConnections = dynamoClient.collection('wsConnections')
 
-  let user = await users.get(auth0User.sub, ['id', 'connectionId'])
+  let user = await users.get(auth0User.sub)
 
   user = {
     id: auth0User.sub,
     ...pick(auth0User, ['name', 'email', 'picture']),
     pseudo: auth0User.nickname,
+    createdAt: Date.now(),
     ...user,
+    updatedAt: Date.now(),
     [auth0User.sub.split('|')[0]]: auth0User,
   }
 
@@ -47,12 +49,17 @@ exports.handler = async (event) => {
 
   await Promise.all([
     // set websocket connectionId to user
-    users.update({ id: user.id, connectionId }),
+    users.update({
+      id: user.id,
+      connectionId,
+      updatedAt: Date.now(),
+    }),
 
     // create connections
     wsConnections.put({
       ...(previousWsConnection || {}),
       id: connectionId,
+      createdAt: Date.now(),
       userId: user.id,
     }),
   ])

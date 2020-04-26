@@ -18,5 +18,4 @@ sudo ./aws/install
 - Test serverless to replace our custom util CLI
 - How to tests lambdas ?
 - Env var
-- add timestamps to tables
 - Cleanup tables time to time with https://docs.aws.amazon.com/fr_fr/lambda/latest/dg/services-cloudwatchevents-expressions.html

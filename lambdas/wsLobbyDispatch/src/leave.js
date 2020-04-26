@@ -9,6 +9,7 @@ export const leave = async (wsConnection, lobby) => {
 
   let newLobby = {
     ...lobby,
+    updatedAt: Date.now(),
     connectionsIds: lobby.connectionsIds.filter((id) => id !== wsConnection.id),
   }
 
@@ -21,11 +22,13 @@ export const leave = async (wsConnection, lobby) => {
       ? lobbyCollection.delete(newLobby.id)
       : lobbyCollection.update({
           id: newLobby.id,
+          updatedAt: Date.now(),
           connectionsIds: newLobby.connectionsIds,
         }),
     // update wsConnection to remove the lobbyId
     wsConnections.update({
       id: wsConnection.id,
+      updatedAt: Date.now(),
       lobbyId: undefined,
     }),
   ])

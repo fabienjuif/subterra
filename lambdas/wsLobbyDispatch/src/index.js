@@ -46,7 +46,7 @@ export const handler = async (event) => {
     if (action.type === '@lobby>leave') {
       return leave(wsConnection, lobby)
     }
-    if (action.type == '@lobby>start') {
+    if (action.type === '@lobby>start') {
       return start(wsConnection, lobby)
     }
 

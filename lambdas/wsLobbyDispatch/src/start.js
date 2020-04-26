@@ -43,6 +43,7 @@ export const start = async (wsConnection, lobby) => {
     connectionsIds: lobby.connectionsIds,
     state: JSON.stringify(gameState),
     initState: JSON.stringify(gameState),
+    createdAt: Date.now(),
   }
 
   await Promise.all([
@@ -55,6 +56,7 @@ export const start = async (wsConnection, lobby) => {
     ...lobby.connectionsIds.map((connectionId) =>
       wsConnections.update({
         id: connectionId,
+        updatedAt: Date.now(),
         lobbyId: undefined,
         gameId: game.id,
       }),

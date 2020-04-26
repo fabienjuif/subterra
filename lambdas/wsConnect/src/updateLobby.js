@@ -11,6 +11,7 @@ export const updateLobby = async (connectionId, user, lobbyId) => {
   if (lobby) {
     await lobbyCollection.put({
       ...lobby,
+      updatedAt: Date.now(),
       connectionsIds: [
         ...(lobby.connectionsIds || []).filter(
           (id) => id !== user.connectionId,

@@ -24,6 +24,7 @@ export const join = async (wsConnection, lobbyId) => {
 
   const newLobby = {
     ...lobby,
+    updatedAt: Date.now(),
     connectionsIds: [...lobby.connectionsIds, wsConnection.id],
   }
 
@@ -35,6 +36,7 @@ export const join = async (wsConnection, lobbyId) => {
     // update wsConnection to match this new lobbyId
     wsConnections.update({
       id: wsConnection.id,
+      updatedAt: Date.now(),
       lobbyId: newLobby.id,
     }),
   ])

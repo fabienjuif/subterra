@@ -11,6 +11,7 @@ export const updateGame = async (connectionId, user, gameId) => {
   if (game) {
     await games.put({
       ...game,
+      updatedAt: Date.now(),
       connectionsIds: [
         ...(game.connectionsIds || []).filter((id) => id !== user.connectionId),
         connectionId,

@@ -36,6 +36,7 @@ export const dispatch = (game, userId) => async (
     // update dynamo
     dynamoClient.collection('games').update({
       id: game.id,
+      updatedAt: Date.now(),
       state: JSON.stringify(engine.getState()),
     }),
   ])

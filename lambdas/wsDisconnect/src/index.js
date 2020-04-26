@@ -17,6 +17,7 @@ exports.handler = async (event) => {
       const lobby = await lobbyCollection.get(connection.lobbyId)
       await lobbyCollection.put({
         ...lobby,
+        updatedAt: Date.now(),
         connectionsIds: (lobby.connectionsIds || []).filter(
           (id) => id !== connectionId,
         ),
@@ -28,6 +29,7 @@ exports.handler = async (event) => {
       const game = await games.get(connection.gameId)
       await games.put({
         ...game,
+        updatedAt: Date.now(),
         connectionsIds: (game.connectionsIds || []).filter(
           (id) => id !== connectionId,
         ),
