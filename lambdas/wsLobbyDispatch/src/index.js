@@ -5,6 +5,7 @@ import { webSocketNotFound, userNotInLobby } from './errors'
 import { getState } from './getState'
 import { join } from './join'
 import { leave } from './leave'
+import { start } from './start'
 
 const dynamoClient = createClient()
 
@@ -42,9 +43,11 @@ export const handler = async (event) => {
     if (action.type === '@lobby>getState') {
       return getState(connectionId, lobby.state)
     }
-
     if (action.type === '@lobby>leave') {
       return leave(wsConnection, lobby)
+    }
+    if (action.type == '@lobby>start') {
+      return start(wsConnection, lobby)
     }
 
     // use engine in all other cases

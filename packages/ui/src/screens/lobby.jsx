@@ -39,7 +39,7 @@ const Lobby = () => {
   }, [lobbyId, dispatch, state.id, history])
 
   const onStart = useCallback(() => {
-    dispatch({ type: '@client>start' })
+    dispatch({ type: '@lobby>start' })
   }, [dispatch])
 
   const onChooseArchetype = useCallback(

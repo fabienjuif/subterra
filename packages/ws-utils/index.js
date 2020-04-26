@@ -15,7 +15,7 @@ export const broadcast = (connectionsIds, data) =>
       api
         .postToConnection({
           ConnectionId: connectionId,
-          Data: data,
+          Data: JSON.stringify(data),
         })
         .promise()
         .catch((ex) => {

@@ -29,13 +29,10 @@ export const dispatch = (lobby, userId) => async (
   // if there is modification
   return Promise.all([
     // broadcast modifications
-    broadcast(
-      lobby.connectionsIds,
-      JSON.stringify({
-        type: '@server>setState',
-        payload: engine.getState(),
-      }),
-    ),
+    broadcast(lobby.connectionsIds, {
+      type: '@server>setState',
+      payload: engine.getState(),
+    }),
     // update dynamo
     dynamoClient.collection('lobby').update({
       id: lobby.id,

@@ -29,7 +29,7 @@ exports.handler = async (event) => {
   if (action && action.type === '@client>init') {
     const wsConnection = await dynamoClient
       .collection('wsConnections')
-      .get(connectionId, ['id', 'lobbyId', 'userId'])
+      .get(connectionId)
     if (!wsConnection) return webSocketNotFound(connectionId)
 
     let responseAction = {
@@ -42,6 +42,15 @@ exports.handler = async (event) => {
         payload: {
           domain: 'lobby',
           id: wsConnection.lobbyId,
+        },
+      }
+    }
+    if (wsConnection.gameId) {
+      responseAction = {
+        type: '@server>redirect',
+        payload: {
+          domain: 'game',
+          id: wsConnection.gameId,
         },
       }
     }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import cn from 'classnames'
 import SockJS from 'sockjs-client'
 import { motion } from 'framer-motion'
@@ -6,14 +6,19 @@ import { useParams, useHistory } from 'react-router-dom'
 import createStore from '@myrtille/core'
 import { createEngine, initState } from '@subterra/engine'
 import { tiles as tilesHelpers } from '@subterra/engine'
-import { Grid, UIPlayer, CardsDeck, Logs, MovableGrid } from '../components'
+import {
+  Grid,
+  UIPlayer,
+  CardsDeck,
+  Logs,
+  MovableGrid,
+  useWebSocket,
+} from '../components'
 import classes from './game.module.scss'
 
 const Game = ({ cards, players, tiles, dices }) => {
-  const { gameId } = useParams()
   const history = useHistory()
-  const token = undefined // TODO: fix this
-
+  const { gameId } = useParams()
   const [cells, setCells] = useState([])
   const [orderedPlayers, setOrderedPlayers] = useState([])
   const [{ state, dispatch }, setStore] = useState({
@@ -21,70 +26,39 @@ const Game = ({ cards, players, tiles, dices }) => {
     dispatch: () => {},
   })
 
+  const serverDispatch = useWebSocket(
+    'game',
+    useCallback(
+      (action) => {
+        if (action.type === '@server>setState') {
+          setStore((old) => ({ ...old, state: action.payload }))
+        } else if (action.type === '@server>redirect') {
+          history.push(`/${action.payload.domain}/${action.payload.id}`)
+        } else {
+          console.trace('Action unknown: ', action)
+        }
+      },
+      [history],
+    ),
+  )
+
+  useEffect(() => {
+    dispatch({ type: '@client>init' }, false)
+  }, [dispatch])
+
+  useEffect(() => {
+    if (gameId !== state.id) {
+      if (gameId) dispatch({ type: '@game>getState' })
+      if (state.id) history.push(`/lobby/${state.id}`)
+    }
+  }, [gameId, dispatch, state.id, history])
+
   useEffect(() => {
     if (gameId) {
-      if (!token) {
-        history.push('/')
-        return
-      }
-
-      const server = new SockJS('/game/ws')
-
-      const send = (action) => server.send(JSON.stringify(action))
-
-      // send our token
-      const sendToken = () =>
-        send({
-          type: '@client>token',
-          payload: token,
-        })
-
-      // this is just for DEBUG purpose in redux-devtools
-      let store = { state: {}, dispatch: () => {} }
-      if (process.env.NODE_ENV === 'development') {
-        store = createStore()
-        // TODO: server should send state and the player action that did this state
-        //      so we can better debug
-        store.addListener('@server>setState', (store, action) => {
-          store.setState(action.payload)
-        })
-
-        store.addListener('@server>askToken', sendToken)
-      }
-
-      server.onmessage = function (e) {
-        const action = JSON.parse(e.data)
-        store.dispatch(action)
-
-        const { type, payload } = action
-
-        if (type === '@server>setState') {
-          setStore((old) => ({ ...old, state: payload }))
-          return
-        }
-
-        if (type === '@server>error') {
-          console.error(action)
-          return
-        }
-
-        console.warn('Unknown type from server', type)
-      }
-
-      server.onclose = function () {
-        console.log('TODO: close server socket')
-      }
-
-      server.onopen = () => {
-        sendToken()
-
-        setStore((old) => ({
-          ...old,
-          dispatch: (action) => {
-            send({ type: '@client>dispatch', payload: action })
-          },
-        }))
-      }
+      setStore((old) => ({
+        ...old,
+        dispatch: serverDispatch,
+      }))
     } else {
       const engine = createEngine()
       // connects engine to react
@@ -102,7 +76,7 @@ const Game = ({ cards, players, tiles, dices }) => {
       engine.dispatch({ type: '@tiles>init', payload: tiles })
       engine.dispatch({ type: '@players>init', payload: players })
     }
-  }, [cards, dices, gameId, history, players, tiles, token])
+  }, [cards, dices, gameId, players, serverDispatch, tiles])
 
   useEffect(() => {
     let cells = tilesHelpers.getWrappingCells(state.grid)
@@ -133,7 +107,7 @@ const Game = ({ cards, players, tiles, dices }) => {
   return (
     <div className={cn('app', classes.app)}>
       <div className={cn('players', classes.players)}>
-        <button onClick={() => dispatch('@players>pass')}>pass</button>
+        <button onClick={() => serverDispatch('@players>pass')}>pass</button>
         {orderedPlayers.map((player) => (
           <motion.div key={player.type} positionTransition>
             <UIPlayer {...player} />
@@ -142,7 +116,7 @@ const Game = ({ cards, players, tiles, dices }) => {
       </div>
       <MovableGrid className={cn('board', classes.board)}>
         <Grid
-          onAction={dispatch}
+          onAction={serverDispatch}
           cells={cells}
           players={state.players}
           nextTile={state.playerActions.tile}
