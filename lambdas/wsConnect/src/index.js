@@ -42,7 +42,7 @@ exports.handler = async (event) => {
     ...pick(auth0User, ['name', 'email', 'picture']),
     pseudo: auth0User.nickname,
     ...user,
-    [auth0User.sub]: auth0User,
+    [auth0User.sub.split('|')[0]]: auth0User,
   }
 
   await docClient
