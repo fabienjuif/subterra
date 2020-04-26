@@ -27,8 +27,13 @@ export const useWebSocket = (domain, listener) => {
   }, [addListener, listener])
 
   return useCallback(
-    (action, withDomain = true) =>
-      dispatch({ ...action, domain: withDomain ? domain : undefined }),
+    (action, withDomain = true) => {
+      const innerAction = typeof action === 'string' ? { type: action } : action
+      return dispatch({
+        ...innerAction,
+        domain: withDomain ? domain : undefined,
+      })
+    },
     [dispatch, domain],
   )
 }
@@ -41,12 +46,13 @@ const WebSocketProvider = ({ children, url }) => {
   const [value] = useState({
     ...defaultValue,
     dispatch: (action) => {
+      const innerAction = typeof action === 'string' ? { type: action } : action
       if (readyRef.current && wsRef.current) {
-        console.debug('<<<', action.type, action)
-        wsRef.current.send(JSON.stringify(action))
+        console.debug('<<<', innerAction.type, innerAction)
+        wsRef.current.send(JSON.stringify(innerAction))
       } else {
-        console.debug('[waiting]', action.type, action)
-        waitingActions.current.push(action)
+        console.debug('[waiting]', innerAction.type, innerAction)
+        waitingActions.current.push(innerAction)
       }
     },
     addListener: (listener) => {

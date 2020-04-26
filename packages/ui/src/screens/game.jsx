@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import cn from 'classnames'
-import SockJS from 'sockjs-client'
+// TODO: remove dep import SockJS from 'sockjs-client'
 import { motion } from 'framer-motion'
 import { useParams, useHistory } from 'react-router-dom'
-import createStore from '@myrtille/core'
 import { createEngine, initState } from '@subterra/engine'
 import { tiles as tilesHelpers } from '@subterra/engine'
 import {

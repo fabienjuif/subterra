@@ -11,20 +11,35 @@ export const start = async (wsConnection, lobby) => {
   const games = dynamoClient.collection('games')
   const wsConnections = dynamoClient.collection('wsConnections')
 
-  const gameState = createEngine({
+  const gameId = nanoid()
+
+  const engine = createEngine({
     ...initState(),
-    players: JSON.parse(lobby.state).players,
-    cards: [
+    id: gameId,
+  })
+
+  engine.dispatch({
+    type: '@dices>init',
+    payload: Array.from({ length: 5000 }).map(() => dices.roll6()),
+  })
+  engine.dispatch({
+    type: '@cards>init',
+    payload: [
       ...Array.from({ length: 10 }).map(() =>
         dices.getRandomInArray(cards.slice(1)),
       ),
       cards[0],
     ],
-    dices: Array.from({ length: 5000 }).map(() => dices.roll6()),
-  }).getState()
+  })
+  engine.dispatch({
+    type: '@players>init',
+    payload: JSON.parse(lobby.state).players,
+  })
+
+  const gameState = engine.getState()
 
   const game = {
-    id: nanoid(),
+    id: gameId,
     connectionsIds: lobby.connectionsIds,
     state: JSON.stringify(gameState),
     initState: JSON.stringify(gameState),
