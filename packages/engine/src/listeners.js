@@ -1,4 +1,5 @@
 import * as cards from './cards'
+import * as tiles from './tiles'
 import * as dices from './dices'
 import * as enemies from './enemies'
 import * as game from './game'
@@ -9,6 +10,7 @@ export default [
   ['@players>init', players.init],
   ['@players>init', players.findPossibilities],
   ['@cards>init', cards.init],
+  ['@tiles>init', tiles.init],
   // game going on
   ['@players>pass', players.pass],
   ['@players>pass', players.findPossibilities],

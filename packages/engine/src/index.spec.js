@@ -2,6 +2,7 @@ import { createPatch } from 'diff'
 import { createEngine } from './index'
 import {
   cards,
+  tiles,
   archetypes,
   EndCard,
   GazCard,
@@ -23,6 +24,10 @@ describe('engine without mock', () => {
       engine.dispatch({
         type: '@cards>init',
         payload: [cards[2], cards[3], cards[1], cards[0]],
+      })
+      engine.dispatch({
+        type: '@tiles>init',
+        payload: [tiles[0], tiles[2], tiles[3], tiles[1]],
       })
       engine.dispatch({
         type: '@players>init',

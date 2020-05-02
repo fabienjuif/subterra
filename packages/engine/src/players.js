@@ -68,11 +68,9 @@ export const look = (store, action) => {
 
     // TODO: Should take the first tile of the deck Tile
     const tile = {
+      ...state.deckTiles.shift(),
       x: action.payload.x,
       y: action.payload.y,
-      right: true,
-      bottom: true,
-      left: true,
       status: [],
       rotation: 0,
     }

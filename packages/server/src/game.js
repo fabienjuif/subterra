@@ -2,7 +2,7 @@ import bodyParser from 'body-parser'
 import uuidPackage from 'uuid'
 import got from 'got'
 import send from '@polka/send-type'
-import { cards } from '@subterra/data'
+import { cards, tiles } from '@subterra/data'
 import { createEngine, dices } from '@subterra/engine'
 import { create } from './sock'
 
@@ -114,6 +114,15 @@ export default (polka, prefix) => {
           dices.getRandomInArray(cards.slice(1)),
         ),
         cards[0],
+      ],
+    })
+    engine.dispatch({
+      type: '@tiles>init',
+      payload: [
+        ...Array.from({ lenght: 9 }).map(() =>
+          dices.getRandomInArray(tiles.slice(2)),
+        ),
+        tiles[1],
       ],
     })
     engine.dispatch({
