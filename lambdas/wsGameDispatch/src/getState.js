@@ -1,4 +1,5 @@
 import AWS from 'aws-sdk'
+import { setState } from './setState'
 
 // TODO: env var
 const WS_API_ENDPOINT =
@@ -10,9 +11,6 @@ export const getState = (connectionId, state) =>
   api
     .postToConnection({
       ConnectionId: connectionId,
-      Data: JSON.stringify({
-        type: '@server>setState',
-        payload: JSON.parse(state),
-      }),
+      Data: JSON.stringify(setState(state)),
     })
     .promise()
