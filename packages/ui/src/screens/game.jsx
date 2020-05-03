@@ -20,16 +20,26 @@ const Game = ({ cards, players, tiles, dices }) => {
   const { gameId } = useParams()
   const [cells, setCells] = useState([])
   const [orderedPlayers, setOrderedPlayers] = useState([])
-  const [{ state, dispatch }, setStore] = useState({
+  const [store, setStore] = useState({
     state: initState(),
     dispatch: () => {},
   })
+
+  const { state, dispatch } = store
+
+  window._state = state
+  window._dispatch = dispatch
 
   const serverDispatch = useWebSocket(
     'game',
     useCallback(
       (action) => {
         if (action.type === '@server>setState') {
+          const { gameOver } = action.payload
+          if (gameOver) {
+            history.push(`/gameover?gameOver=${gameOver}`)
+            return
+          }
           setStore((old) => ({ ...old, state: action.payload }))
         } else if (action.type === '@server>redirect') {
           history.push(`/${action.payload.domain}/${action.payload.id}`)
