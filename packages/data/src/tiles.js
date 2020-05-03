@@ -406,5 +406,3 @@ export default [
     left: true,
   },
 ]
-
-export default tiles

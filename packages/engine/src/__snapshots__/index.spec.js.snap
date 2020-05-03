@@ -5,11 +5,11 @@ Index: @cards>init
 ===================================================================
 --- @cards>init
 +++ @cards>init
-@@ -3,9 +3,33 @@
+@@ -1,9 +1,33 @@
+ {
+   "players": [],
    "enemies": [],
-   "deckTiles": {
-     "length": 10
-   },
+   "deckTiles": [],
 -  "deckCards": [],
 +  "deckCards": [
 +    {
@@ -40,7 +40,7 @@ Index: @cards>init
    "activeCard": {},
    "grid": [
      {
-@@ -23,7 +47,36 @@
+@@ -21,7 +45,36 @@
    "playerActions": {
      "possibilities": []
    },
@@ -224,10 +224,10 @@ Index: @players>init
 +    }
 +  ],
    "enemies": [],
-   "deckTiles": {
-     "length": 10
-   },
-@@ -44,9 +176,46 @@
+   "deckTiles": [],
+   "deckCards": [
+     {
+@@ -42,9 +174,46 @@
        "status": []
      }
    ],
@@ -275,7 +275,7 @@ Index: @players>init
    "technical": {
      "actions": [
        {
-@@ -75,8 +244,130 @@
+@@ -73,8 +242,130 @@
            {
              "type": "end"
            }
@@ -415,7 +415,7 @@ Index: @dices>init
 ===================================================================
 --- @dices>init
 +++ @dices>init
-@@ -160,9 +160,14 @@
+@@ -158,9 +158,14 @@
      {
        "type": "end"
      }
@@ -431,7 +431,7 @@ Index: @dices>init
    "grid": [
      {
        "id": 0,
-@@ -366,8 +371,17 @@
+@@ -364,8 +369,17 @@
              },
              "name": "xXx-scoot-xXx"
            }
@@ -480,9 +480,9 @@ Index: @cards>pick
        "skills": [
          {
            "type": "intuition",
-@@ -137,13 +137,8 @@
-     "length": 10
-   },
+@@ -135,13 +135,8 @@
+   "enemies": [],
+   "deckTiles": [],
    "deckCards": [
      {
 -      "type": "shake",
@@ -494,7 +494,7 @@ Index: @cards>pick
        "damage": 2,
        "duration": 1
      },
-@@ -161,14 +156,15 @@
+@@ -159,14 +154,15 @@
        "type": "end"
      }
    ],
@@ -514,7 +514,7 @@ Index: @cards>pick
      {
        "id": 0,
        "type": "start",
-@@ -380,8 +376,178 @@
+@@ -378,8 +374,178 @@
            3,
            4,
            5

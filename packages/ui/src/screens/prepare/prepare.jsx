@@ -3,6 +3,7 @@ import cn from 'classnames'
 import {
   archetypes as archetypesData,
   cards as cardsData,
+  tiles as tilesData,
 } from '@subterra/data'
 import { dices } from '@subterra/engine'
 import { Archetype } from '../../components'
@@ -22,6 +23,13 @@ const Prepare = () => {
       cardsData[0],
     ]
 
+    const tiles = [
+      ...Array.from({ length: 9 }).map(() =>
+        dices.getRandomInArray(tilesData.slice(2)),
+      ),
+      tilesData[1],
+    ]
+
     setStartInfos({
       cards,
       dices: Array.from({ length: 5000 }).map(() => dices.roll6()),
@@ -30,6 +38,7 @@ const Prepare = () => {
         archetype,
         name: archetype.type,
       })),
+      tiles,
     })
   }, [archetypes])
 

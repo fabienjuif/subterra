@@ -1,11 +1,13 @@
 import createEngine, * as core from './core'
 import * as cards from './cards'
+import * as tiles from './tiles'
 import * as dices from './dices'
 import * as enemies from './enemies'
 import * as game from './game'
 import * as players from './players'
 
 jest.mock('./cards')
+jest.mock('./tiles')
 jest.mock('./enemies')
 jest.mock('./dices')
 jest.mock('./enemies')
@@ -87,6 +89,14 @@ describe('listeners', () => {
 
       expect(players.drop).toHaveBeenCalledTimes(1)
       expect(players.findPossibilities).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('@tiles>init', () => {
+    it('should call tiles.init', () => {
+      const engine = createEngine({})
+      engine.dispatch('@tiles>init')
+      expect(tiles.init).toHaveBeenCalledTimes(1)
     })
   })
 

@@ -170,10 +170,11 @@ describe('players', () => {
   })
 
   describe('look', () => {
-    it('should set a full open empty tile at the expected coordinates as playerActions.tile', () => {
+    it('should set the first decktiles at the expected coordinates as playerActions.tile', () => {
       const action = actions.look({ id: 'Hatsu' }, { x: 1, y: 0 })
       const store = createStore({
         players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        deckTiles: [{ right: true, bottom: true, left: true }, { top: true }],
         grid: [{ x: 0, y: 0, right: true }],
         playerActions: {
           tile: undefined,
@@ -186,6 +187,7 @@ describe('players', () => {
       expect(store.getState()).toEqual({
         players: [{ id: 'Hatsu', actionPoints: 0, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0, right: true }],
+        deckTiles: [{ top: true }],
         playerActions: {
           tile: {
             x: 1,
@@ -208,6 +210,7 @@ describe('players', () => {
       const action = actions.look({ id: 'Hatsu' }, { x: 1, y: 0 })
       const store = createStore({
         players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        deckTiles: [{ right: true, bottom: true, left: true }],
         grid: [{ x: 0, y: 0 }],
         playerActions: {
           tile: undefined,
@@ -220,6 +223,7 @@ describe('players', () => {
       expect(store.getState()).toEqual({
         players: [{ id: 'Hatsu', actionPoints: 0, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0 }],
+        deckTiles: [],
         playerActions: {
           tile: {
             x: 1,
