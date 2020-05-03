@@ -12,10 +12,3 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip awscliv2.zip
 sudo ./aws/install
 ```
-
-## TODO:
-
-- Test serverless to replace our custom util CLI
-- How to tests lambdas ?
-- Env var
-- Cleanup tables time to time with https://docs.aws.amazon.com/fr_fr/lambda/latest/dg/services-cloudwatchevents-expressions.html
