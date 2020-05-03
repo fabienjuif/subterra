@@ -1,79 +1,46 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import cn from 'classnames'
-import SockJS from 'sockjs-client'
+// TODO: remove this dependency import SockJS from 'sockjs-client'
 import { wrapSubmit } from 'from-form-submit'
-import { Archetype } from '../components'
-import { useToken } from '../userContext'
+import { Archetype, useWebSocket } from '../components'
 import classes from './lobby.module.scss'
 
 const Lobby = () => {
-  const [token] = useToken()
-  const sendRef = useRef()
   const history = useHistory()
+  const [state, setState] = useState({})
   const { lobbyId } = useParams()
-  const [{ state, dispatch }, setStore] = useState({
-    state: {},
-    dispatch: () => {},
-  })
+
+  const dispatch = useWebSocket(
+    'lobby',
+    useCallback(
+      (action) => {
+        if (action.type === '@server>setState') {
+          setState(action.payload)
+        } else if (action.type === '@server>redirect') {
+          history.push(`/${action.payload.domain}/${action.payload.id}`)
+        } else {
+          console.trace('Action unknown: ', action)
+        }
+      },
+      [history],
+    ),
+  )
 
   useEffect(() => {
-    if (sendRef.current) return
+    dispatch({ type: '@client>init' }, false)
+  }, [dispatch])
 
-    if (!token) {
-      history.push('/')
-      return
+  useEffect(() => {
+    if (lobbyId !== state.id) {
+      if (lobbyId) dispatch({ type: '@lobby>getState' })
+      if (state.id) history.push(`/lobby/${state.id}`)
     }
-
-    const server = new SockJS('/lobby/ws')
-
-    sendRef.current = (action) => server.send(JSON.stringify(action))
-
-    // send our token
-    const sendToken = () =>
-      sendRef.current({
-        type: '@client>token',
-        payload: token,
-      })
-
-    server.onmessage = function (e) {
-      const action = JSON.parse(e.data)
-
-      const { type, payload } = action
-
-      if (type === '@server>error') {
-        console.error(action)
-        return
-      } else if (type === '@server>redirect') {
-        history.push(`/${payload.type}/${payload.id}`)
-        return
-      } else if (type === '@server>setState') {
-        setStore((old) => ({ ...old, state: payload }))
-        return
-      }
-
-      console.warn('Unknown type from server', type)
-    }
-
-    server.onclose = function () {
-      console.log('TODO: close server socket')
-    }
-
-    server.onopen = () => {
-      sendToken()
-
-      setStore((old) => ({
-        ...old,
-        dispatch: (action) => {
-          sendRef.current({ type: '@client>dispatch', payload: action })
-        },
-      }))
-    }
-  }, [token, history, lobbyId])
+  }, [lobbyId, dispatch, state.id, history])
 
   const onStart = useCallback(() => {
-    sendRef.current({ type: '@client>start' })
-  }, [])
+    dispatch({ type: '@lobby>start' })
+  }, [dispatch])
 
   const onChooseArchetype = useCallback(
     (type) => {
@@ -87,24 +54,25 @@ const Lobby = () => {
 
   const onJoin = useCallback(
     wrapSubmit(({ lobbyId }) => {
-      sendRef.current({
-        type: '@client>join',
+      dispatch({
+        type: '@lobby>join',
         payload: {
-          lobbyId,
+          id: lobbyId,
         },
       })
     }),
-    [],
+    [dispatch],
   )
 
   const onCreate = useCallback(() => {
-    sendRef.current({ type: '@client>create' })
-  }, [])
+    dispatch({ type: '@lobby>create' })
+  }, [dispatch])
 
-  const onLeave = useCallback(() => {
-    sendRef.current({ type: '@client>leave' })
+  const onLeave = useCallback(async () => {
+    dispatch({ type: '@lobby>leave' })
+    setState({})
     history.push('/lobby')
-  }, [history])
+  }, [dispatch, history])
 
   if (!lobbyId) {
     return (

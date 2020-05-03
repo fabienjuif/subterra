@@ -10,6 +10,8 @@ node_modules
 
 # production
 /build
+/packages/ui/build
+/lambdas/*/index.js
 
 # misc
 .DS_Store
@@ -21,3 +23,6 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# security
+/*firebase-adminsdk*.json

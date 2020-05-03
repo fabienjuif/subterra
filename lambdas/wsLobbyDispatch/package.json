@@ -1,0 +1,18 @@
+{
+  "name": "@subterra/lambdas-ws-get-lobby-dispatch",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "arn": "arn:aws:lambda:eu-west-3:427962677004:function:wsLobbyDispatch",
+  "dependencies": {
+    "@fabienjuif/dynamo-client": "^1.0.0",
+    "@myrtille/mutate": "^0.8.2",
+    "lodash": "^4.17.15",
+    "nanoid": "^3.1.3"
+  },
+  "workspaceDependencies": {
+    "@subterra/engine": "^1.0.0",
+    "@subterra/ws-utils": "^1.0.0",
+    "@subterra/data": "^1.0.0"
+  }
+}
