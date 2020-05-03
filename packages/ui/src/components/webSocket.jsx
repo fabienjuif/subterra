@@ -48,7 +48,6 @@ const WebSocketProvider = ({ children, url }) => {
     dispatch: (action) => {
       const innerAction = typeof action === 'string' ? { type: action } : action
       if (readyRef.current && wsRef.current) {
-        console.debug('<<<', innerAction.type, innerAction)
         wsRef.current.send(JSON.stringify(innerAction))
       } else {
         console.debug('[waiting]', innerAction.type, innerAction)
@@ -96,7 +95,6 @@ const WebSocketProvider = ({ children, url }) => {
       let action
       try {
         action = JSON.parse(event.data)
-        console.debug('>>>', action.type, action)
       } catch (ex) {
         console.trace(ex)
       }
