@@ -1,6 +1,6 @@
 import { createClient } from '@fabienjuif/dynamo-client'
 import { nanoid } from 'nanoid'
-import { cards } from '@subterra/data'
+import { cards, tiles } from '@subterra/data'
 import { createEngine, dices, initState } from '@subterra/engine'
 import { broadcast } from '@subterra/ws-utils'
 
@@ -29,6 +29,15 @@ export const start = async (wsConnection, lobby) => {
         dices.getRandomInArray(cards.slice(1)),
       ),
       cards[0],
+    ],
+  })
+  engine.dispatch({
+    type: '@tiles>init',
+    payload: [
+      ...Array.from({ lenght: 9 }).map(() =>
+        dices.getRandomInArray(tiles.slice(2)),
+      ),
+      tiles[1],
     ],
   })
   engine.dispatch({

@@ -6,7 +6,7 @@ export const initState = () => ({
   gameOver: undefined, // 'loose' | 'win'
   players: [],
   enemies: [],
-  deckTiles: { length: 10 }, // should be an array in a futur iteration
+  deckTiles: [],
   deckCards: [],
   dices: [],
   activeCard: {}, // should be an array in a futur iteration
