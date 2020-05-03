@@ -2,20 +2,9 @@ import { omit } from 'lodash'
 import { createClient } from '@fabienjuif/dynamo-client'
 import { broadcast } from '@subterra/ws-utils'
 import { createEngine, initState } from '@subterra/engine'
+import { setState } from './setState'
 
 const dynamoClient = createClient()
-
-const mapState = (state) => ({
-  ...omit(state, ['dices']),
-  technical: {
-    ...state.technical,
-    actions: state.technical.actions
-      .filter((action) => !action.type.match(/>init$/))
-      .map((action) => omit(action, ['domain', 'userId'])),
-  },
-  deckCards: { length: state.deckCards.length },
-  deckTiles: { length: state.deckTiles.length },
-})
 
 export const dispatch = (game, userId) => async (
   state = initState(),
@@ -38,14 +27,14 @@ export const dispatch = (game, userId) => async (
   )
   const newState = engine.getState()
 
+  // closure to broadcast new state
+  const broadcastState = () =>
+    broadcast(game.connectionsIds, setState(newState))
+
   // if this is game over clean up all states
   if (newState.gameOver) {
     return Promise.all([
-      // broadcast modifications
-      broadcast(game.connectionsIds, {
-        type: '@server>setState',
-        payload: mapState(newState),
-      }),
+      broadcastState(),
       // remove gameId from connectionsIds (user are not in "game" state)
       // but we keep game row in dynamo so we can do some stats
       ...game.connectionsIds.map((id) =>
@@ -66,11 +55,7 @@ export const dispatch = (game, userId) => async (
 
   // if there is modification
   return Promise.all([
-    // broadcast modifications
-    broadcast(game.connectionsIds, {
-      type: '@server>setState',
-      payload: mapState(newState),
-    }),
+    broadcastState(),
     // update dynamo
     games.update({
       id: game.id,

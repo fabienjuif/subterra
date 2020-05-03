@@ -32,7 +32,7 @@ export const handler = async (event) => {
     if (!game) return gameNotFound(connectionId, wsConnection.gameId)
 
     if (action.type === '@game>getState') {
-      return getState(connectionId, game.state)
+      return getState(connectionId, JSON.parse(game.state))
     }
 
     // use engine in all other cases
