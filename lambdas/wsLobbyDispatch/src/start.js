@@ -34,7 +34,7 @@ export const start = async (wsConnection, lobby) => {
   engine.dispatch({
     type: '@tiles>init',
     payload: [
-      ...Array.from({ lenght: 9 }).map(() =>
+      ...Array.from({ length: 9 }).map(() =>
         dices.getRandomInArray(tiles.slice(2)),
       ),
       tiles[1],
