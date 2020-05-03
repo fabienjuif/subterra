@@ -1,8 +1,21 @@
+import { omit } from 'lodash'
 import { createClient } from '@fabienjuif/dynamo-client'
 import { broadcast } from '@subterra/ws-utils'
 import { createEngine, initState } from '@subterra/engine'
 
 const dynamoClient = createClient()
+
+const mapState = (state) => ({
+  ...omit(state, ['dices']),
+  technical: {
+    ...state.technical,
+    actions: state.technical.actions
+      .filter((action) => !action.type.match(/>init$/))
+      .map((action) => omit(action, ['domain', 'userId'])),
+  },
+  deckCards: { length: state.deckCards.length },
+  deckTiles: { length: state.deckTiles.length },
+})
 
 export const dispatch = (game, userId) => async (
   state = initState(),
@@ -31,7 +44,7 @@ export const dispatch = (game, userId) => async (
       // broadcast modifications
       broadcast(game.connectionsIds, {
         type: '@server>setState',
-        payload: newState,
+        payload: mapState(newState),
       }),
       // remove gameId from connectionsIds (user are not in "game" state)
       // but we keep game row in dynamo so we can do some stats
@@ -56,7 +69,7 @@ export const dispatch = (game, userId) => async (
     // broadcast modifications
     broadcast(game.connectionsIds, {
       type: '@server>setState',
-      payload: newState,
+      payload: mapState(newState),
     }),
     // update dynamo
     games.update({
