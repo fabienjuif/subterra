@@ -102,7 +102,7 @@ export default (polka, prefix) => {
 
     // create game engine and init it
     engine = createEngine()
-    // TODO: tile deck
+
     engine.dispatch({
       type: '@dices>init',
       payload: Array.from({ length: 5000 }).map(() => dices.roll6()),

@@ -66,7 +66,6 @@ export const look = (store, action) => {
     const player = selectors.findById(state, action)
     const playerTile = state.grid.find(isCellEqual(player))
 
-    // TODO: Should take the first tile of the deck Tile
     const tile = {
       ...state.deckTiles.shift(),
       x: action.payload.x,
