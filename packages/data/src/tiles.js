@@ -1,408 +1,112 @@
+// Type
+const StartType = { type: 'start' }
+const EndType = { type: 'end' }
+const GazType = { type: 'gaz' }
+const WaterType = { type: 'water' }
+const LandslideType = { type: 'landslide' }
+const EnemyType = { type: 'enemy' }
+const TightType = { type: 'tight' }
+const FallType = { type: 'fall' }
+const BlockType = { type: 'block' }
+const DamageType = { type: 'damage' }
+
+// Normal Tiles
+export const CrossTile = { top: true, right: true, bottom: true, left: true }
+export const EdgeTile = { top: true, right: true, bottom: true }
+export const CornerTile = { top: true, right: true }
+export const AlleyTile = { top: true, bottom: true }
+export const DeadEndTile = { top: true }
+
+// Special Tiles
+export const StartTile = { ...CrossTile, ...StartType }
+export const FinalTile = { ...DeadEndTile, ...EndType }
+
+export const CrossGazTile = { ...CrossTile, ...GazType }
+export const EdgeGazTile = { ...EdgeTile, ...GazType }
+export const CornerGazTile = { ...CornerTile, ...GazType }
+export const AlleyGazTile = { ...AlleyTile, ...GazType }
+
+export const CrossWaterTile = { ...CrossTile, ...WaterType }
+export const EdgeWaterTile = { ...EdgeTile, ...WaterType }
+export const CornerWaterTile = { ...CornerTile, ...WaterType }
+export const AlleyWaterTile = { ...AlleyTile, ...WaterType }
+
+export const CrossLandslideTile = { ...CrossTile, ...LandslideType }
+export const EdgeLandslideTile = { ...EdgeTile, ...LandslideType }
+export const CornerLandslideTile = { ...CornerTile, ...LandslideType }
+export const AlleyLandslideTile = { ...AlleyTile, ...LandslideType }
+
+export const DeadEndEnemyTile = { ...DeadEndTile, ...EnemyType }
+export const CornerEnemyTile = { ...CornerTile, ...EnemyType }
+export const AlleyTightTile = { ...AlleyTile, ...TightType }
+export const AlleyFallTile = { ...AlleyTile, ...FallType }
+export const AlleyBlockTile = { ...AlleyTile, ...BlockType }
+export const CrossDamageTile = { ...CrossTile, ...DamageType }
+
 export default [
-  {
-    id: 0,
-    type: 'start',
-    top: true,
-    left: true,
-    bottom: true,
-    right: true,
-  },
-  {
-    id: 1,
-    type: 'end',
-    bottom: true,
-  },
-  {
-    id: 2,
-    type: 'gaz',
-    top: true,
-    right: true,
-  },
-  {
-    id: 3,
-    type: 'water',
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 4,
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 5,
-    type: 'water',
-    top: true,
-    left: true,
-    bottom: true,
-    right: true,
-  },
-  {
-    id: 6,
-    type: 'landslide',
-    dices: [3, 6],
-    top: true,
-    right: true,
-  },
-  {
-    id: 7,
-    type: 'landslide',
-    dices: [3, 2],
-    top: true,
-    right: true,
-    left: true,
-  },
-  {
-    id: 8,
-    type: 'landslide',
-    dices: [6, 2],
-    top: true,
-    right: true,
-  },
-  {
-    id: 9,
-    top: true,
-    left: true,
-    bottom: true,
-    right: true,
-  },
-  {
-    id: 10,
-    type: 'water',
-    left: true,
-    top: true,
-    right: true,
-  },
-  {
-    id: 11,
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 12,
-    type: 'enemy',
-    top: true,
-  },
-  {
-    id: 13,
-    type: 'tight',
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 14,
-    top: true,
-  },
-  {
-    id: 15,
-    top: true,
-    right: true,
-  },
-  {
-    id: 16,
-    type: 'fall',
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 17,
-    type: 'water',
-    top: true,
-    left: true,
-    bottom: true,
-    right: true,
-  },
-  {
-    id: 18,
-    type: 'landslide',
-    dices: [6, 1],
-    top: true,
-    right: true,
-    left: true,
-  },
-  {
-    id: 19,
-    top: true,
-    right: true,
-  },
-  {
-    id: 20,
-    type: 'block',
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 21,
-    type: 'enemy',
-    top: true,
-  },
-  {
-    id: 22,
-    top: true,
-    left: true,
-    bottom: true,
-    right: true,
-  },
-  {
-    id: 23,
-    top: true,
-    right: true,
-  },
-  {
-    id: 24,
-    top: true,
-    right: true,
-    left: true,
-  },
-  {
-    id: 25,
-    top: true,
-    left: true,
-    bottom: true,
-    right: true,
-  },
-  {
-    id: 26,
-    type: 'damage',
-    top: true,
-    left: true,
-    bottom: true,
-    right: true,
-  },
-  {
-    id: 27,
-    type: 'gaz',
-    top: true,
-    right: true,
-  },
-  {
-    id: 28,
-    type: 'enemy',
-    top: true,
-  },
-  {
-    id: 29,
-    type: 'gaz',
-    top: true,
-    right: true,
-    left: true,
-  },
-  {
-    id: 30,
-    type: 'damage',
-    top: true,
-    left: true,
-    bottom: true,
-    right: true,
-  },
-  {
-    id: 31,
-    type: 'water',
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 32,
-    type: 'block',
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 33,
-    type: 'water',
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 34,
-    type: 'gaz',
-    top: true,
-    right: true,
-  },
-  {
-    id: 35,
-    top: true,
-    right: true,
-    left: true,
-  },
-  {
-    id: 36,
-    type: 'block',
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 37,
-    type: 'tight',
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 38,
-    type: 'fall',
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 39,
-    type: 'enemy',
-    top: true,
-  },
-  {
-    id: 40,
-    type: 'gaz',
-    top: true,
-    right: true,
-  },
-  {
-    id: 41,
-    type: 'fall',
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 42,
-    type: 'landslide',
-    dices: [3, 5],
-    top: true,
-    right: true,
-    left: true,
-  },
-  {
-    id: 43,
-    type: 'landslide',
-    dices: [4, 5],
-    top: true,
-    right: true,
-    left: true,
-  },
-  {
-    id: 44,
-    type: 'water',
-    top: true,
-    right: true,
-    left: true,
-  },
-  {
-    id: 45,
-    type: 'landslide',
-    dices: [3, 1],
-    top: true,
-    right: true,
-    left: true,
-  },
-  {
-    id: 46,
-    type: 'gaz',
-    top: true,
-    right: true,
-    left: true,
-  },
-  {
-    id: 47,
-    type: 'gaz',
-    top: true,
-    right: true,
-  },
-  {
-    id: 48,
-    top: true,
-    right: true,
-  },
-  {
-    id: 49,
-    type: 'water',
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 50,
-    type: 'landslide',
-    top: true,
-    right: true,
-  },
-  {
-    id: 51,
-    type: 'enemy',
-    top: true,
-  },
-  {
-    id: 52,
-    top: true,
-  },
-  {
-    id: 53,
-    type: 'tight',
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 54,
-    type: 'landslide',
-    dices: [4, 6],
-    top: true,
-    right: true,
-    left: true,
-  },
-  {
-    id: 55,
-    type: 'landslide',
-    top: true,
-    left: true,
-    right: true,
-  },
-  {
-    id: 56,
-    type: 'enemy',
-    top: true,
-  },
-  {
-    id: 57,
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 58,
-    type: 'landslide',
-    dices: [1, 5],
-    top: true,
-    right: true,
-  },
-  {
-    id: 59,
-    type: 'enemy',
-    top: true,
-    right: true,
-  },
-  {
-    id: 60,
-    top: true,
-    bottom: true,
-  },
-  {
-    id: 61,
-    type: 'gaz',
-    top: true,
-    right: true,
-  },
-  {
-    id: 62,
-    type: 'enemy',
-    top: true,
-    right: true,
-  },
-  {
-    id: 63,
-    type: 'landslide',
-    dices: [2, 5],
-    top: true,
-    right: true,
-    left: true,
-  },
-  {
-    id: 64,
-    top: true,
-    right: true,
-    left: true,
-  },
+  StartTile,
+  FinalTile,
+  CornerGazTile,
+  AlleyWaterTile,
+  AlleyTile,
+  CrossWaterTile,
+  { ...CornerLandslideTile, dices: [3, 6] },
+  { ...EdgeLandslideTile, dices: [2, 3] },
+  { ...CornerLandslideTile, dices: [2, 6] },
+  CrossTile,
+  EdgeWaterTile,
+  AlleyTile,
+  DeadEndEnemyTile,
+  AlleyTightTile,
+  DeadEndTile,
+  CornerTile,
+  AlleyFallTile,
+  CrossWaterTile,
+  { ...EdgeLandslideTile, dices: [1, 6] },
+  CornerTile,
+  AlleyBlockTile,
+  DeadEndEnemyTile,
+  CrossTile,
+  CornerTile,
+  EdgeTile,
+  CrossTile,
+  CrossDamageTile,
+  AlleyGazTile,
+  DeadEndEnemyTile,
+  EdgeGazTile,
+  CrossDamageTile,
+  AlleyWaterTile,
+  AlleyBlockTile,
+  AlleyWaterTile,
+  CornerGazTile,
+  EdgeTile,
+  AlleyBlockTile,
+  AlleyTightTile,
+  AlleyFallTile,
+  DeadEndEnemyTile,
+  CornerGazTile,
+  AlleyFallTile,
+  { ...EdgeLandslideTile, dices: [3, 5] },
+  { ...EdgeLandslideTile, dices: [4, 5] },
+  EdgeWaterTile,
+  { ...EdgeLandslideTile, dices: [1, 3] },
+  EdgeGazTile,
+  CornerGazTile,
+  CornerTile,
+  AlleyWaterTile,
+  { ...CornerLandslideTile, dices: [1, 2] },
+  DeadEndEnemyTile,
+  DeadEndTile,
+  AlleyTightTile,
+  { ...EdgeLandslideTile, dices: [4, 6] },
+  { ...EdgeLandslideTile, dices: [2, 5] },
+  DeadEndEnemyTile,
+  AlleyTile,
+  { ...CornerLandslideTile, dices: [1, 5] },
+  CornerEnemyTile,
+  AlleyTile,
+  CornerGazTile,
+  CornerEnemyTile,
+  { ...EdgeLandslideTile, dices: [2, 5] },
+  EdgeTile,
 ]
