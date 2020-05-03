@@ -68,8 +68,9 @@ const Lobby = () => {
     dispatch({ type: '@lobby>create' })
   }, [dispatch])
 
-  const onLeave = useCallback(() => {
+  const onLeave = useCallback(async () => {
     dispatch({ type: '@lobby>leave' })
+    setState({})
     history.push('/lobby')
   }, [dispatch, history])
 
