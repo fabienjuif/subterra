@@ -28,7 +28,6 @@ const Game = ({ cards, players, tiles, dices }) => {
   const { state, dispatch } = store
 
   window._state = state
-  window._dispatch = dispatch
 
   const serverDispatch = useWebSocket(
     'game',
@@ -52,8 +51,8 @@ const Game = ({ cards, players, tiles, dices }) => {
   )
 
   useEffect(() => {
-    dispatch({ type: '@client>init' }, false)
-  }, [dispatch])
+    if (gameId) dispatch({ type: '@client>init' }, false)
+  }, [dispatch, gameId])
 
   useEffect(() => {
     if (gameId !== state.id) {
@@ -116,7 +115,7 @@ const Game = ({ cards, players, tiles, dices }) => {
   return (
     <div className={cn('app', classes.app)}>
       <div className={cn('players', classes.players)}>
-        <button onClick={() => serverDispatch('@players>pass')}>pass</button>
+        <button onClick={() => dispatch('@players>pass')}>pass</button>
         {orderedPlayers.map((player) => (
           <motion.div key={player.type} positionTransition>
             <UIPlayer {...player} />
@@ -125,7 +124,7 @@ const Game = ({ cards, players, tiles, dices }) => {
       </div>
       <MovableGrid className={cn('board', classes.board)}>
         <Grid
-          onAction={serverDispatch}
+          onAction={dispatch}
           cells={cells}
           players={state.players}
           nextTile={state.playerActions.tile}
