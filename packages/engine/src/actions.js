@@ -94,6 +94,9 @@ export const roll = {
   }),
 }
 
-export const isActionEquals = (obj1) => (obj2) => {
-  return JSON.stringify(obj1) === JSON.stringify(obj2)
-}
+// we remove userId and domain to make sure actions are equals without technicals specificities
+const withoutTechnicalFields = ({ userId, domain, ...action }) => action
+
+export const isActionEquals = (action1) => (action2) =>
+  JSON.stringify(withoutTechnicalFields(action1)) ===
+  JSON.stringify(withoutTechnicalFields(action2))
