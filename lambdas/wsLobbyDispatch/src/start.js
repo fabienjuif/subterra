@@ -18,40 +18,43 @@ export const start = async (wsConnection, lobby) => {
     id: gameId,
   })
 
-  engine.dispatch({
-    type: '@dices>init',
-    payload: Array.from({ length: 5000 }).map(() => dices.roll6()),
-  })
-  engine.dispatch({
-    type: '@cards>init',
-    payload: [
-      ...Array.from({ length: 10 }).map(() =>
-        dices.getRandomInArray(cards.slice(1)),
-      ),
-      cards[0],
-    ],
-  })
-  engine.dispatch({
-    type: '@tiles>init',
-    payload: [
-      ...Array.from({ length: 9 }).map(() =>
-        dices.getRandomInArray(tiles.slice(2)),
-      ),
-      tiles[1],
-    ],
-  })
-  engine.dispatch({
-    type: '@players>init',
-    payload: JSON.parse(lobby.state).players,
-  })
-
   const gameState = engine.getState()
+  const state = JSON.stringify(gameState)
 
   const game = {
     id: gameId,
     connectionsIds: lobby.connectionsIds,
-    state: JSON.stringify(gameState),
-    initState: JSON.stringify(gameState),
+    initState: state,
+    state,
+    actionsSnapshot: [],
+    actions: [
+      {
+        type: '@dices>init',
+        payload: Array.from({ length: 5000 }).map(() => dices.roll6()),
+      },
+      {
+        type: '@cards>init',
+        payload: [
+          ...Array.from({ length: 10 }).map(() =>
+            dices.getRandomInArray(cards.slice(1)),
+          ),
+          cards[0],
+        ],
+      },
+      {
+        type: '@tiles>init',
+        payload: [
+          ...Array.from({ length: 9 }).map(() =>
+            dices.getRandomInArray(tiles.slice(2)),
+          ),
+          tiles[1],
+        ],
+      },
+      {
+        type: '@players>init',
+        payload: JSON.parse(lobby.state).players,
+      },
+    ].map((action) => JSON.stringify(action)),
     createdAt: Date.now(),
   }
 
