@@ -1,7 +1,5 @@
-import { createClient } from '@fabienjuif/dynamo-client'
+import { pick } from 'lodash'
 import { getAndUpdate } from '@subterra/user-utils'
-
-const dynamoClient = createClient()
 
 const createError = (message, code, statusCode = 400) => {
   const error = new Error(message)
@@ -20,7 +18,7 @@ const createError = (message, code, statusCode = 400) => {
 }
 
 export const handler = async (event) => {
-  const { headers, body } = event
+  const { headers } = event
 
   if (
     !headers ||
@@ -33,22 +31,10 @@ export const handler = async (event) => {
     )
   }
 
-  const users = dynamoClient.collection('users')
   const user = await getAndUpdate(headers.Authorization.split('Bearer ')[1])
 
-  if (!body) return createError('You should send a body', 'no_body')
-  const { pseudo } = JSON.parse(body)
-  if (!pseudo) return createError('No pseudo provided', 'no_pseudo')
-
-  await users.update({
-    id: user.id,
-    pseudo,
-    updatedAt: Date.now(),
-    newPseudoAt: Date.now(),
-    previousPseudo: user.pseudo,
-  })
-
   return {
-    statusCode: 201,
+    statusCode: 200,
+    body: JSON.stringify(pick(user, ['name', 'email', 'picture', 'pseudo'])),
   }
 }

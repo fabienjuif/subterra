@@ -70,7 +70,7 @@ const UserProvider = ({ children }) => {
         window.history.replaceState({}, document.title, '/')
       }
 
-      const [logged, token, user] = await Promise.all([
+      const [logged, token] = await Promise.all([
         auth0.isAuthenticated(),
         auth0.getTokenSilently(),
         auth0.getUser(),
@@ -80,7 +80,6 @@ const UserProvider = ({ children }) => {
         ...old,
         logged,
         token,
-        user,
       }))
     }
 

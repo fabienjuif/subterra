@@ -1,5 +1,5 @@
 import { createClient } from '@fabienjuif/dynamo-client'
-import { getAndUpdate } from '@subttera/user'
+import { getAndUpdate } from '@subterra/user-utils'
 import { updateLobby } from './updateLobby'
 import { updateGame } from './updateGame'
 

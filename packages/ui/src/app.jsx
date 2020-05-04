@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
-import { Prepare, Game, Lobby, Over, Welcome } from './screens'
+import { Prepare, Game, Lobby, Over, User, Welcome } from './screens'
 import { UserProvider, WebSocketProvider } from './components'
 import './variables.css'
 
@@ -20,6 +20,7 @@ const App = () => {
             />
             <Route exact path={['/game', '/game/:gameId']} component={Game} />
             <Route exact path="/local" component={Prepare} />
+            <Route exact path="/user" component={User} />
           </Switch>
         </BrowserRouter>
       </WebSocketProvider>
