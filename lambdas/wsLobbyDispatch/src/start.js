@@ -19,11 +19,14 @@ export const start = async (wsConnection, lobby) => {
   })
 
   const gameState = engine.getState()
+  const state = JSON.stringify(gameState)
 
   const game = {
     id: gameId,
     connectionsIds: lobby.connectionsIds,
-    initState: JSON.stringify(gameState),
+    initState: state,
+    state,
+    actionsSnapshot: [],
     actions: [
       {
         type: '@dices>init',

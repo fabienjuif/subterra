@@ -6,6 +6,8 @@ import { createEngine } from '@subterra/engine'
 
 const dynamoClient = createClient()
 
+const MAX_ACTIONS = 5
+
 export const handler = async (event) => {
   const { requestContext, body } = event
   const { connectionId } = requestContext
@@ -27,23 +29,47 @@ export const handler = async (event) => {
 
     const game = await games.get(wsConnection.gameId, [
       'id',
-      'initState',
+      'state',
       'actions',
       'connectionsIds',
     ])
     if (!game) return gameNotFound(connectionId, wsConnection.gameId)
 
     // replay actions on top of the current state
-    const engine = createEngine(JSON.parse(game.initState))
+    const engine = createEngine(JSON.parse(game.state))
     game.actions.forEach((action) => engine.dispatch(JSON.parse(action)))
-    const state = engine.getState()
 
     if (action.type === '@game>getState') {
-      return getState(connectionId, state)
+      return getState(connectionId, engine.getState())
     }
 
     // use engine in all other cases
-    return dispatch(game, wsConnection.userId)(engine, action)
+    await dispatch(game, wsConnection.userId)(engine, action)
+
+    // if actions list is fat we do a snapshot
+    if (game.actions.length + [].concat(action).length > MAX_ACTIONS) {
+      await dynamoClient.docClient
+        .update({
+          TableName: 'games',
+          Key: {
+            id: game.id,
+          },
+          UpdateExpression:
+            'set updatedAt = :updatedAt, ' +
+            'actionsSnapshot = list_append(actionsSnapshot, actions), ' +
+            'actions = :actions, ' +
+            '#s = :state',
+          ExpressionAttributeNames: {
+            '#s': 'state',
+          },
+          ExpressionAttributeValues: {
+            ':updatedAt': Date.now(),
+            ':actions': [],
+            ':state': JSON.stringify(engine.getState()),
+          },
+        })
+        .promise()
+    }
   })().then(
     () => ({ statusCode: 200 }),
     (err) => {
