@@ -2,6 +2,7 @@ import { createClient } from '@fabienjuif/dynamo-client'
 import { dispatch } from './dispatch'
 import { webSocketNotFound, userNotInGame, gameNotFound } from './errors'
 import { getState } from './getState'
+import { createEngine } from '@subterra/engine'
 
 const dynamoClient = createClient()
 
@@ -26,17 +27,23 @@ export const handler = async (event) => {
 
     const game = await games.get(wsConnection.gameId, [
       'id',
-      'state',
+      'initState',
+      'actions',
       'connectionsIds',
     ])
     if (!game) return gameNotFound(connectionId, wsConnection.gameId)
 
+    // replay actions on top of the current state
+    const engine = createEngine(JSON.parse(game.initState))
+    game.actions.forEach((action) => engine.dispatch(JSON.parse(action)))
+    const state = engine.getState()
+
     if (action.type === '@game>getState') {
-      return getState(connectionId, JSON.parse(game.state))
+      return getState(connectionId, state)
     }
 
     // use engine in all other cases
-    return dispatch(game, wsConnection.userId)(game.state, action)
+    return dispatch(game, wsConnection.userId)(engine, action)
   })().then(
     () => ({ statusCode: 200 }),
     (err) => {

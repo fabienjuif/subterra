@@ -1,24 +1,15 @@
-import { omit } from 'lodash'
 import { createClient } from '@fabienjuif/dynamo-client'
 import { broadcast } from '@subterra/ws-utils'
-import { createEngine, initState } from '@subterra/engine'
 import { setState } from './setState'
 
 const dynamoClient = createClient()
 
-export const dispatch = (game, userId) => async (
-  state = initState(),
-  actions,
-) => {
-  const games = dynamoClient.collection('games')
+export const dispatch = (game, userId) => async (engine, actions) => {
+  const prevState = engine.getState()
+
   const wsConnections = dynamoClient.collection('wsConnections')
 
-  // save prevState to make sure not to send a state that did not change
-  let prevState = typeof state === 'string' ? JSON.parse(state) : state
-  prevState.id = game.id
-
   // dispatch actions
-  const engine = createEngine(prevState)
   ;[].concat(actions).forEach((action) =>
     engine.dispatch({
       ...action,
@@ -31,10 +22,30 @@ export const dispatch = (game, userId) => async (
   const broadcastState = () =>
     broadcast(game.connectionsIds, setState(newState))
 
+  // closure to update game
+  const udpateGame = () =>
+    dynamoClient.docClient
+      .update({
+        TableName: 'games',
+        Key: {
+          id: game.id,
+        },
+        UpdateExpression:
+          'set updatedAt = :updatedAt, actions = list_append(actions, :actions)',
+        ExpressionAttributeValues: {
+          ':updatedAt': Date.now(),
+          ':actions': []
+            .concat(actions)
+            .map((action) => JSON.stringify(action)),
+        },
+      })
+      .promise()
+
   // if this is game over clean up all states
   if (newState.gameOver) {
     return Promise.all([
       broadcastState(),
+      udpateGame(),
       // remove gameId from connectionsIds (user are not in "game" state)
       // but we keep game row in dynamo so we can do some stats
       ...game.connectionsIds.map((id) =>
@@ -54,13 +65,5 @@ export const dispatch = (game, userId) => async (
   }
 
   // if there is modification
-  return Promise.all([
-    broadcastState(),
-    // update dynamo
-    games.update({
-      id: game.id,
-      updatedAt: Date.now(),
-      state: JSON.stringify(newState),
-    }),
-  ])
+  return Promise.all([broadcastState(), udpateGame()])
 }
