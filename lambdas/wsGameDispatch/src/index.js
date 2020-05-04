@@ -6,6 +6,7 @@ import { createEngine } from '@subterra/engine'
 
 const dynamoClient = createClient()
 
+// TODO: env var
 const MAX_ACTIONS = 5
 
 export const handler = async (event) => {
