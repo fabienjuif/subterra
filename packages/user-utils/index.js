@@ -2,6 +2,8 @@ import fetch from 'node-fetch'
 import { pick } from 'lodash'
 import { createClient } from '@fabienjuif/dynamo-client'
 
+// TODO: env var
+const MAX_TRY = 3
 const dynamoClient = createClient()
 
 export const getAndUpdate = async (token) => {
@@ -14,20 +16,38 @@ export const getAndUpdate = async (token) => {
   // TODO: env variable
   const AUTH0_API_ENDPOINT = 'https://crawlandsurvive.eu.auth0.com'
 
-  const auth0User = await fetch(`${AUTH0_API_ENDPOINT}/userinfo`, {
-    headers: { Authorization: `Bearer ${token}` },
-  }).then((d) => d.json())
+  let retry = 0
+  let auth0User
+  let lastKnownException
+
+  while (!auth0User && retry < MAX_TRY) {
+    try {
+      auth0User = await fetch(`${AUTH0_API_ENDPOINT}/userinfo`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }).then((d) => d.json())
+    } catch (ex) {
+      lastKnownException = ex
+    }
+    retry += 1
+  }
+
+  if (!auth0User) {
+    console.trace(lastKnownException)
+    console.error('Retried times:', retry)
+    return {
+      statusCode: 500,
+    }
+  }
 
   const users = dynamoClient.collection('users')
 
   let user = await users.get(auth0User.sub)
 
   user = {
-    id: auth0User.sub,
     ...pick(auth0User, ['name', 'email', 'picture']),
-    pseudo: auth0User.nickname,
-    createdAt: Date.now(),
     ...user,
+    id: auth0User.sub,
+    createdAt: Date.now(),
     updatedAt: Date.now(),
     [auth0User.sub.split('|')[0]]: auth0User,
   }

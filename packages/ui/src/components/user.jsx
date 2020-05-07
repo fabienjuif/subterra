@@ -1,9 +1,11 @@
 import React, { createContext, useState, useEffect, useContext } from 'react'
 import createAuth0Client from '@auth0/auth0-spa-js'
+import { useHistory } from 'react-router-dom'
 
 // TODO: env variable
 const AUTH0_DOMAIN = 'crawlandsurvive.eu.auth0.com'
 const AUTH0_CLIENTID = 'l2M5yWr6oaAXcuBpaHD7nZMPHsr2dliI'
+const API_BASEURL = '/beta'
 
 const notReady = async () => {
   throw new Error('not ready')
@@ -15,6 +17,7 @@ const defaultValue = {
   token: undefined,
   logout: notReady,
   login: notReady,
+  fetch: notReady,
 }
 
 const UserContext = createContext(defaultValue)
@@ -22,6 +25,8 @@ const UserContext = createContext(defaultValue)
 export const useUser = () => useContext(UserContext)
 
 const UserProvider = ({ children }) => {
+  const history = useHistory()
+
   const [value, setValue] = useState({
     ...defaultValue,
   })
@@ -73,18 +78,44 @@ const UserProvider = ({ children }) => {
       const [logged, token] = await Promise.all([
         auth0.isAuthenticated(),
         auth0.getTokenSilently(),
-        auth0.getUser(),
       ])
+
+      const innerFetch = (url, options) =>
+        fetch(`${API_BASEURL}${url}`, {
+          ...options,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            ...(options || {}).headers,
+          },
+        }).then(async (raw) => {
+          const text = await raw.text()
+          if (
+            text &&
+            (raw.headers.get('Content-Type') || '').includes('application/json')
+          ) {
+            return JSON.parse(text)
+          }
+
+          return text
+        })
+
+      const user = await innerFetch('/user')
+
+      if (!user.pseudo) {
+        history.push('/pseudo')
+      }
 
       setValue((old) => ({
         ...old,
         logged,
         token,
+        user,
+        fetch: innerFetch,
       }))
     }
 
     login().catch(console.error)
-  }, [auth0])
+  }, [auth0, history])
 
   if (!auth0) return null
 
