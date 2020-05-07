@@ -45,6 +45,12 @@ export const handler = async (event) => {
     }
 
     // use engine in all other cases
+    // only if the current user is the current player in the engine
+    // TODO:
+    const currPlayerInEngine = engine
+      .getState()
+      .players.find(({ current }) => current)
+    // TODO: we need to store the user id not the fake id in the engine!!
     await dispatch(game, wsConnection.userId)(engine, action)
 
     // if actions list is fat we do a snapshot
