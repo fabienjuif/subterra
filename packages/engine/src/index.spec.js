@@ -39,6 +39,12 @@ describe('engine without mock', () => {
           }),
         ),
       })
+      engine.dispatch({
+        type: '@seeds>init',
+        payload: {
+          master: 'Ijdoez8',
+        },
+      })
       engine.dispatch('@cards>pick')
       // TODO: here play a fake game
 
@@ -82,7 +88,12 @@ describe('engine without mock', () => {
         }),
       ),
     })
-    dispatchAndSnap({ type: '@dices>init', payload: [2, 3, 4, 5] })
+    dispatchAndSnap({
+      type: '@seeds>init',
+      payload: {
+        master: '87FZ2jefz',
+      },
+    })
     dispatchAndSnap('@cards>pick')
 
     // TODO: complete this after we can discover and move (or explore)

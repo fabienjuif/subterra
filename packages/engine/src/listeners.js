@@ -4,6 +4,7 @@ import * as dices from './dices'
 import * as enemies from './enemies'
 import * as game from './game'
 import * as players from './players'
+import * as seeds from './seeds'
 
 export default [
   // initializations
@@ -37,7 +38,7 @@ export default [
   ['@enemies>process', enemies.process],
   ['@enemies>move', enemies.move],
   // "random"
-  ['@dices>init', dices.init],
+  ['@seeds>init', seeds.init],
   ['@dices>roll', dices.roll],
   ['@dices>rolled', dices.checkAndDispatch],
 ]

@@ -4,11 +4,16 @@ import tilesData from './utils/tiles'
 
 export const initState = () => ({
   gameOver: undefined, // 'loose' | 'win'
+  seeds: {
+    public: false,
+    master: undefined,
+    dices: undefined,
+    nextDicesSeed: undefined,
+  },
   players: [],
   enemies: [],
   deckTiles: [],
   deckCards: [],
-  dices: [],
   activeCard: {}, // should be an array in a futur iteration
   grid: [
     {

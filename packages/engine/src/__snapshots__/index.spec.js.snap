@@ -5,8 +5,8 @@ Index: @cards>init
 ===================================================================
 --- @cards>init
 +++ @cards>init
-@@ -1,9 +1,33 @@
- {
+@@ -4,9 +4,33 @@
+   },
    "players": [],
    "enemies": [],
    "deckTiles": [],
@@ -36,11 +36,11 @@ Index: @cards>init
 +      "type": "end"
 +    }
 +  ],
-   "dices": [],
    "activeCard": {},
    "grid": [
      {
-@@ -21,7 +45,36 @@
+       "id": 0,
+@@ -23,7 +47,36 @@
    "playerActions": {
      "possibilities": []
    },
@@ -87,8 +87,11 @@ Index: @players>init
 ===================================================================
 --- @players>init
 +++ @players>init
-@@ -1,6 +1,138 @@
+@@ -1,9 +1,141 @@
  {
+   "seeds": {
+     "public": false
+   },
 -  "players": [],
 +  "players": [
 +    {
@@ -227,7 +230,7 @@ Index: @players>init
    "deckTiles": [],
    "deckCards": [
      {
-@@ -42,9 +174,46 @@
+@@ -44,9 +176,46 @@
        "status": []
      }
    ],
@@ -275,7 +278,7 @@ Index: @players>init
    "technical": {
      "actions": [
        {
-@@ -73,8 +242,130 @@
+@@ -75,8 +244,130 @@
            {
              "type": "end"
            }
@@ -411,40 +414,33 @@ Index: @players>init
 `;
 
 exports[`engine without mock should connect behaviours to actions 3`] = `
-Index: @dices>init
+Index: @seeds>init
 ===================================================================
---- @dices>init
-+++ @dices>init
-@@ -158,9 +158,14 @@
+--- @seeds>init
++++ @seeds>init
+@@ -1,7 +1,10 @@
+ {
+   "seeds": {
+-    "public": false
++    "master": "87FZ2jefz",
++    "private": false,
++    "dices": "7M8cMGMdlm",
++    "dicesNext": "7M8cMGMdlm"
+   },
+   "players": [
      {
-       "type": "end"
-     }
-   ],
--  "dices": [],
-+  "dices": [
-+    2,
-+    3,
-+    4,
-+    5
-+  ],
-   "activeCard": {},
-   "grid": [
-     {
-       "id": 0,
-@@ -364,8 +369,17 @@
+       "type": "medic",
+@@ -366,8 +369,14 @@
              },
              "name": "xXx-scoot-xXx"
            }
          ]
 +      },
 +      {
-+        "type": "@dices>init",
-+        "payload": [
-+          2,
-+          3,
-+          4,
-+          5
-+        ]
++        "type": "@seeds>init",
++        "payload": {
++          "master": "87FZ2jefz"
++        }
        }
      ]
    }
@@ -458,8 +454,14 @@ Index: @cards>pick
 ===================================================================
 --- @cards>pick
 +++ @cards>pick
-@@ -1,9 +1,9 @@
- {
+@@ -2,14 +2,14 @@
+   "seeds": {
+     "master": "87FZ2jefz",
+     "private": false,
+     "dices": "7M8cMGMdlm",
+-    "dicesNext": "7M8cMGMdlm"
++    "dicesNext": "7M8cMGMdlm@@0.04602145714249605"
+   },
    "players": [
      {
        "type": "medic",
@@ -469,7 +471,7 @@ Index: @cards>pick
        "skills": [
          {
            "type": "heal",
-@@ -46,9 +46,9 @@
+@@ -52,9 +52,9 @@
        "first": true
      },
      {
@@ -480,7 +482,18 @@ Index: @cards>pick
        "skills": [
          {
            "type": "intuition",
-@@ -135,13 +135,8 @@
+@@ -95,9 +95,9 @@
+       "actionPoints": 2
+     },
+     {
+       "type": "scoot",
+-      "health": 3,
++      "health": 2,
+       "strength": 2,
+       "skills": [
+         {
+           "type": "guide",
+@@ -141,13 +141,8 @@
    "enemies": [],
    "deckTiles": [],
    "deckCards": [
@@ -494,15 +507,10 @@ Index: @cards>pick
        "damage": 2,
        "duration": 1
      },
-@@ -159,14 +154,15 @@
+@@ -164,9 +159,13 @@
+     {
        "type": "end"
      }
-   ],
-   "dices": [
--    2,
--    3,
--    4,
-     5
    ],
 -  "activeCard": {},
 +  "activeCard": {
@@ -514,11 +522,11 @@ Index: @cards>pick
      {
        "id": 0,
        "type": "start",
-@@ -378,8 +374,178 @@
-           3,
-           4,
-           5
-         ]
+@@ -375,8 +374,192 @@
+         "type": "@seeds>init",
+         "payload": {
+           "master": "87FZ2jefz"
+         }
 +      },
 +      {
 +        "type": "@cards>pick"
@@ -637,7 +645,7 @@ Index: @cards>pick
 +              "playerId": "geologist"
 +            }
 +          },
-+          "value": 3
++          "value": 1
 +        }
 +      },
 +      {
@@ -659,7 +667,7 @@ Index: @cards>pick
 +              "playerId": "scoot"
 +            }
 +          },
-+          "value": 4
++          "value": 1
 +        }
 +      },
 +      {
@@ -688,6 +696,20 @@ Index: @cards>pick
 +            }
 +          },
 +          "playerId": "geologist"
++        }
++      },
++      {
++        "type": "@players>damage",
++        "payload": {
++          "damage": 1,
++          "from": {
++            "card": {
++              "type": "shake",
++              "damage": 1,
++              "duration": 1
++            }
++          },
++          "playerId": "scoot"
 +        }
        }
      ]

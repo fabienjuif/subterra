@@ -168,16 +168,6 @@ describe('listeners', () => {
     })
   })
 
-  describe('@dices>init', () => {
-    it('should call dices.init', () => {
-      const engine = createEngine({})
-
-      engine.dispatch('@dices>init')
-
-      expect(dices.init).toHaveBeenCalledTimes(1)
-    })
-  })
-
   describe('@dices>roll', () => {
     it('should call dices.roll', () => {
       const engine = createEngine({})

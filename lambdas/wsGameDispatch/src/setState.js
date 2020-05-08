@@ -1,7 +1,7 @@
 import { omit } from 'lodash'
 
 const mapState = (state) => ({
-  ...omit(state, ['dices']),
+  ...omit(state, ['dices', state.seeds.private ? 'seeds' : undefined]),
   technical: {
     ...state.technical,
     actions: state.technical.actions

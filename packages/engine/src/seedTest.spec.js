@@ -97,7 +97,6 @@ it('should override dices generator', () => {
 
 it('should generate a chain of dices', () => {
   const randomWithSeed = (prevSeed) => {
-    // const nanoid = getNanoIdFromSeed(prevSeed)
     const random = seedRandom(prevSeed)
     const value = random()
     return [value, prevSeed.split('@@')[0] + '@@' + value]
