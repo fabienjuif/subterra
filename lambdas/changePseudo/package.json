@@ -1,11 +1,11 @@
 {
-  "name": "@subterra/lambdas-ws-connect",
+  "name": "@subterra/lambdas-change-pseudo",
   "version": "1.0.0",
   "main": "index.js",
   "private": true,
-  "arn": "arn:aws:lambda:eu-west-3:427962677004:function:wsConnect",
+  "arn": "arn:aws:lambda:eu-west-3:427962677004:function:changePseudo",
   "dependencies": {
-    "@fabienjuif/dynamo-client": "^1.1.0",
+    "@fabienjuif/dynamo-client": "^1.0.0",
     "lodash": "^4.17.15",
     "node-fetch": "^2.6.0"
   },
