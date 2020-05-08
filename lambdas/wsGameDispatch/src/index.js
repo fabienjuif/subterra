@@ -1,6 +1,11 @@
 import { createClient } from '@fabienjuif/dynamo-client'
 import { dispatch } from './dispatch'
-import { webSocketNotFound, userNotInGame, gameNotFound } from './errors'
+import {
+  webSocketNotFound,
+  userNotInGame,
+  gameNotFound,
+  notYourTurn,
+} from './errors'
 import { getState } from './getState'
 import { createEngine } from '@subterra/engine'
 
@@ -45,6 +50,18 @@ export const handler = async (event) => {
     }
 
     // use engine in all other cases
+    // but only if the current user is the current player in the engine
+    const currPlayerInEngine = engine
+      .getState()
+      .players.find(({ current }) => current)
+    if (currPlayerInEngine.id !== wsConnection.userId) {
+      return notYourTurn(
+        wsConnection.id,
+        wsConnection.gameId,
+        wsConnection.userId,
+      )
+    }
+
     await dispatch(game, wsConnection.userId)(engine, action)
 
     // if actions list is fat we do a snapshot
