@@ -1,9 +1,18 @@
 import { createClient } from '@fabienjuif/dynamo-client'
 import { dispatch } from './dispatch'
-import { webSocketNotFound, userNotInGame, gameNotFound } from './errors'
+import {
+  webSocketNotFound,
+  userNotInGame,
+  gameNotFound,
+  notYourTurn,
+} from './errors'
 import { getState } from './getState'
+import { createEngine } from '@subterra/engine'
 
 const dynamoClient = createClient()
+
+// TODO: env var
+const MAX_ACTIONS = 5
 
 export const handler = async (event) => {
   const { requestContext, body } = event
@@ -27,16 +36,58 @@ export const handler = async (event) => {
     const game = await games.get(wsConnection.gameId, [
       'id',
       'state',
+      'actions',
       'connectionsIds',
     ])
     if (!game) return gameNotFound(connectionId, wsConnection.gameId)
 
+    // replay actions on top of the current state
+    const engine = createEngine(JSON.parse(game.state))
+    game.actions.forEach((action) => engine.dispatch(JSON.parse(action)))
+
     if (action.type === '@game>getState') {
-      return getState(connectionId, game.state)
+      return getState(connectionId, engine.getState())
     }
 
     // use engine in all other cases
-    return dispatch(game, wsConnection.userId)(game.state, action)
+    // but only if the current user is the current player in the engine
+    const currPlayerInEngine = engine
+      .getState()
+      .players.find(({ current }) => current)
+    if (currPlayerInEngine.id !== wsConnection.userId) {
+      return notYourTurn(
+        wsConnection.id,
+        wsConnection.gameId,
+        wsConnection.userId,
+      )
+    }
+
+    await dispatch(game, wsConnection.userId)(engine, action)
+
+    // if actions list is fat we do a snapshot
+    if (game.actions.length + [].concat(action).length > MAX_ACTIONS) {
+      await dynamoClient.docClient
+        .update({
+          TableName: 'games',
+          Key: {
+            id: game.id,
+          },
+          UpdateExpression:
+            'set updatedAt = :updatedAt, ' +
+            'actionsSnapshot = list_append(actionsSnapshot, actions), ' +
+            'actions = :actions, ' +
+            '#s = :state',
+          ExpressionAttributeNames: {
+            '#s': 'state',
+          },
+          ExpressionAttributeValues: {
+            ':updatedAt': Date.now(),
+            ':actions': [],
+            ':state': JSON.stringify(engine.getState()),
+          },
+        })
+        .promise()
+    }
   })().then(
     () => ({ statusCode: 200 }),
     (err) => {
