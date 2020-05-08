@@ -213,7 +213,7 @@ export const init = (store, action) => {
   store.mutate((state) => {
     state.players = action.payload.map((player) => ({
       ...player,
-      id: player.type, // type is unique for now and we can replace it by an UUID when needed.
+      id: player.id || player.type, // type is unique for now and we can replace it by an UUID when needed.
       x: 0,
       y: 0,
       actionPoints: 2,
