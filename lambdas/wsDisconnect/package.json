@@ -5,6 +5,6 @@
   "private": true,
   "arn": "arn:aws:lambda:eu-west-3:427962677004:function:wsDisconnect",
   "dependencies": {
-    "@fabienjuif/dynamo-client": "^1.0.0"
+    "@fabienjuif/dynamo-client": "^1.1.0"
   }
 }

@@ -21,3 +21,12 @@ export const gameNotFound = (connectionId, gameId) =>
     connectionId,
     gameId,
   })
+
+export const notYourTurn = (connectionId, gameId, userId) =>
+  sendError(connectionId, {
+    code: 'not_your_turn',
+    message: 'this is not your turn',
+    connectionId,
+    gameId,
+    userId,
+  })
