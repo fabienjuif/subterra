@@ -96,48 +96,65 @@ it('should override dices generator', () => {
 })
 
 it('should generate a chain of dices', () => {
-  const getNanoIdFromSeed = (seed) => {
-    const random = seedRandom(seed)
-
-    return customRandom(
-      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
-      10,
-      (size) => {
-        return new Uint8Array(size).map(() => 256 * random())
-      },
-    )
-  }
-
   const randomWithSeed = (prevSeed) => {
-    const nanoid = getNanoIdFromSeed(prevSeed)
-    const random = seedRandom(nanoid())
-    return [random(), nanoid()]
+    // const nanoid = getNanoIdFromSeed(prevSeed)
+    const random = seedRandom(prevSeed)
+    const value = random()
+    return [value, prevSeed.split('@@')[0] + '@@' + value]
   }
 
   const test = () => {
     let [value, nextSeed] = randomWithSeed('first')
-    expect(value).toEqual(0.13367808911889217)
-    expect(nextSeed).toEqual('RjvmY9PIrQ')
+    const expectedSeed1 = 'first@@0.5553384910006973'
+    expect(value).toEqual(0.5553384910006973)
+    expect(nextSeed).toEqual(expectedSeed1)
     // 2nd
     ;[value, nextSeed] = randomWithSeed(nextSeed)
-    expect(value).toEqual(0.12089142469216785)
-    expect(nextSeed).toEqual('8kVwdwo9ZB')
+    const expectedValue2 = 0.7794949355305213
+    const expectedSeed2 = 'first@@0.7794949355305213'
+    expect(value).toEqual(expectedValue2)
+    expect(nextSeed).toEqual(expectedSeed2)
     // 3rd
     ;[value, nextSeed] = randomWithSeed(nextSeed)
-    expect(value).toEqual(0.36074745039289235)
-    expect(nextSeed).toEqual('C9G4gRwkUR')
+    const expectedValue3 = 0.31890203930142286
+    const expectedSeed3 = 'first@@0.31890203930142286'
+    expect(value).toEqual(expectedValue3)
+    expect(nextSeed).toEqual(expectedSeed3)
 
     // try again from 2nd
-    ;[value, nextSeed] = randomWithSeed('RjvmY9PIrQ')
-    expect(value).toEqual(0.12089142469216785)
-    expect(nextSeed).toEqual('8kVwdwo9ZB')
+    ;[value, nextSeed] = randomWithSeed(expectedSeed1)
+    expect(value).toEqual(expectedValue2)
+    expect(nextSeed).toEqual(expectedSeed2)
     // 3rd
     ;[value, nextSeed] = randomWithSeed(nextSeed)
-    expect(value).toEqual(0.36074745039289235)
-    expect(nextSeed).toEqual('C9G4gRwkUR')
+    expect(value).toEqual(expectedValue3)
+    expect(nextSeed).toEqual(expectedSeed3)
   }
 
+  // base test
   test()
   test()
   test()
+
+  // test random is fine
+  const values = {}
+  let seed = 'first'
+  const roll = () => {
+    const res = randomWithSeed(seed)
+    const value = res[0]
+    seed = res[1]
+    const dice = Math.floor(value * 6) + 1
+    values[dice] = (values[dice] || 0) + 1
+  }
+
+  // test repartition with 10% accepted error
+  const total = 10000
+  const repartition = total / 6
+  const min = repartition - repartition * 0.1
+  const max = repartition + repartition * 0.1
+  Array.from({ length: total }).forEach(roll)
+  Array.from({ length: 6 }).forEach((_, index) => {
+    expect(values[index + 1]).toBeGreaterThanOrEqual(min)
+    expect(values[index + 1]).toBeLessThanOrEqual(max)
+  })
 })
