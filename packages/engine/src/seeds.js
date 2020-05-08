@@ -5,6 +5,7 @@ const ALPHABET =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
 const SEED_SIZE = 10
 
+// TODO: tests
 export const init = (store, action) => {
   if (!action.payload.master) {
     const error = new Error('Master seed must be given')
