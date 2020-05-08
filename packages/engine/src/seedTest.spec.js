@@ -94,3 +94,50 @@ it('should override dices generator', () => {
   expect(generate3Dices('custom')).toEqual(customSeedDices)
   expect(generate3Dices('custom')).toEqual(customSeedDices)
 })
+
+it('should generate a chain of dices', () => {
+  const getNanoIdFromSeed = (seed) => {
+    const random = seedRandom(seed)
+
+    return customRandom(
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+      10,
+      (size) => {
+        return new Uint8Array(size).map(() => 256 * random())
+      },
+    )
+  }
+
+  const randomWithSeed = (prevSeed) => {
+    const nanoid = getNanoIdFromSeed(prevSeed)
+    const random = seedRandom(nanoid())
+    return [random(), nanoid()]
+  }
+
+  const test = () => {
+    let [value, nextSeed] = randomWithSeed('first')
+    expect(value).toEqual(0.13367808911889217)
+    expect(nextSeed).toEqual('RjvmY9PIrQ')
+    // 2nd
+    ;[value, nextSeed] = randomWithSeed(nextSeed)
+    expect(value).toEqual(0.12089142469216785)
+    expect(nextSeed).toEqual('8kVwdwo9ZB')
+    // 3rd
+    ;[value, nextSeed] = randomWithSeed(nextSeed)
+    expect(value).toEqual(0.36074745039289235)
+    expect(nextSeed).toEqual('C9G4gRwkUR')
+
+    // try again from 2nd
+    ;[value, nextSeed] = randomWithSeed('RjvmY9PIrQ')
+    expect(value).toEqual(0.12089142469216785)
+    expect(nextSeed).toEqual('8kVwdwo9ZB')
+    // 3rd
+    ;[value, nextSeed] = randomWithSeed(nextSeed)
+    expect(value).toEqual(0.36074745039289235)
+    expect(nextSeed).toEqual('C9G4gRwkUR')
+  }
+
+  test()
+  test()
+  test()
+})
