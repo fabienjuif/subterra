@@ -1,5 +1,5 @@
 import seedRandom from 'seedrandom'
-import { nanoid, customRandom, customAlphabet } from 'nanoid'
+import { customRandom } from 'nanoid'
 
 const ALPHABET =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
