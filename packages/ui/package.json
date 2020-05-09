@@ -16,7 +16,6 @@
     "react-dom": "^16.13.0",
     "react-icons": "^3.9.0",
     "react-router-dom": "^5.1.2",
-    "seedrandom": "^3.0.5",
     "sockjs-client": "^1.4.0",
     "ws": "^7.2.3"
   },

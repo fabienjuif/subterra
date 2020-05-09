@@ -72,8 +72,8 @@ export const shake = (store, action) => {
       roll.failThen(
         4,
         player,
-        players.damage(player, previousState.activeCard.damage, {
-          card: previousState.activeCard,
+        players.damage(player, previousState.cards.active.damage, {
+          card: previousState.cards.active,
         }),
       ),
     )
@@ -81,7 +81,9 @@ export const shake = (store, action) => {
 }
 
 export const landslide = (store, action) => {
-  const { activeCard } = store.getState()
+  const {
+    cards: { active },
+  } = store.getState()
 
   // find all tiles that are landslide and match the dice result
   // tile should not be already in the landslide status
@@ -101,8 +103,8 @@ export const landslide = (store, action) => {
         if (!tiles.isCellEqual(player)(tile)) return
 
         store.dispatch(
-          players.damage(player, activeCard.damage, {
-            card: activeCard,
+          players.damage(player, active.damage, {
+            card: active,
           }),
         )
       })

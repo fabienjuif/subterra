@@ -80,7 +80,13 @@ const Game = ({ cards, players, tiles, dices, seeds }) => {
 
       // init
       engine.dispatch({ type: '@seeds>init', payload: seeds })
-      engine.dispatch({ type: '@cards>init', payload: cards })
+      engine.dispatch({
+        type: '@cards>init',
+        payload: {
+          remaining: cards.reduce((acc, { remaining }) => acc + remaining, 1),
+          deck: cards,
+        },
+      })
       engine.dispatch({
         type: '@tiles>init',
         payload: {
@@ -143,8 +149,8 @@ const Game = ({ cards, players, tiles, dices, seeds }) => {
       </div>
       <CardsDeck
         className={cn('cards-deck', classes.cardsDeck)}
-        size={state.deckCards.length}
-        card={state.activeCard}
+        size={state.cards.remaining}
+        card={state.cards.active}
       />
       <Logs
         className={cn('logs', classes.logs)}

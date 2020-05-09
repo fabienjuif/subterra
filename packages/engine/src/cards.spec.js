@@ -216,7 +216,7 @@ describe('cards', () => {
   describe('shake', () => {
     it('should roll dices for each players', () => {
       const store = createStore({
-        activeCard: { type: 'shake', damage: 1 },
+        cards: { active: { type: 'shake', damage: 1 } },
         players: [
           {
             name: 'Hatsu',
@@ -258,6 +258,9 @@ describe('cards', () => {
     describe('landslide', () => {
       it('should set the status landslide on tile that dont already have it', () => {
         const store = createStore({
+          cards: {
+            active: {},
+          },
           players: [],
           grid: [
             {
@@ -286,6 +289,9 @@ describe('cards', () => {
         cards.landslide(store, { payload: { rolled: 2 } })
 
         expect(store.getState()).toEqual({
+          cards: {
+            active: {},
+          },
           players: [],
           grid: [
             {
@@ -314,9 +320,11 @@ describe('cards', () => {
 
       it('should damage players on a new landslide tile', () => {
         const store = createStore({
-          activeCard: {
-            type: 'landslide',
-            damage: 2,
+          cards: {
+            active: {
+              type: 'landslide',
+              damage: 2,
+            },
           },
           players: [
             {
@@ -345,9 +353,11 @@ describe('cards', () => {
         cards.landslide(store, { payload: { rolled: 1 } })
 
         expect(store.getState()).toEqual({
-          activeCard: {
-            type: 'landslide',
-            damage: 2,
+          cards: {
+            active: {
+              type: 'landslide',
+              damage: 2,
+            },
           },
           players: [
             {
