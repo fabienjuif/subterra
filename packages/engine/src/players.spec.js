@@ -170,11 +170,20 @@ describe('players', () => {
   })
 
   describe('look', () => {
-    it('should set the first decktiles at the expected coordinates as playerActions.tile', () => {
+    it('should set next tile at the expected coordinates as playerActions.tile', () => {
       const action = actions.look({ id: 'Hatsu' }, { x: 1, y: 0 })
       const store = createStore({
         players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
-        deckTiles: [{ right: true, bottom: true, left: true }, { top: true }],
+        tiles: {
+          remaining: 3,
+          deck: [
+            { tile: { right: true, bottom: true, left: true }, remaining: 2 },
+            { tile: { top: true }, remaining: 1 },
+          ],
+        },
+        seeds: {
+          tilesNext: 'nextSeed',
+        },
         grid: [{ x: 0, y: 0, right: true }],
         playerActions: {
           tile: undefined,
@@ -186,8 +195,17 @@ describe('players', () => {
 
       expect(store.getState()).toEqual({
         players: [{ id: 'Hatsu', actionPoints: 0, x: 0, y: 0 }],
+        tiles: {
+          remaining: 2,
+          deck: [
+            { tile: { right: true, bottom: true, left: true }, remaining: 1 },
+            { tile: { top: true }, remaining: 1 },
+          ],
+        },
+        seeds: {
+          tilesNext: 'nextSeed@@0.2895602246632603',
+        },
         grid: [{ x: 0, y: 0, right: true }],
-        deckTiles: [{ top: true }],
         playerActions: {
           tile: {
             x: 1,
@@ -206,11 +224,122 @@ describe('players', () => {
       })
     })
 
+    it('should remove tile from deck when there is no more remaining', () => {
+      const action = actions.look({ id: 'Hatsu' }, { x: 1, y: 0 })
+      const store = createStore({
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        tiles: {
+          remaining: 2,
+          deck: [
+            { tile: { right: true, bottom: true, left: true }, remaining: 1 },
+            { tile: { top: true }, remaining: 1 },
+          ],
+        },
+        seeds: {
+          tilesNext: 'nextSeed',
+        },
+        grid: [{ x: 0, y: 0, right: true }],
+        playerActions: {
+          tile: undefined,
+          possibilities: [action],
+        },
+      })
+
+      players.look(store, action)
+
+      expect(store.getState()).toEqual({
+        players: [{ id: 'Hatsu', actionPoints: 0, x: 0, y: 0 }],
+        tiles: {
+          remaining: 1,
+          deck: [{ tile: { top: true }, remaining: 1 }],
+        },
+        seeds: {
+          tilesNext: 'nextSeed@@0.2895602246632603',
+        },
+        grid: [{ x: 0, y: 0, right: true }],
+        playerActions: {
+          tile: {
+            x: 1,
+            y: 0,
+            right: true,
+            bottom: true,
+            left: true,
+            status: [],
+            rotation: 0,
+          },
+          possibilities: [
+            actions.rotate({ id: 'Hatsu' }, 90),
+            actions.drop({ id: 'Hatsu' }),
+          ],
+        },
+      })
+    })
+
+    it('should draw a final card when the deck is empty', () => {
+      const action = actions.look({ id: 'Hatsu' }, { x: 1, y: 0 })
+      const store = createStore({
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        tiles: {
+          remaining: 0,
+          deck: [
+            { tile: { right: true, bottom: true, left: true }, remaining: 1 },
+            { tile: { top: true }, remaining: 1 },
+          ],
+        },
+        seeds: {
+          tilesNext: 'nextSeed',
+        },
+        grid: [{ x: 0, y: 0, right: true }],
+        playerActions: {
+          tile: undefined,
+          possibilities: [action],
+        },
+      })
+
+      players.look(store, action)
+
+      expect(store.getState()).toEqual({
+        players: [{ id: 'Hatsu', actionPoints: 0, x: 0, y: 0 }],
+        tiles: {
+          remaining: 0,
+          deck: [
+            { tile: { right: true, bottom: true, left: true }, remaining: 1 },
+            { tile: { top: true }, remaining: 1 },
+          ],
+        },
+        seeds: {
+          tilesNext: 'nextSeed',
+        },
+        grid: [{ x: 0, y: 0, right: true }],
+        playerActions: {
+          tile: {
+            id: 'XuLC14NjlAStWpwJCoSxf',
+            name: 'final tile',
+            top: true,
+            type: 'end',
+            x: 1,
+            y: 0,
+            status: [],
+            rotation: 0,
+          },
+          possibilities: [actions.rotate({ id: 'Hatsu' }, 90)],
+        },
+      })
+    })
+
     it('should not set a drop possibilities when we can move from the current tile to the looked tile', () => {
       const action = actions.look({ id: 'Hatsu' }, { x: 1, y: 0 })
       const store = createStore({
         players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
-        deckTiles: [{ right: true, bottom: true, left: true }],
+        tiles: {
+          remaining: 1,
+          deck: [
+            { tile: { right: true, bottom: true, left: true }, remaining: 1 },
+          ],
+        },
+        seeds: {
+          tilesNext: 'nextSeed',
+        },
         grid: [{ x: 0, y: 0 }],
         playerActions: {
           tile: undefined,
@@ -223,7 +352,13 @@ describe('players', () => {
       expect(store.getState()).toEqual({
         players: [{ id: 'Hatsu', actionPoints: 0, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0 }],
-        deckTiles: [],
+        tiles: {
+          remaining: 0,
+          deck: [],
+        },
+        seeds: {
+          tilesNext: 'nextSeed@@0.2895602246632603',
+        },
         playerActions: {
           tile: {
             x: 1,

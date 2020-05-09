@@ -1,3 +1,4 @@
+import { FinalTile } from '@subterra/data'
 import { isActionEquals, players as actions } from './actions'
 import { players as selectors } from './selectors'
 import {
@@ -7,6 +8,7 @@ import {
   canMoveFromTo,
   nextRotation,
 } from './utils/tiles'
+import { roll } from './utils/dices'
 
 export const pass = (store, action) => {
   const previousState = store.getState()
@@ -66,8 +68,34 @@ export const look = (store, action) => {
     const player = selectors.findById(state, action)
     const playerTile = state.grid.find(isCellEqual(player))
 
+    // draw a tile
+    // - if there is no more tiles, draw an end
+    // - in other case take a card from remaining one
+    //    and remove cards from deck when there is no more remaining
+    let nextTile
+    if (state.tiles.remaining <= 0) {
+      nextTile = { ...FinalTile }
+    } else {
+      state.tiles.remaining -= 1
+
+      const { value, nextSeed } = roll(
+        state.tiles.deck.length,
+        state.seeds.tilesNext,
+      )
+      state.seeds.tilesNext = nextSeed
+
+      const tileInDeck = state.tiles.deck[value - 1]
+      tileInDeck.remaining -= 1
+      if (tileInDeck.remaining <= 0) {
+        state.tiles.deck.splice(value - 1, 1)
+      }
+
+      nextTile = { ...tileInDeck.tile }
+    }
+
+    // tile is drawn, add it where the player looked at
     const tile = {
-      ...state.deckTiles.shift(),
+      ...nextTile,
       x: action.payload.x,
       y: action.payload.y,
       status: [],
@@ -79,8 +107,9 @@ export const look = (store, action) => {
 
     state.playerActions.possibilities = [actions.rotate(player, 90)]
 
-    if (canMoveFromTo(playerTile, tile))
+    if (canMoveFromTo(playerTile, tile)) {
       state.playerActions.possibilities.push(actions.drop(player))
+    }
   })
 }
 
