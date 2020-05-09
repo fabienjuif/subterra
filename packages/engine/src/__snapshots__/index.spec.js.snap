@@ -21,7 +21,7 @@ Index: @seeds>init
    "tiles": {
      "remaining": 0,
      "deck": []
-@@ -26,7 +33,14 @@
+@@ -28,7 +35,14 @@
    "playerActions": {
      "possibilities": []
    },
@@ -54,7 +54,7 @@ Index: @tiles>init
 -    "remaining": 0,
 -    "deck": []
 +    "remaining": 10,
-+    "tiles": [
++    "deck": [
 +      {
 +        "tile": {
 +          "id": "EfssmBj1Gg0i3zAKKlSGQ",
@@ -89,10 +89,10 @@ Index: @tiles>init
 +      }
 +    ]
    },
-   "players": [],
-   "enemies": [],
-   "deckCards": [],
-@@ -39,8 +72,48 @@
+   "cards": {
+     "remaining": 0,
+     "deck": []
+@@ -41,8 +74,48 @@
          "type": "@seeds>init",
          "payload": {
            "master": "87FZ2jefz"
@@ -102,7 +102,7 @@ Index: @tiles>init
 +        "type": "@tiles>init",
 +        "payload": {
 +          "remaining": 10,
-+          "tiles": [
++          "deck": [
 +            {
 +              "tile": {
 +                "id": "EfssmBj1Gg0i3zAKKlSGQ",
@@ -150,42 +150,61 @@ Index: @cards>init
 ===================================================================
 --- @cards>init
 +++ @cards>init
-@@ -47,9 +47,33 @@
+@@ -46,10 +46,51 @@
+       }
      ]
+   },
+   "cards": {
+-    "remaining": 0,
+-    "deck": []
++    "remaining": 11,
++    "deck": [
++      {
++        "card": {
++          "type": "shake",
++          "damage": 1,
++          "duration": 1,
++          "name": "shake",
++          "id": "1sKrNtKjjrYkrSDdmWkYy"
++        },
++        "remaining": 2
++      },
++      {
++        "card": {
++          "type": "gaz",
++          "damage": 2,
++          "duration": 1,
++          "name": "gaz",
++          "id": "3KNfiVS61yBJ2lE26OR0N"
++        },
++        "remaining": 1
++      },
++      {
++        "card": {
++          "type": "water",
++          "damage": 2,
++          "duration": 1,
++          "name": "water",
++          "id": "jVjrsEynaxHyQ0o2bn3F5"
++        },
++        "remaining": 3
++      },
++      {
++        "card": {
++          "type": "enemy",
++          "damage": 3,
++          "duration": 1,
++          "name": "horror",
++          "id": "Xk0FDZpwRm2re3Uox5Qg4"
++        },
++        "remaining": 4
++      }
++    ]
    },
    "players": [],
    "enemies": [],
--  "deckCards": [],
-+  "deckCards": [
-+    {
-+      "type": "shake",
-+      "damage": 1,
-+      "duration": 1
-+    },
-+    {
-+      "type": "gaz",
-+      "damage": 2,
-+      "duration": 1
-+    },
-+    {
-+      "type": "water",
-+      "damage": 2,
-+      "duration": 1
-+    },
-+    {
-+      "type": "enemy",
-+      "damage": 3,
-+      "duration": 1
-+    },
-+    {
-+      "type": "end"
-+    }
-+  ],
-   "activeCard": {},
    "grid": [
-     {
-       "id": 0,
-@@ -112,8 +136,36 @@
+@@ -114,8 +155,56 @@
                "remaining": 2
              }
            ]
@@ -193,31 +212,51 @@ Index: @cards>init
 +      },
 +      {
 +        "type": "@cards>init",
-+        "payload": [
-+          {
-+            "type": "shake",
-+            "damage": 1,
-+            "duration": 1
-+          },
-+          {
-+            "type": "gaz",
-+            "damage": 2,
-+            "duration": 1
-+          },
-+          {
-+            "type": "water",
-+            "damage": 2,
-+            "duration": 1
-+          },
-+          {
-+            "type": "enemy",
-+            "damage": 3,
-+            "duration": 1
-+          },
-+          {
-+            "type": "end"
-+          }
-+        ]
++        "payload": {
++          "remaining": 11,
++          "deck": [
++            {
++              "card": {
++                "type": "shake",
++                "damage": 1,
++                "duration": 1,
++                "name": "shake",
++                "id": "1sKrNtKjjrYkrSDdmWkYy"
++              },
++              "remaining": 2
++            },
++            {
++              "card": {
++                "type": "gaz",
++                "damage": 2,
++                "duration": 1,
++                "name": "gaz",
++                "id": "3KNfiVS61yBJ2lE26OR0N"
++              },
++              "remaining": 1
++            },
++            {
++              "card": {
++                "type": "water",
++                "damage": 2,
++                "duration": 1,
++                "name": "water",
++                "id": "jVjrsEynaxHyQ0o2bn3F5"
++              },
++              "remaining": 3
++            },
++            {
++              "card": {
++                "type": "enemy",
++                "damage": 3,
++                "duration": 1,
++                "name": "horror",
++                "id": "Xk0FDZpwRm2re3Uox5Qg4"
++              },
++              "remaining": 4
++            }
++          ]
++        }
        }
      ]
    }
@@ -231,8 +270,8 @@ Index: @players>init
 ===================================================================
 --- @players>init
 +++ @players>init
-@@ -45,9 +45,141 @@
-         "remaining": 2
+@@ -90,9 +90,141 @@
+         "remaining": 4
        }
      ]
    },
@@ -371,10 +410,10 @@ Index: @players>init
 +    }
 +  ],
    "enemies": [],
-   "deckCards": [
+   "grid": [
      {
-       "type": "shake",
-@@ -87,9 +219,46 @@
+       "id": 0,
+@@ -106,9 +238,46 @@
        "status": []
      }
    ],
@@ -422,11 +461,11 @@ Index: @players>init
    "technical": {
      "actions": [
        {
-@@ -164,8 +333,130 @@
-           {
-             "type": "end"
-           }
-         ]
+@@ -203,8 +372,130 @@
+               "remaining": 4
+             }
+           ]
+         }
 +      },
 +      {
 +        "type": "@players>init",
@@ -562,80 +601,50 @@ Index: @cards>pick
 ===================================================================
 --- @cards>pick
 +++ @cards>pick
-@@ -2,9 +2,9 @@
-   "seeds": {
-     "master": "87FZ2jefz",
+@@ -4,9 +4,9 @@
      "private": true,
      "dices": "7M8cMGMdlm",
--    "dicesNext": "7M8cMGMdlm",
-+    "dicesNext": "7M8cMGMdlm@@0.04602145714249605",
+     "dicesNext": "7M8cMGMdlm",
      "cards": "Y2laJE1czq",
-     "cardsNext": "Y2laJE1czq",
+-    "cardsNext": "Y2laJE1czq",
++    "cardsNext": "Y2laJE1czq@@0.9138369455687093",
      "tiles": "5hk7Zpp7wP",
      "tilesNext": "5hk7Zpp7wP"
-@@ -48,9 +48,9 @@
+   },
+   "tiles": {
+@@ -46,9 +46,9 @@
+       }
+     ]
+   },
+   "cards": {
+-    "remaining": 11,
++    "remaining": 10,
+     "deck": [
+       {
+         "card": {
+           "type": "shake",
+@@ -86,11 +86,18 @@
+           "duration": 1,
+           "name": "horror",
+           "id": "Xk0FDZpwRm2re3Uox5Qg4"
+         },
+-        "remaining": 4
++        "remaining": 3
+       }
+-    ]
++    ],
++    "active": {
++      "type": "enemy",
++      "damage": 3,
++      "duration": 1,
++      "name": "horror",
++      "id": "Xk0FDZpwRm2re3Uox5Qg4"
++    }
    },
    "players": [
      {
        "type": "medic",
--      "health": 3,
-+      "health": 2,
-       "strength": 6,
-       "skills": [
-         {
-           "type": "heal",
-@@ -93,9 +93,9 @@
-       "first": true
-     },
-     {
-       "type": "geologist",
--      "health": 3,
-+      "health": 2,
-       "strength": 3,
-       "skills": [
-         {
-           "type": "intuition",
-@@ -136,9 +136,9 @@
-       "actionPoints": 2
-     },
-     {
-       "type": "scoot",
--      "health": 3,
-+      "health": 2,
-       "strength": 2,
-       "skills": [
-         {
-           "type": "guide",
-@@ -181,13 +181,8 @@
-   ],
-   "enemies": [],
-   "deckCards": [
-     {
--      "type": "shake",
--      "damage": 1,
--      "duration": 1
--    },
--    {
-       "type": "gaz",
-       "damage": 2,
-       "duration": 1
-     },
-@@ -204,9 +199,13 @@
-     {
-       "type": "end"
-     }
-   ],
--  "activeCard": {},
-+  "activeCard": {
-+    "type": "shake",
-+    "damage": 1,
-+    "duration": 1
-+  },
-   "grid": [
-     {
-       "id": 0,
-       "type": "start",
-@@ -455,8 +454,192 @@
+@@ -494,8 +501,23 @@
              },
              "name": "xXx-scoot-xXx"
            }
@@ -645,184 +654,15 @@ Index: @cards>pick
 +        "type": "@cards>pick"
 +      },
 +      {
-+        "type": "@cards>shake",
++        "type": "@cards>enemy",
 +        "payload": {
 +          "card": {
-+            "type": "shake",
-+            "damage": 1,
-+            "duration": 1
++            "type": "enemy",
++            "damage": 3,
++            "duration": 1,
++            "name": "horror",
++            "id": "Xk0FDZpwRm2re3Uox5Qg4"
 +          }
-+        }
-+      },
-+      {
-+        "type": "@dices>roll",
-+        "payload": {
-+          "min": 4,
-+          "playerId": "medic",
-+          "actionOnFail": {
-+            "type": "@players>damage",
-+            "payload": {
-+              "damage": 1,
-+              "from": {
-+                "card": {
-+                  "type": "shake",
-+                  "damage": 1,
-+                  "duration": 1
-+                }
-+              },
-+              "playerId": "medic"
-+            }
-+          }
-+        }
-+      },
-+      {
-+        "type": "@dices>roll",
-+        "payload": {
-+          "min": 4,
-+          "playerId": "geologist",
-+          "actionOnFail": {
-+            "type": "@players>damage",
-+            "payload": {
-+              "damage": 1,
-+              "from": {
-+                "card": {
-+                  "type": "shake",
-+                  "damage": 1,
-+                  "duration": 1
-+                }
-+              },
-+              "playerId": "geologist"
-+            }
-+          }
-+        }
-+      },
-+      {
-+        "type": "@dices>roll",
-+        "payload": {
-+          "min": 4,
-+          "playerId": "scoot",
-+          "actionOnFail": {
-+            "type": "@players>damage",
-+            "payload": {
-+              "damage": 1,
-+              "from": {
-+                "card": {
-+                  "type": "shake",
-+                  "damage": 1,
-+                  "duration": 1
-+                }
-+              },
-+              "playerId": "scoot"
-+            }
-+          }
-+        }
-+      },
-+      {
-+        "type": "@dices>rolled",
-+        "payload": {
-+          "min": 4,
-+          "playerId": "medic",
-+          "actionOnFail": {
-+            "type": "@players>damage",
-+            "payload": {
-+              "damage": 1,
-+              "from": {
-+                "card": {
-+                  "type": "shake",
-+                  "damage": 1,
-+                  "duration": 1
-+                }
-+              },
-+              "playerId": "medic"
-+            }
-+          },
-+          "value": 2
-+        }
-+      },
-+      {
-+        "type": "@dices>rolled",
-+        "payload": {
-+          "min": 4,
-+          "playerId": "geologist",
-+          "actionOnFail": {
-+            "type": "@players>damage",
-+            "payload": {
-+              "damage": 1,
-+              "from": {
-+                "card": {
-+                  "type": "shake",
-+                  "damage": 1,
-+                  "duration": 1
-+                }
-+              },
-+              "playerId": "geologist"
-+            }
-+          },
-+          "value": 1
-+        }
-+      },
-+      {
-+        "type": "@dices>rolled",
-+        "payload": {
-+          "min": 4,
-+          "playerId": "scoot",
-+          "actionOnFail": {
-+            "type": "@players>damage",
-+            "payload": {
-+              "damage": 1,
-+              "from": {
-+                "card": {
-+                  "type": "shake",
-+                  "damage": 1,
-+                  "duration": 1
-+                }
-+              },
-+              "playerId": "scoot"
-+            }
-+          },
-+          "value": 1
-+        }
-+      },
-+      {
-+        "type": "@players>damage",
-+        "payload": {
-+          "damage": 1,
-+          "from": {
-+            "card": {
-+              "type": "shake",
-+              "damage": 1,
-+              "duration": 1
-+            }
-+          },
-+          "playerId": "medic"
-+        }
-+      },
-+      {
-+        "type": "@players>damage",
-+        "payload": {
-+          "damage": 1,
-+          "from": {
-+            "card": {
-+              "type": "shake",
-+              "damage": 1,
-+              "duration": 1
-+            }
-+          },
-+          "playerId": "geologist"
-+        }
-+      },
-+      {
-+        "type": "@players>damage",
-+        "payload": {
-+          "damage": 1,
-+          "from": {
-+            "card": {
-+              "type": "shake",
-+              "damage": 1,
-+              "duration": 1
-+            }
-+          },
-+          "playerId": "scoot"
 +        }
        }
      ]

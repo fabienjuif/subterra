@@ -1,25 +1,47 @@
+import { EndCard } from '@subterra/data'
 import { players, roll } from './actions'
-import { isCellEqual } from './utils/tiles'
+import { tiles, dices } from './utils'
 
 export const init = (store, action) => {
   store.mutate((state) => {
-    state.deckCards = action.payload
+    state.cards = action.payload
   })
 }
 
 export const pick = (store, action) => {
   store.mutate((state) => {
-    if (state.deckCards.length > 0) {
-      state.activeCard = state.deckCards.shift()
+    // draw a new card
+    // - if there is 1 remaining card we draw a "end" card
+    // - in other case take a card from remaining one
+    //    and remove cards from deck when there is no more remaining
+    let nextCard
+    state.cards.remaining = Math.max(0, state.cards.remaining - 1)
+    if (state.cards.remaining <= 0) {
+      nextCard = { ...EndCard }
+    } else {
+      const { value, nextSeed } = dices.roll(
+        state.cards.deck.length,
+        state.seeds.cardsNext,
+      )
+      state.seeds.cardsNext = nextSeed
+
+      const cardInDeck = state.cards.deck[value - 1]
+      cardInDeck.remaining -= 1
+      if (cardInDeck.remaining <= 0) {
+        state.cards.deck.splice(value - 1, 1)
+      }
+
+      nextCard = { ...cardInDeck.card }
     }
+    state.cards.active = nextCard
   })
 
   const nextState = store.getState()
-  const { type: cardType } = nextState.activeCard
+  const { type: cardType } = nextState.cards.active
   if (['shake', 'water', 'gaz', 'enemy', 'end'].includes(cardType)) {
     store.dispatch({
       type: `@cards>${cardType}`,
-      payload: { card: nextState.activeCard },
+      payload: { card: nextState.cards.active },
     })
   } else if (cardType === 'landslide') {
     store.dispatch(roll.then({ type: '@cards>landslide' }))
@@ -76,7 +98,7 @@ export const landslide = (store, action) => {
       tile.status.push('landslide')
 
       state.players.forEach((player) => {
-        if (!isCellEqual(player)(tile)) return
+        if (!tiles.isCellEqual(player)(tile)) return
 
         store.dispatch(
           players.damage(player, activeCard.damage, {
@@ -104,7 +126,7 @@ export const processMarkerCard = (store, action) => {
       tile.status.push(card.type)
 
       state.players.forEach((player) => {
-        if (!isCellEqual(player)(tile)) return
+        if (!tiles.isCellEqual(player)(tile)) return
 
         store.dispatch(
           players.damage(player, card.damage, {

@@ -31,7 +31,27 @@ describe('engine without mock', () => {
       })
       engine.dispatch({
         type: '@cards>init',
-        payload: [cards[2], cards[3], cards[1], cards[0]],
+        payload: {
+          remaining: 11,
+          deck: [
+            {
+              card: ShakeCard,
+              remaining: 2,
+            },
+            {
+              card: GazCard,
+              remaining: 1,
+            },
+            {
+              card: WaterCard,
+              remaining: 3,
+            },
+            {
+              card: HorrorCard,
+              remaining: 4,
+            },
+          ],
+        },
       })
       engine.dispatch({
         type: '@tiles>init',
@@ -102,7 +122,7 @@ describe('engine without mock', () => {
       type: '@tiles>init',
       payload: {
         remaining: 10,
-        tiles: [
+        deck: [
           {
             tile: AlleyBlockTile,
             remaining: 3,
@@ -120,7 +140,27 @@ describe('engine without mock', () => {
     })
     dispatchAndSnap({
       type: '@cards>init',
-      payload: [ShakeCard, GazCard, WaterCard, HorrorCard, EndCard],
+      payload: {
+        remaining: 11,
+        deck: [
+          {
+            card: ShakeCard,
+            remaining: 2,
+          },
+          {
+            card: GazCard,
+            remaining: 1,
+          },
+          {
+            card: WaterCard,
+            remaining: 3,
+          },
+          {
+            card: HorrorCard,
+            remaining: 4,
+          },
+        ],
+      },
     })
     dispatchAndSnap({
       type: '@players>init',

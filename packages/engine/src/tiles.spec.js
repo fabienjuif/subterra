@@ -10,40 +10,14 @@ describe('tiles', () => {
       tiles.init(store, {
         payload: {
           remaining: 3,
-          deck: [
-            {
-              tile: { ...data[0] },
-              remaining: 2,
-            },
-            {
-              tile: { ...data[2] },
-              remaining: 3,
-            },
-            {
-              tile: { ...data[1] },
-              remaining: 1,
-            },
-          ],
+          deck: [data[0], data[2], data[1]],
         },
       })
 
       expect(store.getState()).toEqual({
         tiles: {
           remaining: 3,
-          deck: [
-            {
-              tile: { ...data[0] },
-              remaining: 2,
-            },
-            {
-              tile: { ...data[2] },
-              remaining: 3,
-            },
-            {
-              tile: { ...data[1] },
-              remaining: 1,
-            },
-          ],
+          deck: [data[0], data[2], data[1]],
         },
       })
     })
