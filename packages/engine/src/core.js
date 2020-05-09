@@ -1,6 +1,6 @@
 import createStore from '@myrtille/mutate'
+import { StartTile } from '@subterra/data'
 import listeners from './listeners'
-import tilesData from './utils/tiles'
 
 export const initState = () => ({
   gameOver: undefined, // 'loose' | 'win'
@@ -23,7 +23,7 @@ export const initState = () => ({
   enemies: [],
   grid: [
     {
-      ...tilesData[0],
+      ...StartTile,
       x: 0,
       y: 0,
       status: [

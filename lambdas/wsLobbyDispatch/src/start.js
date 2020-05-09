@@ -1,7 +1,7 @@
 import { createClient } from '@fabienjuif/dynamo-client'
 import { nanoid } from 'nanoid'
 import { cards, tiles } from '@subterra/data'
-import { createEngine, seeds, initState } from '@subterra/engine'
+import { createEngine, random, initState } from '@subterra/engine'
 import { broadcast } from '@subterra/ws-utils'
 
 const dynamoClient = createClient()
@@ -31,7 +31,7 @@ export const start = async (wsConnection, lobby) => {
       {
         type: '@seeds>init',
         payload: {
-          master: seeds.getNanoid(Math.random)(),
+          master: random.getNanoid(Math.random)(),
         },
       },
       {

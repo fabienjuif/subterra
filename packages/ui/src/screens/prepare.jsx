@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import cn from 'classnames'
 import { archetypes as archetypesData, cards, tiles } from '@subterra/data'
-import { seeds } from '@subterra/engine'
+import { random } from '@subterra/engine'
 import { Archetype } from '../components'
 import Game from './game'
 import classes from './prepare.module.scss'
@@ -12,7 +12,7 @@ const Prepare = () => {
   const [startInfos, setStartInfos] = useState(undefined)
 
   const innerOnStart = useCallback(() => {
-    const masterSeed = seeds.getNanoid(Math.random)()
+    const masterSeed = random.getNanoid(Math.random)()
 
     setStartInfos({
       cards: cards.map((card) => ({ ...card })),

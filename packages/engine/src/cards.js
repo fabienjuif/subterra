@@ -1,6 +1,6 @@
 import { EndCard } from '@subterra/data'
 import { players, roll } from './actions'
-import { tiles, dices } from './utils'
+import { tiles, random } from './utils'
 
 export const init = (store, action) => {
   store.mutate((state) => {
@@ -19,7 +19,7 @@ export const pick = (store, action) => {
     if (state.cards.remaining <= 0) {
       nextCard = { ...EndCard }
     } else {
-      const { value, nextSeed } = dices.roll(
+      const { value, nextSeed } = random.roll(
         state.cards.deck.length,
         state.seeds.cardsNext,
       )

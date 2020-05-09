@@ -1,5 +1,5 @@
 import seedRandom from 'seedrandom'
-import { getNanoid } from './utils/seeds'
+import { random } from './utils'
 
 export const init = (store, action) => {
   if (!action.payload.master) {
@@ -10,7 +10,7 @@ export const init = (store, action) => {
   }
 
   const masterRandom = seedRandom(action.payload.master)
-  const masterNanoid = getNanoid(masterRandom)
+  const masterNanoid = random.getNanoid(masterRandom)
 
   const defaultDicesSeed = masterNanoid()
   const defaultCardsSeed = masterNanoid()
