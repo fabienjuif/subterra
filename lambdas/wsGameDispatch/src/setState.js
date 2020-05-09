@@ -8,7 +8,7 @@ const mapState = (state) => ({
       .filter((action) => !action.type.match(/>init$/))
       .map((action) => omit(action, ['domain', 'userId'])),
   },
-  deckCards: { length: state.deckCards.length },
+  cards: pick(state.cards, ['remaining', 'active']),
   tiles: pick(state.tiles, ['remaining']),
 })
 

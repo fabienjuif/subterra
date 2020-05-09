@@ -1,12 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import cn from 'classnames'
-import {
-  archetypes as archetypesData,
-  cards as cardsData,
-  tiles,
-} from '@subterra/data'
-import seedrandom from 'seedrandom'
-import { dices, seeds } from '@subterra/engine'
+import { archetypes as archetypesData, cards, tiles } from '@subterra/data'
+import { seeds } from '@subterra/engine'
 import { Archetype } from '../components'
 import Game from './game'
 import classes from './prepare.module.scss'
@@ -18,39 +13,17 @@ const Prepare = () => {
 
   const innerOnStart = useCallback(() => {
     const masterSeed = seeds.getNanoid(Math.random)()
-    const masterRandom = seedrandom(masterSeed)
-    const masterNanoid = seeds.getNanoid(masterRandom)
-    const dicesSeed = masterNanoid()
-    const cardsSeed = masterNanoid()
-    const tilesSeed = masterNanoid()
-
-    let nextCardsSeed = cardsSeed
-
-    const cards = [
-      ...Array.from({ length: 10 }).map(() => {
-        const { value, nextSeed } = dices.getRandomInArray(
-          cardsData.slice(1),
-          nextCardsSeed,
-        )
-        nextCardsSeed = nextSeed
-        return value
-      }),
-      cardsData[0],
-    ]
 
     setStartInfos({
-      cards,
+      cards: cards.map((card) => ({ ...card })),
+      tiles: tiles.map((tile) => ({ ...tile })),
       players: archetypes.map((archetype) => ({
         ...archetype,
         archetype,
         name: archetype.type,
       })),
-      tiles: tiles.map((tile) => ({ ...tile })),
       seeds: {
         master: masterSeed,
-        tiles: tilesSeed,
-        cards: cardsSeed,
-        dices: dicesSeed,
       },
     })
   }, [archetypes])

@@ -85,7 +85,6 @@ export const look = (store, action) => {
         return value
       }
 
-      // TODO: test it
       if (
         state.tiles.remaining < 4 &&
         rollTile(state.tiles.remaining + 1) === 1
