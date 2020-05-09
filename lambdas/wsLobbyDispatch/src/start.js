@@ -65,7 +65,7 @@ export const start = async (wsConnection, lobby) => {
         type: '@tiles>init',
         payload: {
           remaining: 20,
-          deck: tiles.map((tile) => ({ tile, remaining: 1 })),
+          deck: tiles.map((tile) => ({ ...tile })),
         },
       },
       {

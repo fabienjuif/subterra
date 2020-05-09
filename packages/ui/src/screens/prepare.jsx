@@ -45,7 +45,7 @@ const Prepare = () => {
         archetype,
         name: archetype.type,
       })),
-      tiles: tiles.map((tile) => ({ tile: { ...tile }, remaining: 1 })),
+      tiles: tiles.map((tile) => ({ ...tile })),
       seeds: {
         master: masterSeed,
         tiles: tilesSeed,

@@ -83,7 +83,10 @@ const Game = ({ cards, players, tiles, dices, seeds }) => {
       engine.dispatch({ type: '@cards>init', payload: cards })
       engine.dispatch({
         type: '@tiles>init',
-        payload: { remaining: tiles.length, deck: tiles },
+        payload: {
+          remaining: tiles.reduce((acc, { remaining }) => acc + remaining, 0),
+          deck: tiles,
+        },
       })
       engine.dispatch({ type: '@players>init', payload: players })
     }
