@@ -6,7 +6,7 @@ import {
   tiles as tilesData,
 } from '@subterra/data'
 import seedrandom from 'seedrandom'
-import { dices, seeds } from '@subterra/engine'
+import { random, seeds } from '@subterra/engine'
 import { Archetype } from '../components'
 import Game from './game'
 import classes from './prepare.module.scss'
@@ -29,7 +29,7 @@ const Prepare = () => {
 
     const cards = [
       ...Array.from({ length: 10 }).map(() => {
-        const { value, nextSeed } = dices.getRandomInArray(
+        const { value, nextSeed } = random.getRandomInArray(
           cardsData.slice(1),
           nextCardsSeed,
         )
@@ -41,7 +41,7 @@ const Prepare = () => {
 
     const tiles = [
       ...Array.from({ length: 9 }).map(() => {
-        const { value, nextSeed } = dices.getRandomInArray(
+        const { value, nextSeed } = random.getRandomInArray(
           tilesData.slice(2),
           nextTilesSeed,
         )

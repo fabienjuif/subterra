@@ -39,8 +39,8 @@ Index: @cards>init
    "activeCard": {},
    "grid": [
      {
-       "id": 0,
-@@ -23,7 +47,36 @@
+       "x": 0,
+@@ -17,7 +41,36 @@
    "playerActions": {
      "possibilities": []
    },
@@ -230,55 +230,7 @@ Index: @players>init
    "deckTiles": [],
    "deckCards": [
      {
-@@ -44,9 +176,46 @@
-       "status": []
-     }
-   ],
-   "playerActions": {
--    "possibilities": []
-+    "possibilities": [
-+      {
-+        "type": "@players>look",
-+        "payload": {
-+          "playerId": "medic",
-+          "x": 0,
-+          "y": -1,
-+          "cost": 1
-+        }
-+      },
-+      {
-+        "type": "@players>look",
-+        "payload": {
-+          "playerId": "medic",
-+          "x": -1,
-+          "y": 0,
-+          "cost": 1
-+        }
-+      },
-+      {
-+        "type": "@players>look",
-+        "payload": {
-+          "playerId": "medic",
-+          "x": 1,
-+          "y": 0,
-+          "cost": 1
-+        }
-+      },
-+      {
-+        "type": "@players>look",
-+        "payload": {
-+          "playerId": "medic",
-+          "x": 0,
-+          "y": 1,
-+          "cost": 1
-+        }
-+      }
-+    ]
-   },
-   "technical": {
-     "actions": [
-       {
-@@ -75,8 +244,130 @@
+@@ -69,8 +201,130 @@
            {
              "type": "end"
            }
@@ -434,7 +386,7 @@ Index: @seeds>init
    "players": [
      {
        "type": "medic",
-@@ -366,8 +373,14 @@
+@@ -323,8 +330,14 @@
              },
              "name": "xXx-scoot-xXx"
            }
@@ -528,9 +480,9 @@ Index: @cards>pick
 +  },
    "grid": [
      {
-       "id": 0,
-       "type": "start",
-@@ -379,8 +378,192 @@
+       "x": 0,
+       "y": 0,
+@@ -336,8 +335,192 @@
          "type": "@seeds>init",
          "payload": {
            "master": "87FZ2jefz"

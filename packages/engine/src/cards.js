@@ -1,5 +1,5 @@
 import { players, roll } from './actions'
-import { isCellEqual } from './utils/tiles'
+import { tiles } from './utils'
 
 export const init = (store, action) => {
   store.mutate((state) => {
@@ -76,7 +76,7 @@ export const landslide = (store, action) => {
       tile.status.push('landslide')
 
       state.players.forEach((player) => {
-        if (!isCellEqual(player)(tile)) return
+        if (!tiles.isCellEqual(player)(tile)) return
 
         store.dispatch(
           players.damage(player, activeCard.damage, {
@@ -104,7 +104,7 @@ export const processMarkerCard = (store, action) => {
       tile.status.push(card.type)
 
       state.players.forEach((player) => {
-        if (!isCellEqual(player)(tile)) return
+        if (!tiles.isCellEqual(player)(tile)) return
 
         store.dispatch(
           players.damage(player, card.damage, {

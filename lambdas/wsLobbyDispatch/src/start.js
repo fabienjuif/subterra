@@ -2,7 +2,7 @@ import { createClient } from '@fabienjuif/dynamo-client'
 import { nanoid } from 'nanoid'
 import seedrandom from 'seedrandom'
 import { cards, tiles } from '@subterra/data'
-import { createEngine, dices, seeds, initState } from '@subterra/engine'
+import { createEngine, random, initState } from '@subterra/engine'
 import { broadcast } from '@subterra/ws-utils'
 
 const dynamoClient = createClient()
@@ -22,9 +22,9 @@ export const start = async (wsConnection, lobby) => {
   const gameState = engine.getState()
   const state = JSON.stringify(gameState)
 
-  const masterSeed = seeds.getNanoid(Math.random)()
+  const masterSeed = random.getNanoid(Math.random)()
   const masterRandom = seedrandom(masterSeed)
-  const masterNanoid = seeds.getNanoid(masterRandom)
+  const masterNanoid = random.getNanoid(masterRandom)
   const dicesSeed = masterNanoid()
   const cardsSeed = masterNanoid()
   const tilesSeed = masterNanoid()
@@ -52,7 +52,7 @@ export const start = async (wsConnection, lobby) => {
         type: '@cards>init',
         payload: [
           ...Array.from({ length: 10 }).map(() => {
-            const { value, nextSeed } = dices.getRandomInArray(
+            const { value, nextSeed } = random.getRandomInArray(
               cards.slice(1),
               nextCardsSeed,
             )
@@ -66,7 +66,7 @@ export const start = async (wsConnection, lobby) => {
         type: '@tiles>init',
         payload: [
           ...Array.from({ length: 9 }).map(() => {
-            const { value, nextSeed } = dices.getRandomInArray(
+            const { value, nextSeed } = random.getRandomInArray(
               tiles.slice(2),
               nextTilesSeed,
             )

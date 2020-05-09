@@ -1,4 +1,4 @@
-import { roll, roll6, getRandomInArray } from './dices'
+import { roll, roll6, getRandomInArray } from './random'
 
 describe('dices', () => {
   describe('roll', () => {
