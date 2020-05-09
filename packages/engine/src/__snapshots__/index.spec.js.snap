@@ -1,12 +1,157 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`engine without mock should connect behaviours to actions 1`] = `
+Index: @seeds>init
+===================================================================
+--- @seeds>init
++++ @seeds>init
+@@ -1,7 +1,14 @@
+ {
+   "seeds": {
+-    "public": false
++    "master": "87FZ2jefz",
++    "private": true,
++    "dices": "7M8cMGMdlm",
++    "dicesNext": "7M8cMGMdlm",
++    "cards": "Y2laJE1czq",
++    "cardsNext": "Y2laJE1czq",
++    "tiles": "5hk7Zpp7wP",
++    "tilesNext": "5hk7Zpp7wP"
+   },
+   "tiles": {
+     "remaining": 0,
+     "deck": []
+@@ -26,7 +33,14 @@
+   "playerActions": {
+     "possibilities": []
+   },
+   "technical": {
+-    "actions": []
++    "actions": [
++      {
++        "type": "@seeds>init",
++        "payload": {
++          "master": "87FZ2jefz"
++        }
++      }
++    ]
+   }
+ }
+\\ No newline at end of file
+
+`;
+
+exports[`engine without mock should connect behaviours to actions 2`] = `
+Index: @tiles>init
+===================================================================
+--- @tiles>init
++++ @tiles>init
+@@ -9,10 +9,43 @@
+     "tiles": "5hk7Zpp7wP",
+     "tilesNext": "5hk7Zpp7wP"
+   },
+   "tiles": {
+-    "remaining": 0,
+-    "deck": []
++    "remaining": 10,
++    "tiles": [
++      {
++        "tile": {
++          "id": "EfssmBj1Gg0i3zAKKlSGQ",
++          "name": "alley block tile",
++          "top": true,
++          "bottom": true,
++          "type": "block"
++        },
++        "remaining": 3
++      },
++      {
++        "tile": {
++          "id": "_wbDKHo0T69uSO1qclmqj",
++          "name": "corner enemy tile",
++          "top": true,
++          "right": true,
++          "type": "enemy"
++        },
++        "remaining": 4
++      },
++      {
++        "tile": {
++          "id": "GL3wvjvDRUNq13upLe29u",
++          "name": "cross damage tile",
++          "top": true,
++          "right": true,
++          "bottom": true,
++          "left": true,
++          "type": "damage"
++        },
++        "remaining": 2
++      }
++    ]
+   },
+   "players": [],
+   "enemies": [],
+   "deckCards": [],
+@@ -39,8 +72,48 @@
+         "type": "@seeds>init",
+         "payload": {
+           "master": "87FZ2jefz"
+         }
++      },
++      {
++        "type": "@tiles>init",
++        "payload": {
++          "remaining": 10,
++          "tiles": [
++            {
++              "tile": {
++                "id": "EfssmBj1Gg0i3zAKKlSGQ",
++                "name": "alley block tile",
++                "top": true,
++                "bottom": true,
++                "type": "block"
++              },
++              "remaining": 3
++            },
++            {
++              "tile": {
++                "id": "_wbDKHo0T69uSO1qclmqj",
++                "name": "corner enemy tile",
++                "top": true,
++                "right": true,
++                "type": "enemy"
++              },
++              "remaining": 4
++            },
++            {
++              "tile": {
++                "id": "GL3wvjvDRUNq13upLe29u",
++                "name": "cross damage tile",
++                "top": true,
++                "right": true,
++                "bottom": true,
++                "left": true,
++                "type": "damage"
++              },
++              "remaining": 2
++            }
++          ]
++        }
+       }
+     ]
+   }
+ }
+\\ No newline at end of file
+
+`;
+
+exports[`engine without mock should connect behaviours to actions 3`] = `
 Index: @cards>init
 ===================================================================
 --- @cards>init
 +++ @cards>init
-@@ -7,9 +7,33 @@
-     "deck": []
+@@ -47,9 +47,33 @@
+     ]
    },
    "players": [],
    "enemies": [],
@@ -40,13 +185,12 @@ Index: @cards>init
    "grid": [
      {
        "id": 0,
-@@ -26,7 +50,36 @@
-   "playerActions": {
-     "possibilities": []
-   },
-   "technical": {
--    "actions": []
-+    "actions": [
+@@ -112,8 +136,36 @@
+               "remaining": 2
+             }
+           ]
+         }
++      },
 +      {
 +        "type": "@cards>init",
 +        "payload": [
@@ -74,23 +218,23 @@ Index: @cards>init
 +            "type": "end"
 +          }
 +        ]
-+      }
-+    ]
+       }
+     ]
    }
  }
 \\ No newline at end of file
 
 `;
 
-exports[`engine without mock should connect behaviours to actions 2`] = `
+exports[`engine without mock should connect behaviours to actions 4`] = `
 Index: @players>init
 ===================================================================
 --- @players>init
 +++ @players>init
-@@ -5,9 +5,141 @@
-   "tiles": {
-     "remaining": 0,
-     "deck": []
+@@ -45,9 +45,141 @@
+         "remaining": 2
+       }
+     ]
    },
 -  "players": [],
 +  "players": [
@@ -230,7 +374,7 @@ Index: @players>init
    "deckCards": [
      {
        "type": "shake",
-@@ -47,9 +179,46 @@
+@@ -87,9 +219,46 @@
        "status": []
      }
    ],
@@ -278,7 +422,7 @@ Index: @players>init
    "technical": {
      "actions": [
        {
-@@ -78,8 +247,130 @@
+@@ -164,8 +333,130 @@
            {
              "type": "end"
            }
@@ -413,47 +557,7 @@ Index: @players>init
 
 `;
 
-exports[`engine without mock should connect behaviours to actions 3`] = `
-Index: @seeds>init
-===================================================================
---- @seeds>init
-+++ @seeds>init
-@@ -1,7 +1,14 @@
- {
-   "seeds": {
--    "public": false
-+    "master": "87FZ2jefz",
-+    "private": true,
-+    "dices": "7M8cMGMdlm",
-+    "dicesNext": "7M8cMGMdlm",
-+    "cards": "Y2laJE1czq",
-+    "cardsNext": "Y2laJE1czq",
-+    "tiles": "5hk7Zpp7wP",
-+    "tilesNext": "5hk7Zpp7wP"
-   },
-   "tiles": {
-     "remaining": 0,
-     "deck": []
-@@ -369,8 +376,14 @@
-             },
-             "name": "xXx-scoot-xXx"
-           }
-         ]
-+      },
-+      {
-+        "type": "@seeds>init",
-+        "payload": {
-+          "master": "87FZ2jefz"
-+        }
-       }
-     ]
-   }
- }
-\\ No newline at end of file
-
-`;
-
-exports[`engine without mock should connect behaviours to actions 4`] = `
+exports[`engine without mock should connect behaviours to actions 5`] = `
 Index: @cards>pick
 ===================================================================
 --- @cards>pick
@@ -469,7 +573,7 @@ Index: @cards>pick
      "cardsNext": "Y2laJE1czq",
      "tiles": "5hk7Zpp7wP",
      "tilesNext": "5hk7Zpp7wP"
-@@ -15,9 +15,9 @@
+@@ -48,9 +48,9 @@
    },
    "players": [
      {
@@ -480,7 +584,7 @@ Index: @cards>pick
        "skills": [
          {
            "type": "heal",
-@@ -60,9 +60,9 @@
+@@ -93,9 +93,9 @@
        "first": true
      },
      {
@@ -491,7 +595,7 @@ Index: @cards>pick
        "skills": [
          {
            "type": "intuition",
-@@ -103,9 +103,9 @@
+@@ -136,9 +136,9 @@
        "actionPoints": 2
      },
      {
@@ -502,7 +606,7 @@ Index: @cards>pick
        "skills": [
          {
            "type": "guide",
-@@ -148,13 +148,8 @@
+@@ -181,13 +181,8 @@
    ],
    "enemies": [],
    "deckCards": [
@@ -516,7 +620,7 @@ Index: @cards>pick
        "damage": 2,
        "duration": 1
      },
-@@ -171,9 +166,13 @@
+@@ -204,9 +199,13 @@
      {
        "type": "end"
      }
@@ -531,11 +635,11 @@ Index: @cards>pick
      {
        "id": 0,
        "type": "start",
-@@ -382,8 +381,192 @@
-         "type": "@seeds>init",
-         "payload": {
-           "master": "87FZ2jefz"
-         }
+@@ -455,8 +454,192 @@
+             },
+             "name": "xXx-scoot-xXx"
+           }
+         ]
 +      },
 +      {
 +        "type": "@cards>pick"

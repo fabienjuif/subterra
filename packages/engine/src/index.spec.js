@@ -2,13 +2,15 @@ import { createPatch } from 'diff'
 import { createEngine } from './index'
 import {
   cards,
-  tiles,
   archetypes,
   EndCard,
   GazCard,
   WaterCard,
   ShakeCard,
   HorrorCard,
+  AlleyBlockTile,
+  CornerEnemyTile,
+  CrossDamageTile,
 } from '@subterra/data'
 
 expect.addSnapshotSerializer({
@@ -22,12 +24,34 @@ describe('engine without mock', () => {
       const engine = createEngine()
 
       engine.dispatch({
+        type: '@seeds>init',
+        payload: {
+          master: '87FZ2jefz',
+        },
+      })
+      engine.dispatch({
         type: '@cards>init',
         payload: [cards[2], cards[3], cards[1], cards[0]],
       })
       engine.dispatch({
         type: '@tiles>init',
-        payload: [tiles[0], tiles[2], tiles[3], tiles[1]],
+        payload: {
+          remaining: 10,
+          tiles: [
+            {
+              tile: AlleyBlockTile,
+              remaining: 3,
+            },
+            {
+              tile: CornerEnemyTile,
+              remaining: 4,
+            },
+            {
+              tile: CrossDamageTile,
+              remaining: 2,
+            },
+          ],
+        },
       })
       engine.dispatch({
         type: '@players>init',
@@ -38,12 +62,6 @@ describe('engine without mock', () => {
             name: `xXx-${archetype.type}-xXx`,
           }),
         ),
-      })
-      engine.dispatch({
-        type: '@seeds>init',
-        payload: {
-          master: 'Ijdoez8',
-        },
       })
       engine.dispatch('@cards>pick')
       // TODO: here play a fake game
@@ -75,6 +93,32 @@ describe('engine without mock', () => {
     }
 
     dispatchAndSnap({
+      type: '@seeds>init',
+      payload: {
+        master: '87FZ2jefz',
+      },
+    })
+    dispatchAndSnap({
+      type: '@tiles>init',
+      payload: {
+        remaining: 10,
+        tiles: [
+          {
+            tile: AlleyBlockTile,
+            remaining: 3,
+          },
+          {
+            tile: CornerEnemyTile,
+            remaining: 4,
+          },
+          {
+            tile: CrossDamageTile,
+            remaining: 2,
+          },
+        ],
+      },
+    })
+    dispatchAndSnap({
       type: '@cards>init',
       payload: [ShakeCard, GazCard, WaterCard, HorrorCard, EndCard],
     })
@@ -87,12 +131,6 @@ describe('engine without mock', () => {
           name: `xXx-${archetype.type}-xXx`,
         }),
       ),
-    })
-    dispatchAndSnap({
-      type: '@seeds>init',
-      payload: {
-        master: '87FZ2jefz',
-      },
     })
     dispatchAndSnap('@cards>pick')
 
