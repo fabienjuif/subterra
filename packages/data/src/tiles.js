@@ -120,10 +120,6 @@ const CornerLandslideTile = {
   ...CornerTile,
   ...LandslideType,
 }
-const AlleyLandslideTile = {
-  ...AlleyTile,
-  ...LandslideType,
-}
 
 export const DeadEndEnemyTile = {
   ...DeadEndTile,
@@ -229,8 +225,6 @@ export const CornerLandslideTile15 = {
 }
 
 export default [
-  StartTile,
-  FinalTile,
   CornerGazTile,
   AlleyWaterTile,
   AlleyTile,

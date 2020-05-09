@@ -10,9 +10,12 @@ export const initState = () => ({
     dices: undefined,
     nextDicesSeed: undefined,
   },
+  tiles: {
+    remaining: 0,
+    deck: [],
+  },
   players: [],
   enemies: [],
-  deckTiles: [],
   deckCards: [],
   activeCard: {}, // should be an array in a futur iteration
   grid: [

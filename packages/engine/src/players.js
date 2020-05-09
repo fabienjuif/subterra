@@ -70,27 +70,35 @@ export const look = (store, action) => {
 
     // draw a tile
     // - if there is no more tiles, draw an end
+    // - if there is less than 4 cards, roll a dice it could be the end!
     // - in other case take a card from remaining one
     //    and remove cards from deck when there is no more remaining
     let nextTile
-    if (state.tiles.remaining <= 0) {
+    if (state.tiles.remaining - 1 <= 0) {
       nextTile = { ...FinalTile }
     } else {
       state.tiles.remaining -= 1
 
-      const { value, nextSeed } = roll(
-        state.tiles.deck.length,
-        state.seeds.tilesNext,
-      )
-      state.seeds.tilesNext = nextSeed
-
-      const tileInDeck = state.tiles.deck[value - 1]
-      tileInDeck.remaining -= 1
-      if (tileInDeck.remaining <= 0) {
-        state.tiles.deck.splice(value - 1, 1)
+      const rollTile = (number) => {
+        const { value, nextSeed } = roll(number, state.seeds.tilesNext)
+        state.seeds.tilesNext = nextSeed
+        return value
       }
 
-      nextTile = { ...tileInDeck.tile }
+      // TODO: test it
+      if (state.tiles.remaining < 4 && rollTile(state.tiles.remaining) === 1) {
+        nextTile = { ...FinalTile }
+      } else {
+        const value = rollTile(state.tiles.deck.length)
+
+        const tileInDeck = state.tiles.deck[value - 1]
+        tileInDeck.remaining -= 1
+        if (tileInDeck.remaining <= 0) {
+          state.tiles.deck.splice(value - 1, 1)
+        }
+
+        nextTile = { ...tileInDeck.tile }
+      }
     }
 
     // tile is drawn, add it where the player looked at

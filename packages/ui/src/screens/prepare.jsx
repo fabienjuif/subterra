@@ -3,7 +3,7 @@ import cn from 'classnames'
 import {
   archetypes as archetypesData,
   cards as cardsData,
-  tiles as tilesData,
+  tiles,
 } from '@subterra/data'
 import seedrandom from 'seedrandom'
 import { dices, seeds } from '@subterra/engine'
@@ -25,7 +25,6 @@ const Prepare = () => {
     const tilesSeed = masterNanoid()
 
     let nextCardsSeed = cardsSeed
-    let nextTilesSeed = tilesSeed
 
     const cards = [
       ...Array.from({ length: 10 }).map(() => {
@@ -39,18 +38,6 @@ const Prepare = () => {
       cardsData[0],
     ]
 
-    const tiles = [
-      ...Array.from({ length: 9 }).map(() => {
-        const { value, nextSeed } = dices.getRandomInArray(
-          tilesData.slice(2),
-          nextTilesSeed,
-        )
-        nextTilesSeed = nextSeed
-        return value
-      }),
-      tilesData[1],
-    ]
-
     setStartInfos({
       cards,
       players: archetypes.map((archetype) => ({
@@ -58,7 +45,7 @@ const Prepare = () => {
         archetype,
         name: archetype.type,
       })),
-      tiles,
+      tiles: tiles.map((tile) => ({ tile: { ...tile }, remaining: 1 })),
       seeds: {
         master: masterSeed,
         tiles: tilesSeed,

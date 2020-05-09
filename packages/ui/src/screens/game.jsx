@@ -81,7 +81,10 @@ const Game = ({ cards, players, tiles, dices, seeds }) => {
       // init
       engine.dispatch({ type: '@seeds>init', payload: seeds })
       engine.dispatch({ type: '@cards>init', payload: cards })
-      engine.dispatch({ type: '@tiles>init', payload: tiles })
+      engine.dispatch({
+        type: '@tiles>init',
+        payload: { remaining: tiles.length, deck: tiles },
+      })
       engine.dispatch({ type: '@players>init', payload: players })
     }
   }, [cards, dices, gameId, players, seeds, serverDispatch, tiles])
@@ -133,7 +136,7 @@ const Game = ({ cards, players, tiles, dices, seeds }) => {
       </MovableGrid>
       <div className={cn('turn', classes.turn)}>turn: {state.turn}</div>
       <div className={cn('tiles-deck', classes.tilesDeck)}>
-        tiles: {state.deckTiles.length}
+        tiles: {state.tiles.remaining}
       </div>
       <CardsDeck
         className={cn('cards-deck', classes.cardsDeck)}
