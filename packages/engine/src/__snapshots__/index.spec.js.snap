@@ -423,7 +423,7 @@ Index: @seeds>init
    "seeds": {
 -    "public": false
 +    "master": "87FZ2jefz",
-+    "private": false,
++    "private": true,
 +    "dices": "7M8cMGMdlm",
 +    "dicesNext": "7M8cMGMdlm"
    },
@@ -457,7 +457,7 @@ Index: @cards>pick
 @@ -2,14 +2,14 @@
    "seeds": {
      "master": "87FZ2jefz",
-     "private": false,
+     "private": true,
      "dices": "7M8cMGMdlm",
 -    "dicesNext": "7M8cMGMdlm"
 +    "dicesNext": "7M8cMGMdlm@@0.04602145714249605"

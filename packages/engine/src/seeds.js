@@ -5,7 +5,6 @@ const ALPHABET =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
 const SEED_SIZE = 10
 
-// TODO: tests
 export const init = (store, action) => {
   if (!action.payload.master) {
     const error = new Error('Master seed must be given')
@@ -26,7 +25,7 @@ export const init = (store, action) => {
     state.seeds = {
       ...action.payload,
       private:
-        action.payload.private === undefined ? false : action.payload.private,
+        action.payload.private === undefined ? true : action.payload.private,
       dices,
       dicesNext: dices,
     }
