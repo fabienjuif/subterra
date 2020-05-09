@@ -1,18 +1,29 @@
 import createStore from '@myrtille/mutate'
+import { StartTile } from '@subterra/data'
 import listeners from './listeners'
-import tilesData from './utils/tiles'
 
 export const initState = () => ({
   gameOver: undefined, // 'loose' | 'win'
+  seeds: {
+    public: false,
+    master: undefined,
+    dices: undefined,
+    nextDicesSeed: undefined,
+  },
+  tiles: {
+    remaining: 0,
+    deck: [],
+  },
+  cards: {
+    remaining: 0,
+    deck: [],
+    active: undefined, // should be an array in a futur iteration
+  },
   players: [],
   enemies: [],
-  deckTiles: [],
-  deckCards: [],
-  dices: [],
-  activeCard: {}, // should be an array in a futur iteration
   grid: [
     {
-      ...tilesData[0],
+      ...StartTile,
       x: 0,
       y: 0,
       status: [

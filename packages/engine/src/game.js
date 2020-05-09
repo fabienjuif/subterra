@@ -1,4 +1,4 @@
-import { isCellEqual } from './utils/tiles'
+import { tiles } from './utils'
 
 export const checkLoose = (store, action) => {
   const prevState = store.getState()
@@ -16,7 +16,7 @@ export const checkWin = (store, action) => {
   const outCell = prevState.grid.find(({ type }) => type === 'end')
   if (!outCell) return
 
-  const playersOut = prevState.players.filter(isCellEqual(outCell))
+  const playersOut = prevState.players.filter(tiles.isCellEqual(outCell))
   const deadPlayers = prevState.players.filter(({ health }) => health <= 0)
 
   if (deadPlayers.length + playersOut.length !== prevState.players.length) {

@@ -1,5 +1,5 @@
 import getClosestPath from '@fabienjuif/astar'
-import { isCellEqual, canMoveFromTo } from './utils/tiles'
+import { tiles } from './utils'
 import { enemies as actions } from './actions'
 
 const mapGridToAstarGraph = (grid) => {
@@ -49,9 +49,9 @@ export const process = (store, action) => {
         {
           heuristic: (start, end) => {
             if (
-              canMoveFromTo(
-                grid.find(isCellEqual({ x: start[0], y: start[1] })),
-                grid.find(isCellEqual({ x: end[0], y: end[1] })),
+              tiles.canMoveFromTo(
+                grid.find(tiles.isCellEqual({ x: start[0], y: start[1] })),
+                grid.find(tiles.isCellEqual({ x: end[0], y: end[1] })),
               )
             )
               return 1
@@ -89,20 +89,22 @@ export const process = (store, action) => {
 
 export const move = (store, action) => {
   store.mutate((state) => {
-    const previousCell = state.grid.find(isCellEqual(action.payload.enemy))
+    const previousCell = state.grid.find(
+      tiles.isCellEqual(action.payload.enemy),
+    )
     previousCell.status.splice(
       previousCell.status.findIndex((s) => s === 'enemy'),
       1,
     )
 
-    const nextCell = state.grid.find(isCellEqual(action.payload.path[1]))
+    const nextCell = state.grid.find(tiles.isCellEqual(action.payload.path[1]))
     nextCell.status.push('enemy')
   })
 }
 
 export const kill = (store, action) => {
   store.mutate((state) => {
-    const cell = state.grid.find(isCellEqual(action.payload))
+    const cell = state.grid.find(tiles.isCellEqual(action.payload))
     cell.status.splice(
       cell.status.findIndex((s) => s === 'enemy'),
       1,

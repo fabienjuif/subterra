@@ -2,13 +2,15 @@ import { createPatch } from 'diff'
 import { createEngine } from './index'
 import {
   cards,
-  tiles,
   archetypes,
   EndCard,
   GazCard,
   WaterCard,
   ShakeCard,
   HorrorCard,
+  AlleyBlockTile,
+  CornerEnemyTile,
+  CrossDamageTile,
 } from '@subterra/data'
 
 expect.addSnapshotSerializer({
@@ -22,12 +24,54 @@ describe('engine without mock', () => {
       const engine = createEngine()
 
       engine.dispatch({
+        type: '@seeds>init',
+        payload: {
+          master: '87FZ2jefz',
+        },
+      })
+      engine.dispatch({
         type: '@cards>init',
-        payload: [cards[2], cards[3], cards[1], cards[0]],
+        payload: {
+          remaining: 11,
+          deck: [
+            {
+              card: ShakeCard,
+              remaining: 2,
+            },
+            {
+              card: GazCard,
+              remaining: 1,
+            },
+            {
+              card: WaterCard,
+              remaining: 3,
+            },
+            {
+              card: HorrorCard,
+              remaining: 4,
+            },
+          ],
+        },
       })
       engine.dispatch({
         type: '@tiles>init',
-        payload: [tiles[0], tiles[2], tiles[3], tiles[1]],
+        payload: {
+          remaining: 10,
+          tiles: [
+            {
+              tile: AlleyBlockTile,
+              remaining: 3,
+            },
+            {
+              tile: CornerEnemyTile,
+              remaining: 4,
+            },
+            {
+              tile: CrossDamageTile,
+              remaining: 2,
+            },
+          ],
+        },
       })
       engine.dispatch({
         type: '@players>init',
@@ -69,8 +113,54 @@ describe('engine without mock', () => {
     }
 
     dispatchAndSnap({
+      type: '@seeds>init',
+      payload: {
+        master: '87FZ2jefz',
+      },
+    })
+    dispatchAndSnap({
+      type: '@tiles>init',
+      payload: {
+        remaining: 10,
+        deck: [
+          {
+            tile: AlleyBlockTile,
+            remaining: 3,
+          },
+          {
+            tile: CornerEnemyTile,
+            remaining: 4,
+          },
+          {
+            tile: CrossDamageTile,
+            remaining: 2,
+          },
+        ],
+      },
+    })
+    dispatchAndSnap({
       type: '@cards>init',
-      payload: [ShakeCard, GazCard, WaterCard, HorrorCard, EndCard],
+      payload: {
+        remaining: 11,
+        deck: [
+          {
+            card: ShakeCard,
+            remaining: 2,
+          },
+          {
+            card: GazCard,
+            remaining: 1,
+          },
+          {
+            card: WaterCard,
+            remaining: 3,
+          },
+          {
+            card: HorrorCard,
+            remaining: 4,
+          },
+        ],
+      },
     })
     dispatchAndSnap({
       type: '@players>init',
@@ -82,7 +172,6 @@ describe('engine without mock', () => {
         }),
       ),
     })
-    dispatchAndSnap({ type: '@dices>init', payload: [2, 3, 4, 5] })
     dispatchAndSnap('@cards>pick')
 
     // TODO: complete this after we can discover and move (or explore)

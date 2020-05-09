@@ -1,15 +1,12 @@
 import { players as playerSelectors } from './selectors'
-
-export const init = (store, action) => {
-  store.mutate((state) => {
-    state.dices = action.payload
-  })
-}
+import { random } from './utils'
 
 export const roll = (store, action) => {
   let value
   store.mutate((state) => {
-    value = state.dices.shift()
+    const roll = random.roll6(state.seeds.dicesNext)
+    state.seeds.dicesNext = roll.nextSeed
+    value = roll.value
   })
 
   store.dispatch({

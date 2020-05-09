@@ -1,5 +1,5 @@
 export { default as Game } from './game'
-export { default as Prepare } from './prepare/prepare'
+export { default as Prepare } from './prepare'
 export { default as Lobby } from './lobby'
 export { default as Login } from './login'
 export { default as Over } from './over'

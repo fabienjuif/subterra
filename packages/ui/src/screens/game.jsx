@@ -15,7 +15,7 @@ import {
 } from '../components'
 import classes from './game.module.scss'
 
-const Game = ({ cards, players, tiles, dices }) => {
+const Game = ({ cards, players, tiles, dices, seeds }) => {
   const history = useHistory()
   const { gameId } = useParams()
   const [cells, setCells] = useState([])
@@ -79,12 +79,24 @@ const Game = ({ cards, players, tiles, dices }) => {
       )
 
       // init
-      engine.dispatch({ type: '@dices>init', payload: dices })
-      engine.dispatch({ type: '@cards>init', payload: cards })
-      engine.dispatch({ type: '@tiles>init', payload: tiles })
+      engine.dispatch({ type: '@seeds>init', payload: seeds })
+      engine.dispatch({
+        type: '@cards>init',
+        payload: {
+          remaining: cards.reduce((acc, { remaining }) => acc + remaining, 1),
+          deck: cards,
+        },
+      })
+      engine.dispatch({
+        type: '@tiles>init',
+        payload: {
+          remaining: tiles.reduce((acc, { remaining }) => acc + remaining, 0),
+          deck: tiles,
+        },
+      })
       engine.dispatch({ type: '@players>init', payload: players })
     }
-  }, [cards, dices, gameId, players, serverDispatch, tiles])
+  }, [cards, dices, gameId, players, seeds, serverDispatch, tiles])
 
   useEffect(() => {
     let cells = tilesHelpers.getWrappingCells(state.grid)
@@ -133,12 +145,12 @@ const Game = ({ cards, players, tiles, dices }) => {
       </MovableGrid>
       <div className={cn('turn', classes.turn)}>turn: {state.turn}</div>
       <div className={cn('tiles-deck', classes.tilesDeck)}>
-        tiles: {state.deckTiles.length}
+        tiles: {state.tiles.remaining}
       </div>
       <CardsDeck
         className={cn('cards-deck', classes.cardsDeck)}
-        size={state.deckCards.length}
-        card={state.activeCard}
+        size={state.cards.remaining}
+        card={state.cards.active}
       />
       <Logs
         className={cn('logs', classes.logs)}

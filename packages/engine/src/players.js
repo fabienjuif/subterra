@@ -1,12 +1,7 @@
+import { FinalTile } from '@subterra/data'
 import { isActionEquals, players as actions } from './actions'
 import { players as selectors } from './selectors'
-import {
-  isCellEqual,
-  getWrappingCells,
-  findActionsOnCell,
-  canMoveFromTo,
-  nextRotation,
-} from './utils/tiles'
+import { tiles, random } from './utils'
 
 export const pass = (store, action) => {
   const previousState = store.getState()
@@ -64,10 +59,46 @@ export const look = (store, action) => {
     if (!state.playerActions.possibilities.some(isActionEquals(action))) return
 
     const player = selectors.findById(state, action)
-    const playerTile = state.grid.find(isCellEqual(player))
+    const playerTile = state.grid.find(tiles.isCellEqual(player))
 
+    // draw a tile
+    // - if there is no more tiles, draw an end
+    // - if there is less than 4 cards, roll a dice it could be the end!
+    // - in other case take a card from remaining one
+    //    and remove cards from deck when there is no more remaining
+    let nextTile
+    if (state.tiles.remaining - 1 <= 0) {
+      nextTile = { ...FinalTile }
+    } else {
+      state.tiles.remaining -= 1
+
+      const rollTile = (number) => {
+        const { value, nextSeed } = random.roll(number, state.seeds.tilesNext)
+        state.seeds.tilesNext = nextSeed
+        return value
+      }
+
+      if (
+        state.tiles.remaining < 4 &&
+        rollTile(state.tiles.remaining + 1) === 1
+      ) {
+        nextTile = { ...FinalTile }
+      } else {
+        const value = rollTile(state.tiles.deck.length)
+
+        const tileInDeck = state.tiles.deck[value - 1]
+        tileInDeck.remaining -= 1
+        if (tileInDeck.remaining <= 0) {
+          state.tiles.deck.splice(value - 1, 1)
+        }
+
+        nextTile = { ...tileInDeck.tile }
+      }
+    }
+
+    // tile is drawn, add it where the player looked at
     const tile = {
-      ...state.deckTiles.shift(),
+      ...nextTile,
       x: action.payload.x,
       y: action.payload.y,
       status: [],
@@ -79,8 +110,9 @@ export const look = (store, action) => {
 
     state.playerActions.possibilities = [actions.rotate(player, 90)]
 
-    if (canMoveFromTo(playerTile, tile))
+    if (tiles.canMoveFromTo(playerTile, tile)) {
       state.playerActions.possibilities.push(actions.drop(player))
+    }
   })
 }
 
@@ -89,7 +121,7 @@ export const rotate = (store, action) => {
     if (!state.playerActions.possibilities.some(isActionEquals(action))) return
 
     const player = selectors.findById(state, action)
-    const playerTile = state.grid.find(isCellEqual(player))
+    const playerTile = state.grid.find(tiles.isCellEqual(player))
     const rotatedTile = {
       ...state.playerActions.tile,
       rotation: action.payload.rotation,
@@ -97,10 +129,10 @@ export const rotate = (store, action) => {
 
     state.playerActions.tile = rotatedTile
     state.playerActions.possibilities = [
-      actions.rotate(player, nextRotation(rotatedTile)),
+      actions.rotate(player, tiles.nextRotation(rotatedTile)),
     ]
 
-    if (canMoveFromTo(playerTile, rotatedTile))
+    if (tiles.canMoveFromTo(playerTile, rotatedTile))
       state.playerActions.possibilities.push(actions.drop(player))
   })
 }
@@ -121,8 +153,8 @@ export const findPossibilities = (store, action) => {
 
     if (player.actionPoints === 0 || player.health === 0) return // TODO: We should add excess in another PR by filter all actions once they are created
 
-    const tile = state.grid.find(isCellEqual(player))
-    const playersOnCell = state.players.filter(isCellEqual(player))
+    const tile = state.grid.find(tiles.isCellEqual(player))
+    const playersOnCell = state.players.filter(tiles.isCellEqual(player))
 
     // based actions
     // TODO: clear / climb / etc
@@ -136,8 +168,8 @@ export const findPossibilities = (store, action) => {
     ]
 
     // actions on cells
-    const cells = getWrappingCells(state.grid)
-    const findPlayerActionsOnCell = findActionsOnCell(player, tile)
+    const cells = tiles.getWrappingCells(state.grid)
+    const findPlayerActionsOnCell = tiles.findActionsOnCell(player, tile)
     const cellsActions = cells.flatMap(findPlayerActionsOnCell)
 
     // actions based on skills
@@ -180,7 +212,7 @@ export const damage = (store, action) => {
   if (!prevPlayer.skills.some(findProtect)) {
     const withProtect = prevState.players.find(
       (player) =>
-        isCellEqual(player)(prevPlayer) &&
+        tiles.isCellEqual(player)(prevPlayer) &&
         player.health > 0 &&
         player.skills.some(findProtect),
     )

@@ -1,24 +1,13 @@
 import createStore from '@myrtille/mutate'
 import * as dices from './dices'
-import * as actions from './actions'
 
 describe('dices', () => {
-  describe('init', () => {
-    it('should set new dices', () => {
-      const store = createStore({ dices: [] })
-
-      dices.init(store, { payload: [3, 4, 2, 1] })
-
-      expect(store.getState()).toEqual({
-        dices: [3, 4, 2, 1],
-      })
-    })
-  })
-
   describe('roll', () => {
     it('should roll dices and pass value and the given payload to a new @dices>rolled action', () => {
       const store = createStore({
-        dices: [1, 2],
+        seeds: {
+          dicesNext: 'UdeeoeE',
+        },
       })
       store.dispatch = jest.fn()
 
@@ -26,7 +15,9 @@ describe('dices', () => {
 
       // one of the dices has been used
       expect(store.getState()).toEqual({
-        dices: [2],
+        seeds: {
+          dicesNext: 'UdeeoeE@@0.11693691397108087',
+        },
       })
 
       // new action

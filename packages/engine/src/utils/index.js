@@ -1,4 +1,4 @@
-import * as dices from './dices'
+import * as random from './random'
 import * as tiles from './tiles'
 
-export { dices, tiles }
+export { random, tiles }

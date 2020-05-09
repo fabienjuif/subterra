@@ -1,7 +1,7 @@
 import { createClient } from '@fabienjuif/dynamo-client'
 import { nanoid } from 'nanoid'
 import { cards, tiles } from '@subterra/data'
-import { createEngine, dices, initState } from '@subterra/engine'
+import { createEngine, random, initState } from '@subterra/engine'
 import { broadcast } from '@subterra/ws-utils'
 
 const dynamoClient = createClient()
@@ -29,26 +29,24 @@ export const start = async (wsConnection, lobby) => {
     actionsSnapshot: [],
     actions: [
       {
-        type: '@dices>init',
-        payload: Array.from({ length: 5000 }).map(() => dices.roll6()),
+        type: '@seeds>init',
+        payload: {
+          master: random.getNanoid(Math.random)(),
+        },
       },
       {
         type: '@cards>init',
-        payload: [
-          ...Array.from({ length: 10 }).map(() =>
-            dices.getRandomInArray(cards.slice(1)),
-          ),
-          cards[0],
-        ],
+        payload: {
+          remaining: 15,
+          deck: cards.map((card) => ({ ...card })),
+        },
       },
       {
         type: '@tiles>init',
-        payload: [
-          ...Array.from({ length: 9 }).map(() =>
-            dices.getRandomInArray(tiles.slice(2)),
-          ),
-          tiles[1],
-        ],
+        payload: {
+          remaining: 20,
+          deck: tiles.map((tile) => ({ ...tile })),
+        },
       },
       {
         type: '@players>init',
