@@ -182,7 +182,7 @@ describe('players', () => {
           ],
         },
         seeds: {
-          tilesNext: 'nextSeed',
+          tilesNext: 'nextSeed5',
         },
         grid: [{ x: 0, y: 0, right: true }],
         playerActions: {
@@ -203,7 +203,7 @@ describe('players', () => {
           ],
         },
         seeds: {
-          tilesNext: 'nextSeed@@0.2895602246632603',
+          tilesNext: 'nextSeed5@@0.1931634125608288',
         },
         grid: [{ x: 0, y: 0, right: true }],
         playerActions: {
@@ -236,7 +236,7 @@ describe('players', () => {
           ],
         },
         seeds: {
-          tilesNext: 'nextSeed',
+          tilesNext: 'nextSeed2',
         },
         grid: [{ x: 0, y: 0, right: true }],
         playerActions: {
@@ -251,26 +251,23 @@ describe('players', () => {
         players: [{ id: 'Hatsu', actionPoints: 0, x: 0, y: 0 }],
         tiles: {
           remaining: 1,
-          deck: [{ tile: { top: true }, remaining: 1 }],
+          deck: [
+            { tile: { right: true, bottom: true, left: true }, remaining: 1 },
+          ],
         },
         seeds: {
-          tilesNext: 'nextSeed@@0.2895602246632603',
+          tilesNext: 'nextSeed2@@0.9193660108935956',
         },
         grid: [{ x: 0, y: 0, right: true }],
         playerActions: {
           tile: {
             x: 1,
             y: 0,
-            right: true,
-            bottom: true,
-            left: true,
+            top: true,
             status: [],
             rotation: 0,
           },
-          possibilities: [
-            actions.rotate({ id: 'Hatsu' }, 90),
-            actions.drop({ id: 'Hatsu' }),
-          ],
+          possibilities: [actions.rotate({ id: 'Hatsu' }, 90)],
         },
       })
     })
@@ -332,13 +329,13 @@ describe('players', () => {
       const store = createStore({
         players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
         tiles: {
-          remaining: 1,
+          remaining: 2,
           deck: [
             { tile: { right: true, bottom: true, left: true }, remaining: 1 },
           ],
         },
         seeds: {
-          tilesNext: 'nextSeed',
+          tilesNext: 'nextSeed2',
         },
         grid: [{ x: 0, y: 0 }],
         playerActions: {
@@ -353,11 +350,11 @@ describe('players', () => {
         players: [{ id: 'Hatsu', actionPoints: 0, x: 0, y: 0 }],
         grid: [{ x: 0, y: 0 }],
         tiles: {
-          remaining: 0,
+          remaining: 1,
           deck: [],
         },
         seeds: {
-          tilesNext: 'nextSeed@@0.2895602246632603',
+          tilesNext: 'nextSeed2@@0.9193660108935956',
         },
         playerActions: {
           tile: {

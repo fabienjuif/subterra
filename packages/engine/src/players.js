@@ -86,7 +86,10 @@ export const look = (store, action) => {
       }
 
       // TODO: test it
-      if (state.tiles.remaining < 4 && rollTile(state.tiles.remaining) === 1) {
+      if (
+        state.tiles.remaining < 4 &&
+        rollTile(state.tiles.remaining + 1) === 1
+      ) {
         nextTile = { ...FinalTile }
       } else {
         const value = rollTile(state.tiles.deck.length)
