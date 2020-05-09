@@ -6,7 +6,7 @@ import {
   tiles as tilesData,
 } from '@subterra/data'
 import seedrandom from 'seedrandom'
-import { random, seeds } from '@subterra/engine'
+import { random } from '@subterra/engine'
 import { Archetype } from '../components'
 import Game from './game'
 import classes from './prepare.module.scss'
@@ -17,9 +17,9 @@ const Prepare = () => {
   const [startInfos, setStartInfos] = useState(undefined)
 
   const innerOnStart = useCallback(() => {
-    const masterSeed = seeds.getNanoid(Math.random)()
+    const masterSeed = random.getNanoid(Math.random)()
     const masterRandom = seedrandom(masterSeed)
-    const masterNanoid = seeds.getNanoid(masterRandom)
+    const masterNanoid = random.getNanoid(masterRandom)
     const dicesSeed = masterNanoid()
     const cardsSeed = masterNanoid()
     const tilesSeed = masterNanoid()
