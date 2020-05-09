@@ -418,19 +418,23 @@ Index: @seeds>init
 ===================================================================
 --- @seeds>init
 +++ @seeds>init
-@@ -1,7 +1,10 @@
+@@ -1,7 +1,14 @@
  {
    "seeds": {
 -    "public": false
 +    "master": "87FZ2jefz",
 +    "private": true,
 +    "dices": "7M8cMGMdlm",
-+    "dicesNext": "7M8cMGMdlm"
++    "dicesNext": "7M8cMGMdlm",
++    "cards": "Y2laJE1czq",
++    "cardsNext": "Y2laJE1czq",
++    "tiles": "5hk7Zpp7wP",
++    "tilesNext": "5hk7Zpp7wP"
    },
    "players": [
      {
        "type": "medic",
-@@ -366,8 +369,14 @@
+@@ -366,8 +373,14 @@
              },
              "name": "xXx-scoot-xXx"
            }
@@ -454,13 +458,17 @@ Index: @cards>pick
 ===================================================================
 --- @cards>pick
 +++ @cards>pick
-@@ -2,14 +2,14 @@
+@@ -2,18 +2,18 @@
    "seeds": {
      "master": "87FZ2jefz",
      "private": true,
      "dices": "7M8cMGMdlm",
--    "dicesNext": "7M8cMGMdlm"
-+    "dicesNext": "7M8cMGMdlm@@0.04602145714249605"
+-    "dicesNext": "7M8cMGMdlm",
++    "dicesNext": "7M8cMGMdlm@@0.04602145714249605",
+     "cards": "Y2laJE1czq",
+     "cardsNext": "Y2laJE1czq",
+     "tiles": "5hk7Zpp7wP",
+     "tilesNext": "5hk7Zpp7wP"
    },
    "players": [
      {
@@ -471,7 +479,7 @@ Index: @cards>pick
        "skills": [
          {
            "type": "heal",
-@@ -52,9 +52,9 @@
+@@ -56,9 +56,9 @@
        "first": true
      },
      {
@@ -482,7 +490,7 @@ Index: @cards>pick
        "skills": [
          {
            "type": "intuition",
-@@ -95,9 +95,9 @@
+@@ -99,9 +99,9 @@
        "actionPoints": 2
      },
      {
@@ -493,7 +501,7 @@ Index: @cards>pick
        "skills": [
          {
            "type": "guide",
-@@ -141,13 +141,8 @@
+@@ -145,13 +145,8 @@
    "enemies": [],
    "deckTiles": [],
    "deckCards": [
@@ -507,7 +515,7 @@ Index: @cards>pick
        "damage": 2,
        "duration": 1
      },
-@@ -164,9 +159,13 @@
+@@ -168,9 +163,13 @@
      {
        "type": "end"
      }
@@ -522,7 +530,7 @@ Index: @cards>pick
      {
        "id": 0,
        "type": "start",
-@@ -375,8 +374,192 @@
+@@ -379,8 +378,192 @@
          "type": "@seeds>init",
          "payload": {
            "master": "87FZ2jefz"

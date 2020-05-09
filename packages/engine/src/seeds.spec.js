@@ -20,8 +20,12 @@ describe('seeds', () => {
       expect(store.getState()).toEqual({
         seeds: {
           master: 's3eED',
+          cards: 'sQm51rGZhs',
+          cardsNext: 'sQm51rGZhs',
           dices: '9AoHJila2H',
           dicesNext: '9AoHJila2H',
+          tiles: '4PIzW1vbN5',
+          tilesNext: '4PIzW1vbN5',
           private: true,
         },
       })
@@ -39,8 +43,12 @@ describe('seeds', () => {
       expect(store.getState()).toEqual({
         seeds: {
           master: 's3eED',
+          cards: 'sQm51rGZhs',
+          cardsNext: 'sQm51rGZhs',
           dices: '9AoHJila2H',
           dicesNext: '9AoHJila2H',
+          tiles: '4PIzW1vbN5',
+          tilesNext: '4PIzW1vbN5',
           private: false,
         },
       })
@@ -61,6 +69,10 @@ describe('seeds', () => {
           master: 's3eED',
           dices: 'DiC3s',
           dicesNext: 'DiC3s',
+          cards: 'sQm51rGZhs',
+          cardsNext: 'sQm51rGZhs',
+          tiles: '4PIzW1vbN5',
+          tilesNext: '4PIzW1vbN5',
           private: false,
         },
       })
