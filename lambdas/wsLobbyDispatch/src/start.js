@@ -1,7 +1,8 @@
 import { createClient } from '@fabienjuif/dynamo-client'
 import { nanoid } from 'nanoid'
+import seedrandom from 'seedrandom'
 import { cards, tiles } from '@subterra/data'
-import { createEngine, dices, initState } from '@subterra/engine'
+import { createEngine, dices, seeds, initState } from '@subterra/engine'
 import { broadcast } from '@subterra/ws-utils'
 
 const dynamoClient = createClient()
@@ -21,6 +22,16 @@ export const start = async (wsConnection, lobby) => {
   const gameState = engine.getState()
   const state = JSON.stringify(gameState)
 
+  const masterSeed = seeds.getNanoid(Math.random)()
+  const masterRandom = seedrandom(masterSeed)
+  const masterNanoid = seeds.getNanoid(masterRandom)
+  const dicesSeed = masterNanoid()
+  const cardsSeed = masterNanoid()
+  const tilesSeed = masterNanoid()
+
+  let nextCardsSeed = cardsSeed
+  let nextTilesSeed = tilesSeed
+
   const game = {
     id: gameId,
     connectionsIds: lobby.connectionsIds,
@@ -29,24 +40,39 @@ export const start = async (wsConnection, lobby) => {
     actionsSnapshot: [],
     actions: [
       {
-        type: '@dices>init',
-        payload: Array.from({ length: 5000 }).map(() => dices.roll6()),
+        type: '@seeds>init',
+        payload: {
+          master: masterSeed,
+          tiles: tilesSeed,
+          cards: cardsSeed,
+          dices: dicesSeed,
+        },
       },
       {
         type: '@cards>init',
         payload: [
-          ...Array.from({ length: 10 }).map(() =>
-            dices.getRandomInArray(cards.slice(1)),
-          ),
+          ...Array.from({ length: 10 }).map(() => {
+            const { value, nextSeed } = dices.getRandomInArray(
+              cards.slice(1),
+              nextCardsSeed,
+            )
+            nextCardsSeed = nextSeed
+            return value
+          }),
           cards[0],
         ],
       },
       {
         type: '@tiles>init',
         payload: [
-          ...Array.from({ length: 9 }).map(() =>
-            dices.getRandomInArray(tiles.slice(2)),
-          ),
+          ...Array.from({ length: 9 }).map(() => {
+            const { value, nextSeed } = dices.getRandomInArray(
+              tiles.slice(2),
+              nextTilesSeed,
+            )
+            nextTilesSeed = nextSeed
+            return value
+          }),
           tiles[1],
         ],
       },

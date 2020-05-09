@@ -5,9 +5,10 @@ import {
   cards as cardsData,
   tiles as tilesData,
 } from '@subterra/data'
-import { dices } from '@subterra/engine'
-import { Archetype } from '../../components'
-import Game from '../game'
+import seedrandom from 'seedrandom'
+import { dices, seeds } from '@subterra/engine'
+import { Archetype } from '../components'
+import Game from './game'
 import classes from './prepare.module.scss'
 
 const Prepare = () => {
@@ -16,29 +17,54 @@ const Prepare = () => {
   const [startInfos, setStartInfos] = useState(undefined)
 
   const innerOnStart = useCallback(() => {
+    const masterSeed = seeds.getNanoid(Math.random)()
+    const masterRandom = seedrandom(masterSeed)
+    const masterNanoid = seeds.getNanoid(masterRandom)
+    const dicesSeed = masterNanoid()
+    const cardsSeed = masterNanoid()
+    const tilesSeed = masterNanoid()
+
+    let nextCardsSeed = cardsSeed
+    let nextTilesSeed = tilesSeed
+
     const cards = [
-      ...Array.from({ length: 10 }).map(() =>
-        dices.getRandomInArray(cardsData.slice(1)),
-      ),
+      ...Array.from({ length: 10 }).map(() => {
+        const { value, nextSeed } = dices.getRandomInArray(
+          cardsData.slice(1),
+          nextCardsSeed,
+        )
+        nextCardsSeed = nextSeed
+        return value
+      }),
       cardsData[0],
     ]
 
     const tiles = [
-      ...Array.from({ length: 9 }).map(() =>
-        dices.getRandomInArray(tilesData.slice(2)),
-      ),
+      ...Array.from({ length: 9 }).map(() => {
+        const { value, nextSeed } = dices.getRandomInArray(
+          tilesData.slice(2),
+          nextTilesSeed,
+        )
+        nextTilesSeed = nextSeed
+        return value
+      }),
       tilesData[1],
     ]
 
     setStartInfos({
       cards,
-      dices: Array.from({ length: 5000 }).map(() => dices.roll6()),
       players: archetypes.map((archetype) => ({
         ...archetype,
         archetype,
         name: archetype.type,
       })),
       tiles,
+      seeds: {
+        master: masterSeed,
+        tiles: tilesSeed,
+        cards: cardsSeed,
+        dices: dicesSeed,
+      },
     })
   }, [archetypes])
 

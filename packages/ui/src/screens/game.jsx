@@ -15,7 +15,7 @@ import {
 } from '../components'
 import classes from './game.module.scss'
 
-const Game = ({ cards, players, tiles, dices }) => {
+const Game = ({ cards, players, tiles, dices, seeds }) => {
   const history = useHistory()
   const { gameId } = useParams()
   const [cells, setCells] = useState([])
@@ -79,12 +79,12 @@ const Game = ({ cards, players, tiles, dices }) => {
       )
 
       // init
-      engine.dispatch({ type: '@dices>init', payload: dices })
+      engine.dispatch({ type: '@seeds>init', payload: seeds })
       engine.dispatch({ type: '@cards>init', payload: cards })
       engine.dispatch({ type: '@tiles>init', payload: tiles })
       engine.dispatch({ type: '@players>init', payload: players })
     }
-  }, [cards, dices, gameId, players, serverDispatch, tiles])
+  }, [cards, dices, gameId, players, seeds, serverDispatch, tiles])
 
   useEffect(() => {
     let cells = tilesHelpers.getWrappingCells(state.grid)

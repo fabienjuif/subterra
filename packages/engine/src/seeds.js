@@ -1,9 +1,5 @@
 import seedRandom from 'seedrandom'
-import { customRandom } from 'nanoid'
-
-const ALPHABET =
-  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-const SEED_SIZE = 10
+import { getNanoid } from './utils/seeds'
 
 export const init = (store, action) => {
   if (!action.payload.master) {
@@ -14,12 +10,15 @@ export const init = (store, action) => {
   }
 
   const masterRandom = seedRandom(action.payload.master)
-  const masterNanoid = customRandom(ALPHABET, SEED_SIZE, (size) => {
-    return new Uint8Array(size).map(() => 256 * masterRandom())
-  })
+  const masterNanoid = getNanoid(masterRandom)
 
   const defaultDicesSeed = masterNanoid()
+  const defaultCardsSeed = masterNanoid()
+  const defaultTilesSeed = masterNanoid()
+
   const dices = action.payload.dices || defaultDicesSeed
+  const cards = action.payload.cards || defaultCardsSeed
+  const tiles = action.payload.tiles || defaultTilesSeed
 
   store.mutate((state) => {
     state.seeds = {
@@ -28,6 +27,10 @@ export const init = (store, action) => {
         action.payload.private === undefined ? true : action.payload.private,
       dices,
       dicesNext: dices,
+      cards,
+      cardsNext: cards,
+      tiles,
+      tilesNext: tiles,
     }
   })
 }
