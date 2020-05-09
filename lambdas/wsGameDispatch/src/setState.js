@@ -1,4 +1,4 @@
-import { omit } from 'lodash'
+import { omit, pick } from 'lodash'
 
 const mapState = (state) => ({
   ...omit(state, ['dices', state.seeds.private ? 'seeds' : undefined]),
@@ -9,7 +9,7 @@ const mapState = (state) => ({
       .map((action) => omit(action, ['domain', 'userId'])),
   },
   deckCards: { length: state.deckCards.length },
-  deckTiles: { length: state.deckTiles.length },
+  tiles: pick(state.tiles, ['remaining']),
 })
 
 export const setState = (state) => ({

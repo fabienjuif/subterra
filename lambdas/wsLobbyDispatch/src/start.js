@@ -30,7 +30,6 @@ export const start = async (wsConnection, lobby) => {
   const tilesSeed = masterNanoid()
 
   let nextCardsSeed = cardsSeed
-  let nextTilesSeed = tilesSeed
 
   const game = {
     id: gameId,
@@ -64,17 +63,10 @@ export const start = async (wsConnection, lobby) => {
       },
       {
         type: '@tiles>init',
-        payload: [
-          ...Array.from({ length: 9 }).map(() => {
-            const { value, nextSeed } = dices.getRandomInArray(
-              tiles.slice(2),
-              nextTilesSeed,
-            )
-            nextTilesSeed = nextSeed
-            return value
-          }),
-          tiles[1],
-        ],
+        payload: {
+          remaining: 20,
+          deck: tiles.map((tile) => ({ tile, remaining: 1 })),
+        },
       },
       {
         type: '@players>init',
