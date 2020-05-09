@@ -6,12 +6,21 @@ import * as cards from './cards'
 describe('cards', () => {
   describe('init', () => {
     it('should set a new deck cards', () => {
-      const store = createStore({ deckCards: [cardData[1], cardData[0]] })
+      const store = createStore({ cards: {} })
 
-      cards.init(store, { payload: [cardData[2], cardData[3], cardData[0]] })
+      cards.init(store, {
+        payload: {
+          remaining: 3,
+          deck: [cardData[2], cardData[3], cardData[0]],
+        },
+      })
 
       expect(store.getState()).toEqual({
-        deckCards: [cardData[2], cardData[3], cardData[0]],
+        cards: {
+          remaining: 3,
+          deck: [cardData[2], cardData[3], cardData[0]],
+          active: undefined,
+        },
       })
     })
   })
@@ -19,34 +28,58 @@ describe('cards', () => {
   describe('pick', () => {
     it('should set a new board card and reduce the number of cards in the deck if this number is more than 0', () => {
       const store = createStore({
-        activeCard: {},
-        deckCards: [cardData[2], cardData[3], cardData[0]],
+        cards: {
+          remaining: 3,
+          deck: [cardData[2], cardData[3], cardData[0]],
+          active: undefined,
+        },
+        seeds: {
+          cardsNext: 'se3Ed',
+        },
       })
 
       cards.pick(store, {})
 
-      expect(store.getState().activeCard).toBeDefined()
-      expect(store.getState().activeCard.type).not.toBe('end')
-      expect(store.getState().deckCards).toEqual([cardData[3], cardData[0]])
+      expect(store.getState().cards).toEqual({
+        remaining: 2,
+        deck: [
+          { ...cardData[2], remaining: cardData[2].remaining - 1 },
+          cardData[3],
+          cardData[0],
+        ],
+        active: cardData[2].card,
+      })
     })
 
     it('should not pick a card if the deck is empty but it should dispatch it', () => {
       const store = createStore({
-        activeCard: cardData[0],
-        deckCards: [],
+        cards: {
+          remaining: 1,
+          deck: [],
+          active: undefined,
+        },
+        seeds: {
+          cardsNext: 'se3Ed',
+        },
       })
       store.dispatch = jest.fn()
 
       cards.pick(store, {})
 
-      expect(store.getState().activeCard).toBeDefined()
-      expect(store.getState().activeCard.type).toBe('end')
-      expect(store.getState().deckCards).toEqual([])
+      expect(store.getState().cards).toEqual({
+        remaining: 0,
+        deck: [],
+        active: {
+          id: 'hKyJQmhBBSgFdJkZStisD',
+          type: 'end',
+        },
+      })
       expect(store.dispatch).toHaveBeenCalledTimes(1)
       expect(store.dispatch).toHaveBeenCalledWith({
         type: '@cards>end',
         payload: {
           card: {
+            id: 'hKyJQmhBBSgFdJkZStisD',
             type: 'end',
           },
         },
@@ -55,7 +88,14 @@ describe('cards', () => {
 
     it('should calls @cards>shake if the next card is a shaking card', () => {
       const store = createStore({
-        deckCards: [{ type: 'shake' }],
+        cards: {
+          remaining: 2,
+          deck: [{ card: { type: 'shake' }, remaining: 1 }],
+          active: undefined,
+        },
+        seeds: {
+          cardsNext: 'se3Ed',
+        },
       })
 
       store.dispatch = jest.fn()
@@ -75,7 +115,14 @@ describe('cards', () => {
 
     it('should roll a dice for the card landslide', () => {
       const store = createStore({
-        deckCards: [{ type: 'landslide' }],
+        cards: {
+          remaining: 2,
+          deck: [{ card: { type: 'landslide' }, remaining: 1 }],
+          active: undefined,
+        },
+        seeds: {
+          cardsNext: 'se3Ed',
+        },
       })
 
       store.dispatch = jest.fn()
@@ -90,7 +137,14 @@ describe('cards', () => {
 
     it('should calls @cards>water if the next card is a water card', () => {
       const store = createStore({
-        deckCards: [{ type: 'water' }],
+        cards: {
+          remaining: 2,
+          deck: [{ card: { type: 'water' }, remaining: 1 }],
+          active: undefined,
+        },
+        seeds: {
+          cardsNext: 'se3Ed',
+        },
       })
 
       store.dispatch = jest.fn()
@@ -106,7 +160,14 @@ describe('cards', () => {
 
     it('should calls @cards>gaz if the next card is a gaz card', () => {
       const store = createStore({
-        deckCards: [{ type: 'gaz' }],
+        cards: {
+          remaining: 2,
+          deck: [{ card: { type: 'gaz' }, remaining: 1 }],
+          active: undefined,
+        },
+        seeds: {
+          cardsNext: 'se3Ed',
+        },
       })
 
       store.dispatch = jest.fn()
@@ -126,7 +187,14 @@ describe('cards', () => {
 
     it('should calls @cards>enemy if the next card is a enemy card', () => {
       const store = createStore({
-        deckCards: [{ type: 'enemy' }],
+        cards: {
+          remaining: 2,
+          deck: [{ card: { type: 'enemy' }, remaining: 1 }],
+          active: undefined,
+        },
+        seeds: {
+          cardsNext: 'se3Ed',
+        },
       })
 
       store.dispatch = jest.fn()
@@ -143,32 +211,12 @@ describe('cards', () => {
         },
       })
     })
-
-    it('should calls @cards>end if the next card is an ending card', () => {
-      const store = createStore({
-        deckCards: [{ type: 'end' }],
-      })
-
-      store.dispatch = jest.fn()
-
-      cards.pick(store, {})
-
-      expect(store.dispatch).toHaveBeenCalledTimes(1)
-      expect(store.dispatch).toHaveBeenCalledWith({
-        type: '@cards>end',
-        payload: {
-          card: {
-            type: 'end',
-          },
-        },
-      })
-    })
   })
 
   describe('shake', () => {
     it('should roll dices for each players', () => {
       const store = createStore({
-        activeCard: { type: 'shake', damage: 1 },
+        cards: { active: { type: 'shake', damage: 1 } },
         players: [
           {
             name: 'Hatsu',
@@ -210,6 +258,9 @@ describe('cards', () => {
     describe('landslide', () => {
       it('should set the status landslide on tile that dont already have it', () => {
         const store = createStore({
+          cards: {
+            active: {},
+          },
           players: [],
           grid: [
             {
@@ -238,6 +289,9 @@ describe('cards', () => {
         cards.landslide(store, { payload: { rolled: 2 } })
 
         expect(store.getState()).toEqual({
+          cards: {
+            active: {},
+          },
           players: [],
           grid: [
             {
@@ -266,9 +320,11 @@ describe('cards', () => {
 
       it('should damage players on a new landslide tile', () => {
         const store = createStore({
-          activeCard: {
-            type: 'landslide',
-            damage: 2,
+          cards: {
+            active: {
+              type: 'landslide',
+              damage: 2,
+            },
           },
           players: [
             {
@@ -297,9 +353,11 @@ describe('cards', () => {
         cards.landslide(store, { payload: { rolled: 1 } })
 
         expect(store.getState()).toEqual({
-          activeCard: {
-            type: 'landslide',
-            damage: 2,
+          cards: {
+            active: {
+              type: 'landslide',
+              damage: 2,
+            },
           },
           players: [
             {

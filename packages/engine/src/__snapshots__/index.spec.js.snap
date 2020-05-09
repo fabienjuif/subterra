@@ -1,46 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`engine without mock should connect behaviours to actions 1`] = `
-Index: @cards>init
+Index: @seeds>init
 ===================================================================
---- @cards>init
-+++ @cards>init
-@@ -4,9 +4,33 @@
+--- @seeds>init
++++ @seeds>init
+@@ -1,7 +1,14 @@
+ {
+   "seeds": {
+-    "public": false
++    "master": "87FZ2jefz",
++    "private": true,
++    "dices": "7M8cMGMdlm",
++    "dicesNext": "7M8cMGMdlm",
++    "cards": "Y2laJE1czq",
++    "cardsNext": "Y2laJE1czq",
++    "tiles": "5hk7Zpp7wP",
++    "tilesNext": "5hk7Zpp7wP"
    },
-   "players": [],
-   "enemies": [],
-   "deckTiles": [],
--  "deckCards": [],
-+  "deckCards": [
-+    {
-+      "type": "shake",
-+      "damage": 1,
-+      "duration": 1
-+    },
-+    {
-+      "type": "gaz",
-+      "damage": 2,
-+      "duration": 1
-+    },
-+    {
-+      "type": "water",
-+      "damage": 2,
-+      "duration": 1
-+    },
-+    {
-+      "type": "enemy",
-+      "damage": 3,
-+      "duration": 1
-+    },
-+    {
-+      "type": "end"
-+    }
-+  ],
-   "activeCard": {},
-   "grid": [
-     {
-       "x": 0,
-@@ -17,7 +41,36 @@
+   "tiles": {
+     "remaining": 0,
+     "deck": []
+@@ -29,7 +36,14 @@
    "playerActions": {
      "possibilities": []
    },
@@ -48,32 +29,10 @@ Index: @cards>init
 -    "actions": []
 +    "actions": [
 +      {
-+        "type": "@cards>init",
-+        "payload": [
-+          {
-+            "type": "shake",
-+            "damage": 1,
-+            "duration": 1
-+          },
-+          {
-+            "type": "gaz",
-+            "damage": 2,
-+            "duration": 1
-+          },
-+          {
-+            "type": "water",
-+            "damage": 2,
-+            "duration": 1
-+          },
-+          {
-+            "type": "enemy",
-+            "damage": 3,
-+            "duration": 1
-+          },
-+          {
-+            "type": "end"
-+          }
-+        ]
++        "type": "@seeds>init",
++        "payload": {
++          "master": "87FZ2jefz"
++        }
 +      }
 +    ]
    }
@@ -83,14 +42,238 @@ Index: @cards>init
 `;
 
 exports[`engine without mock should connect behaviours to actions 2`] = `
+Index: @tiles>init
+===================================================================
+--- @tiles>init
++++ @tiles>init
+@@ -9,10 +9,43 @@
+     "tiles": "5hk7Zpp7wP",
+     "tilesNext": "5hk7Zpp7wP"
+   },
+   "tiles": {
+-    "remaining": 0,
+-    "deck": []
++    "remaining": 10,
++    "deck": [
++      {
++        "tile": {
++          "id": "EfssmBj1Gg0i3zAKKlSGQ",
++          "name": "alley block tile",
++          "top": true,
++          "bottom": true,
++          "type": "block"
++        },
++        "remaining": 3
++      },
++      {
++        "tile": {
++          "id": "_wbDKHo0T69uSO1qclmqj",
++          "name": "corner enemy tile",
++          "top": true,
++          "right": true,
++          "type": "enemy"
++        },
++        "remaining": 4
++      },
++      {
++        "tile": {
++          "id": "GL3wvjvDRUNq13upLe29u",
++          "name": "cross damage tile",
++          "top": true,
++          "right": true,
++          "bottom": true,
++          "left": true,
++          "type": "damage"
++        },
++        "remaining": 2
++      }
++    ]
+   },
+   "cards": {
+     "remaining": 0,
+     "deck": []
+@@ -42,8 +75,48 @@
+         "type": "@seeds>init",
+         "payload": {
+           "master": "87FZ2jefz"
+         }
++      },
++      {
++        "type": "@tiles>init",
++        "payload": {
++          "remaining": 10,
++          "deck": [
++            {
++              "tile": {
++                "id": "EfssmBj1Gg0i3zAKKlSGQ",
++                "name": "alley block tile",
++                "top": true,
++                "bottom": true,
++                "type": "block"
++              },
++              "remaining": 3
++            },
++            {
++              "tile": {
++                "id": "_wbDKHo0T69uSO1qclmqj",
++                "name": "corner enemy tile",
++                "top": true,
++                "right": true,
++                "type": "enemy"
++              },
++              "remaining": 4
++            },
++            {
++              "tile": {
++                "id": "GL3wvjvDRUNq13upLe29u",
++                "name": "cross damage tile",
++                "top": true,
++                "right": true,
++                "bottom": true,
++                "left": true,
++                "type": "damage"
++              },
++              "remaining": 2
++            }
++          ]
++        }
+       }
+     ]
+   }
+ }
+\\ No newline at end of file
+
+`;
+
+exports[`engine without mock should connect behaviours to actions 3`] = `
+Index: @cards>init
+===================================================================
+--- @cards>init
++++ @cards>init
+@@ -46,10 +46,51 @@
+       }
+     ]
+   },
+   "cards": {
+-    "remaining": 0,
+-    "deck": []
++    "remaining": 11,
++    "deck": [
++      {
++        "card": {
++          "type": "shake",
++          "damage": 1,
++          "duration": 1,
++          "name": "shake",
++          "id": "1sKrNtKjjrYkrSDdmWkYy"
++        },
++        "remaining": 2
++      },
++      {
++        "card": {
++          "type": "gaz",
++          "damage": 2,
++          "duration": 1,
++          "name": "gaz",
++          "id": "3KNfiVS61yBJ2lE26OR0N"
++        },
++        "remaining": 1
++      },
++      {
++        "card": {
++          "type": "water",
++          "damage": 2,
++          "duration": 1,
++          "name": "water",
++          "id": "jVjrsEynaxHyQ0o2bn3F5"
++        },
++        "remaining": 3
++      },
++      {
++        "card": {
++          "type": "enemy",
++          "damage": 3,
++          "duration": 1,
++          "name": "horror",
++          "id": "Xk0FDZpwRm2re3Uox5Qg4"
++        },
++        "remaining": 4
++      }
++    ]
+   },
+   "players": [],
+   "enemies": [],
+   "grid": [
+@@ -115,8 +156,56 @@
+               "remaining": 2
+             }
+           ]
+         }
++      },
++      {
++        "type": "@cards>init",
++        "payload": {
++          "remaining": 11,
++          "deck": [
++            {
++              "card": {
++                "type": "shake",
++                "damage": 1,
++                "duration": 1,
++                "name": "shake",
++                "id": "1sKrNtKjjrYkrSDdmWkYy"
++              },
++              "remaining": 2
++            },
++            {
++              "card": {
++                "type": "gaz",
++                "damage": 2,
++                "duration": 1,
++                "name": "gaz",
++                "id": "3KNfiVS61yBJ2lE26OR0N"
++              },
++              "remaining": 1
++            },
++            {
++              "card": {
++                "type": "water",
++                "damage": 2,
++                "duration": 1,
++                "name": "water",
++                "id": "jVjrsEynaxHyQ0o2bn3F5"
++              },
++              "remaining": 3
++            },
++            {
++              "card": {
++                "type": "enemy",
++                "damage": 3,
++                "duration": 1,
++                "name": "horror",
++                "id": "Xk0FDZpwRm2re3Uox5Qg4"
++              },
++              "remaining": 4
++            }
++          ]
++        }
+       }
+     ]
+   }
+ }
+\\ No newline at end of file
+
+`;
+
+exports[`engine without mock should connect behaviours to actions 4`] = `
 Index: @players>init
 ===================================================================
 --- @players>init
 +++ @players>init
-@@ -1,9 +1,141 @@
- {
-   "seeds": {
-     "public": false
+@@ -90,9 +90,141 @@
+         "remaining": 4
+       }
+     ]
    },
 -  "players": [],
 +  "players": [
@@ -227,14 +410,62 @@ Index: @players>init
 +    }
 +  ],
    "enemies": [],
-   "deckTiles": [],
-   "deckCards": [
+   "grid": [
      {
-@@ -69,8 +201,130 @@
-           {
-             "type": "end"
-           }
-         ]
+       "id": "QqyB-54vIKWS3s4ku7j5Y",
+@@ -107,9 +239,46 @@
+       "status": []
+     }
+   ],
+   "playerActions": {
+-    "possibilities": []
++    "possibilities": [
++      {
++        "type": "@players>look",
++        "payload": {
++          "playerId": "medic",
++          "x": 0,
++          "y": -1,
++          "cost": 1
++        }
++      },
++      {
++        "type": "@players>look",
++        "payload": {
++          "playerId": "medic",
++          "x": -1,
++          "y": 0,
++          "cost": 1
++        }
++      },
++      {
++        "type": "@players>look",
++        "payload": {
++          "playerId": "medic",
++          "x": 1,
++          "y": 0,
++          "cost": 1
++        }
++      },
++      {
++        "type": "@players>look",
++        "payload": {
++          "playerId": "medic",
++          "x": 0,
++          "y": 1,
++          "cost": 1
++        }
++      }
++    ]
+   },
+   "technical": {
+     "actions": [
+       {
+@@ -204,8 +373,130 @@
+               "remaining": 4
+             }
+           ]
+         }
 +      },
 +      {
 +        "type": "@players>init",
@@ -365,311 +596,73 @@ Index: @players>init
 
 `;
 
-exports[`engine without mock should connect behaviours to actions 3`] = `
-Index: @seeds>init
+exports[`engine without mock should connect behaviours to actions 5`] = `
+Index: @cards>pick
 ===================================================================
---- @seeds>init
-+++ @seeds>init
-@@ -1,7 +1,14 @@
- {
-   "seeds": {
--    "public": false
-+    "master": "87FZ2jefz",
-+    "private": true,
-+    "dices": "7M8cMGMdlm",
-+    "dicesNext": "7M8cMGMdlm",
-+    "cards": "Y2laJE1czq",
-+    "cardsNext": "Y2laJE1czq",
-+    "tiles": "5hk7Zpp7wP",
-+    "tilesNext": "5hk7Zpp7wP"
+--- @cards>pick
++++ @cards>pick
+@@ -4,9 +4,9 @@
+     "private": true,
+     "dices": "7M8cMGMdlm",
+     "dicesNext": "7M8cMGMdlm",
+     "cards": "Y2laJE1czq",
+-    "cardsNext": "Y2laJE1czq",
++    "cardsNext": "Y2laJE1czq@@0.9138369455687093",
+     "tiles": "5hk7Zpp7wP",
+     "tilesNext": "5hk7Zpp7wP"
+   },
+   "tiles": {
+@@ -46,9 +46,9 @@
+       }
+     ]
+   },
+   "cards": {
+-    "remaining": 11,
++    "remaining": 10,
+     "deck": [
+       {
+         "card": {
+           "type": "shake",
+@@ -86,11 +86,18 @@
+           "duration": 1,
+           "name": "horror",
+           "id": "Xk0FDZpwRm2re3Uox5Qg4"
+         },
+-        "remaining": 4
++        "remaining": 3
+       }
+-    ]
++    ],
++    "active": {
++      "type": "enemy",
++      "damage": 3,
++      "duration": 1,
++      "name": "horror",
++      "id": "Xk0FDZpwRm2re3Uox5Qg4"
++    }
    },
    "players": [
      {
        "type": "medic",
-@@ -323,8 +330,14 @@
+@@ -495,8 +502,23 @@
              },
              "name": "xXx-scoot-xXx"
            }
          ]
 +      },
 +      {
-+        "type": "@seeds>init",
-+        "payload": {
-+          "master": "87FZ2jefz"
-+        }
-       }
-     ]
-   }
- }
-\\ No newline at end of file
-
-`;
-
-exports[`engine without mock should connect behaviours to actions 4`] = `
-Index: @cards>pick
-===================================================================
---- @cards>pick
-+++ @cards>pick
-@@ -2,18 +2,18 @@
-   "seeds": {
-     "master": "87FZ2jefz",
-     "private": true,
-     "dices": "7M8cMGMdlm",
--    "dicesNext": "7M8cMGMdlm",
-+    "dicesNext": "7M8cMGMdlm@@0.04602145714249605",
-     "cards": "Y2laJE1czq",
-     "cardsNext": "Y2laJE1czq",
-     "tiles": "5hk7Zpp7wP",
-     "tilesNext": "5hk7Zpp7wP"
-   },
-   "players": [
-     {
-       "type": "medic",
--      "health": 3,
-+      "health": 2,
-       "strength": 6,
-       "skills": [
-         {
-           "type": "heal",
-@@ -56,9 +56,9 @@
-       "first": true
-     },
-     {
-       "type": "geologist",
--      "health": 3,
-+      "health": 2,
-       "strength": 3,
-       "skills": [
-         {
-           "type": "intuition",
-@@ -99,9 +99,9 @@
-       "actionPoints": 2
-     },
-     {
-       "type": "scoot",
--      "health": 3,
-+      "health": 2,
-       "strength": 2,
-       "skills": [
-         {
-           "type": "guide",
-@@ -145,13 +145,8 @@
-   "enemies": [],
-   "deckTiles": [],
-   "deckCards": [
-     {
--      "type": "shake",
--      "damage": 1,
--      "duration": 1
--    },
--    {
-       "type": "gaz",
-       "damage": 2,
-       "duration": 1
-     },
-@@ -168,9 +163,13 @@
-     {
-       "type": "end"
-     }
-   ],
--  "activeCard": {},
-+  "activeCard": {
-+    "type": "shake",
-+    "damage": 1,
-+    "duration": 1
-+  },
-   "grid": [
-     {
-       "x": 0,
-       "y": 0,
-@@ -336,8 +335,192 @@
-         "type": "@seeds>init",
-         "payload": {
-           "master": "87FZ2jefz"
-         }
-+      },
-+      {
 +        "type": "@cards>pick"
 +      },
 +      {
-+        "type": "@cards>shake",
++        "type": "@cards>enemy",
 +        "payload": {
 +          "card": {
-+            "type": "shake",
-+            "damage": 1,
-+            "duration": 1
++            "type": "enemy",
++            "damage": 3,
++            "duration": 1,
++            "name": "horror",
++            "id": "Xk0FDZpwRm2re3Uox5Qg4"
 +          }
-+        }
-+      },
-+      {
-+        "type": "@dices>roll",
-+        "payload": {
-+          "min": 4,
-+          "playerId": "medic",
-+          "actionOnFail": {
-+            "type": "@players>damage",
-+            "payload": {
-+              "damage": 1,
-+              "from": {
-+                "card": {
-+                  "type": "shake",
-+                  "damage": 1,
-+                  "duration": 1
-+                }
-+              },
-+              "playerId": "medic"
-+            }
-+          }
-+        }
-+      },
-+      {
-+        "type": "@dices>roll",
-+        "payload": {
-+          "min": 4,
-+          "playerId": "geologist",
-+          "actionOnFail": {
-+            "type": "@players>damage",
-+            "payload": {
-+              "damage": 1,
-+              "from": {
-+                "card": {
-+                  "type": "shake",
-+                  "damage": 1,
-+                  "duration": 1
-+                }
-+              },
-+              "playerId": "geologist"
-+            }
-+          }
-+        }
-+      },
-+      {
-+        "type": "@dices>roll",
-+        "payload": {
-+          "min": 4,
-+          "playerId": "scoot",
-+          "actionOnFail": {
-+            "type": "@players>damage",
-+            "payload": {
-+              "damage": 1,
-+              "from": {
-+                "card": {
-+                  "type": "shake",
-+                  "damage": 1,
-+                  "duration": 1
-+                }
-+              },
-+              "playerId": "scoot"
-+            }
-+          }
-+        }
-+      },
-+      {
-+        "type": "@dices>rolled",
-+        "payload": {
-+          "min": 4,
-+          "playerId": "medic",
-+          "actionOnFail": {
-+            "type": "@players>damage",
-+            "payload": {
-+              "damage": 1,
-+              "from": {
-+                "card": {
-+                  "type": "shake",
-+                  "damage": 1,
-+                  "duration": 1
-+                }
-+              },
-+              "playerId": "medic"
-+            }
-+          },
-+          "value": 2
-+        }
-+      },
-+      {
-+        "type": "@dices>rolled",
-+        "payload": {
-+          "min": 4,
-+          "playerId": "geologist",
-+          "actionOnFail": {
-+            "type": "@players>damage",
-+            "payload": {
-+              "damage": 1,
-+              "from": {
-+                "card": {
-+                  "type": "shake",
-+                  "damage": 1,
-+                  "duration": 1
-+                }
-+              },
-+              "playerId": "geologist"
-+            }
-+          },
-+          "value": 1
-+        }
-+      },
-+      {
-+        "type": "@dices>rolled",
-+        "payload": {
-+          "min": 4,
-+          "playerId": "scoot",
-+          "actionOnFail": {
-+            "type": "@players>damage",
-+            "payload": {
-+              "damage": 1,
-+              "from": {
-+                "card": {
-+                  "type": "shake",
-+                  "damage": 1,
-+                  "duration": 1
-+                }
-+              },
-+              "playerId": "scoot"
-+            }
-+          },
-+          "value": 1
-+        }
-+      },
-+      {
-+        "type": "@players>damage",
-+        "payload": {
-+          "damage": 1,
-+          "from": {
-+            "card": {
-+              "type": "shake",
-+              "damage": 1,
-+              "duration": 1
-+            }
-+          },
-+          "playerId": "medic"
-+        }
-+      },
-+      {
-+        "type": "@players>damage",
-+        "payload": {
-+          "damage": 1,
-+          "from": {
-+            "card": {
-+              "type": "shake",
-+              "damage": 1,
-+              "duration": 1
-+            }
-+          },
-+          "playerId": "geologist"
-+        }
-+      },
-+      {
-+        "type": "@players>damage",
-+        "payload": {
-+          "damage": 1,
-+          "from": {
-+            "card": {
-+              "type": "shake",
-+              "damage": 1,
-+              "duration": 1
-+            }
-+          },
-+          "playerId": "scoot"
 +        }
        }
      ]

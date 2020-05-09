@@ -1,6 +1,7 @@
+import { FinalTile } from '@subterra/data'
 import { isActionEquals, players as actions } from './actions'
 import { players as selectors } from './selectors'
-import { tiles } from './utils'
+import { tiles, random } from './utils'
 
 export const pass = (store, action) => {
   const previousState = store.getState()
@@ -60,8 +61,44 @@ export const look = (store, action) => {
     const player = selectors.findById(state, action)
     const playerTile = state.grid.find(tiles.isCellEqual(player))
 
+    // draw a tile
+    // - if there is no more tiles, draw an end
+    // - if there is less than 4 cards, roll a dice it could be the end!
+    // - in other case take a card from remaining one
+    //    and remove cards from deck when there is no more remaining
+    let nextTile
+    if (state.tiles.remaining - 1 <= 0) {
+      nextTile = { ...FinalTile }
+    } else {
+      state.tiles.remaining -= 1
+
+      const rollTile = (number) => {
+        const { value, nextSeed } = random.roll(number, state.seeds.tilesNext)
+        state.seeds.tilesNext = nextSeed
+        return value
+      }
+
+      if (
+        state.tiles.remaining < 4 &&
+        rollTile(state.tiles.remaining + 1) === 1
+      ) {
+        nextTile = { ...FinalTile }
+      } else {
+        const value = rollTile(state.tiles.deck.length)
+
+        const tileInDeck = state.tiles.deck[value - 1]
+        tileInDeck.remaining -= 1
+        if (tileInDeck.remaining <= 0) {
+          state.tiles.deck.splice(value - 1, 1)
+        }
+
+        nextTile = { ...tileInDeck.tile }
+      }
+    }
+
+    // tile is drawn, add it where the player looked at
     const tile = {
-      ...state.deckTiles.shift(),
+      ...nextTile,
       x: action.payload.x,
       y: action.payload.y,
       status: [],
@@ -73,8 +110,9 @@ export const look = (store, action) => {
 
     state.playerActions.possibilities = [actions.rotate(player, 90)]
 
-    if (tiles.canMoveFromTo(playerTile, tile))
+    if (tiles.canMoveFromTo(playerTile, tile)) {
       state.playerActions.possibilities.push(actions.drop(player))
+    }
   })
 }
 

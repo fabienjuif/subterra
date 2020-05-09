@@ -1,6 +1,5 @@
 import { createClient } from '@fabienjuif/dynamo-client'
 import { nanoid } from 'nanoid'
-import seedrandom from 'seedrandom'
 import { cards, tiles } from '@subterra/data'
 import { createEngine, random, initState } from '@subterra/engine'
 import { broadcast } from '@subterra/ws-utils'
@@ -22,16 +21,6 @@ export const start = async (wsConnection, lobby) => {
   const gameState = engine.getState()
   const state = JSON.stringify(gameState)
 
-  const masterSeed = random.getNanoid(Math.random)()
-  const masterRandom = seedrandom(masterSeed)
-  const masterNanoid = random.getNanoid(masterRandom)
-  const dicesSeed = masterNanoid()
-  const cardsSeed = masterNanoid()
-  const tilesSeed = masterNanoid()
-
-  let nextCardsSeed = cardsSeed
-  let nextTilesSeed = tilesSeed
-
   const game = {
     id: gameId,
     connectionsIds: lobby.connectionsIds,
@@ -42,39 +31,22 @@ export const start = async (wsConnection, lobby) => {
       {
         type: '@seeds>init',
         payload: {
-          master: masterSeed,
-          tiles: tilesSeed,
-          cards: cardsSeed,
-          dices: dicesSeed,
+          master: random.getNanoid(Math.random)(),
         },
       },
       {
         type: '@cards>init',
-        payload: [
-          ...Array.from({ length: 10 }).map(() => {
-            const { value, nextSeed } = random.getRandomInArray(
-              cards.slice(1),
-              nextCardsSeed,
-            )
-            nextCardsSeed = nextSeed
-            return value
-          }),
-          cards[0],
-        ],
+        payload: {
+          remaining: 15,
+          deck: cards.map((card) => ({ ...card })),
+        },
       },
       {
         type: '@tiles>init',
-        payload: [
-          ...Array.from({ length: 9 }).map(() => {
-            const { value, nextSeed } = random.getRandomInArray(
-              tiles.slice(2),
-              nextTilesSeed,
-            )
-            nextTilesSeed = nextSeed
-            return value
-          }),
-          tiles[1],
-        ],
+        payload: {
+          remaining: 20,
+          deck: tiles.map((tile) => ({ ...tile })),
+        },
       },
       {
         type: '@players>init',
