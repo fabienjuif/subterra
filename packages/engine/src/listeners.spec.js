@@ -5,6 +5,7 @@ import * as dices from './dices'
 import * as enemies from './enemies'
 import * as game from './game'
 import * as players from './players'
+import * as seeds from './seeds'
 
 jest.mock('./cards')
 jest.mock('./tiles')
@@ -13,6 +14,7 @@ jest.mock('./dices')
 jest.mock('./enemies')
 jest.mock('./game')
 jest.mock('./players')
+jest.mock('./seeds')
 core.saveAction = jest.fn()
 
 describe('listeners', () => {
@@ -273,6 +275,16 @@ describe('listeners', () => {
       engine.dispatch('@players>heal')
 
       expect(players.heal).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('@seeds>init', () => {
+    it('should call seeds.init', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@seeds>init')
+
+      expect(seeds.init).toHaveBeenCalledTimes(1)
     })
   })
 })
