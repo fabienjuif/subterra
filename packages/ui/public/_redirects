@@ -1,2 +1,3 @@
-/beta https://jw9fgoihic.execute-api.eu-west-3.amazonaws.com/beta 200
+# this is the redirect file to configure netlify
+/beta/* https://jw9fgoihic.execute-api.eu-west-3.amazonaws.com/beta/:splat 200
 * / 200
