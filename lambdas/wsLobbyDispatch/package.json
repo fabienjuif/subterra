@@ -5,7 +5,7 @@
   "private": true,
   "arn": "arn:aws:lambda:eu-west-3:427962677004:function:wsLobbyDispatch",
   "dependencies": {
-    "@fabienjuif/dynamo-client": "^1.1.0",
+    "@fabienjuif/dynamo-client": "^2.0.0",
     "@myrtille/mutate": "^0.8.2",
     "lodash": "^4.17.15",
     "nanoid": "^3.1.3"

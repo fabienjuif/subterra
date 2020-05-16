@@ -1028,10 +1028,10 @@
   resolved "https://registry.yarnpkg.com/@fabienjuif/astar/-/astar-0.1.0.tgz#dbc303efb9c343c9d71cbeab289e91badfe3cd07"
   integrity sha512-iSYH2Th1DLO4QHuBHiXZaSQjZESJz//QPnsWnoEAOBwxqbb1hxNwUZQplgZOWVeOfV3DR2TFXIrsu0YjAVPFuw==
 
-"@fabienjuif/dynamo-client@^1.0.0", "@fabienjuif/dynamo-client@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@fabienjuif/dynamo-client/-/dynamo-client-1.1.0.tgz#875233365c71156a535f80800dae6f87f4055f0f"
-  integrity sha512-ktQSnqfEeaVCu83zXS9xew9dvkLUtcLf2tHh2vZQTTP0+AVLt5m2u3izP5lB27I4CwMmYDxgpLPznIEHh9Bxrw==
+"@fabienjuif/dynamo-client@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@fabienjuif/dynamo-client/-/dynamo-client-2.0.0.tgz#23d26b8eb889dc31b113cd8a07ccc5f7082f1d64"
+  integrity sha512-yVxRP7OzGlNQBB2mKhDUc/yGsWTGlJbD5eOreLDqONToN8+QGQIM5EXfQZaDIEx7DfXo+/SHAw7Hk1osWp1dNw==
 
 "@hapi/address@2.x.x":
   version "2.1.4"

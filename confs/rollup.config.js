@@ -5,11 +5,7 @@ export default {
   input: 'src/index.js',
   // TODO: should get this from package.json
   external: [
-    'firebase-functions',
-    'firebase-admin',
     'nanoid',
-    'express',
-    'body-parser',
     'immer',
     'lodash',
     'node-fetch',
