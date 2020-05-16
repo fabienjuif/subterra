@@ -1,23 +1,8 @@
 import { createClient } from '@fabienjuif/dynamo-client'
 import { getAndUpdate } from '@subterra/user-utils'
+import { createError } from '@subterra/rest-utils'
 
 const dynamoClient = createClient()
-
-const createError = (message, code, statusCode = 400) => {
-  const error = new Error(message)
-  error.code = code
-  error.statusCode = statusCode
-
-  console.trace(error)
-
-  return {
-    statusCode,
-    body: JSON.stringify({
-      code,
-      message,
-    }),
-  }
-}
 
 export const handler = async (event) => {
   const { headers, body } = event

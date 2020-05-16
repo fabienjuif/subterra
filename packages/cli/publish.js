@@ -28,7 +28,7 @@ const asyncSpawn = (...args) =>
     })
   })
 
-module.exports = async ({ lambdaName, cleanAll }) => {
+module.exports = async ({ lambdaName, cleanAll, keepAll, dryRun }) => {
   let names = []
 
   if (lambdaName) {
@@ -45,17 +45,28 @@ module.exports = async ({ lambdaName, cleanAll }) => {
   await Promise.all(
     names.map(async (name) => {
       const cwd = path.resolve(__dirname, '../../lambdas', name)
-      const { arn } = JSON.parse(
+      const { arn, dependencies } = JSON.parse(
         await readFile(path.resolve(cwd, 'package.json')),
       )
 
-      await asyncSpawn('npm', ['install', '--no-package-lock'], { cwd })
+      if (!arn) {
+        console.log('No arn found for', name)
+        return
+      }
+
+      await asyncSpawn(
+        'npm',
+        ['install', '--no-package-lock', '--only=production'],
+        { cwd },
+      )
       await asyncSpawn(
         'yarn',
         [
           'rollup',
           '-c',
           path.resolve(__dirname, '../../confs/rollup.config.js'),
+          '--external',
+          Object.keys(dependencies).concat(['aws-sdk']).join(','),
         ],
         { cwd },
       )
@@ -65,21 +76,26 @@ module.exports = async ({ lambdaName, cleanAll }) => {
         { cwd },
       )
       try {
-        await asyncSpawn(
-          'aws',
-          [
-            'lambda',
-            'update-function-code',
-            '--zip-file',
-            'fileb://lambdas.zip',
-            '--function-name',
-            arn,
-          ],
-          { cwd },
-        )
+        if (!dryRun) {
+          await asyncSpawn(
+            'aws',
+            [
+              'lambda',
+              'update-function-code',
+              '--zip-file',
+              'fileb://lambdas.zip',
+              '--function-name',
+              arn,
+            ],
+            { cwd },
+          )
 
-        console.log(`${name} is published.`)
+          console.log(`${name} is published.`)
+        } else {
+          console.log(`${name} is not published (dry-run)`)
+        }
       } finally {
+        if (keepAll) return
         const files = ['lambdas.zip', 'index.js']
 
         if (cleanAll) {

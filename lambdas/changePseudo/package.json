@@ -10,6 +10,7 @@
     "node-fetch": "^2.6.0"
   },
   "workspaceDependencies": {
+    "@subterra/rest-utils": "^1.0.0",
     "@subterra/user-utils": "^1.0.0"
   }
 }
