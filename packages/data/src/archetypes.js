@@ -1,3 +1,5 @@
+// TODO: remove Infinity so we can add them in dynamo in the "items" table
+//      like cards and tiles
 export default [
   {
     type: 'medic',
