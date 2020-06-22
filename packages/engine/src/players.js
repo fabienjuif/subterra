@@ -293,6 +293,7 @@ export const heal = (store, action) => {
 export const excess = (store, action) => {
   const player = { id: action.payload.playerId }
 
+  // dispatch the action (or damage)
   store.dispatch(
     roll.branch(
       4,
@@ -301,4 +302,8 @@ export const excess = (store, action) => {
       action.payload.actionOnSuccess,
     ),
   )
+
+  // pass the turn
+  // FIXME: IT DOES NOT WORK because we don't have time to 'drop' a tile for example
+  store.dispatch('@players>pass')
 }
