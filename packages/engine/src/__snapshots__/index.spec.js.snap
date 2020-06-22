@@ -21,8 +21,8 @@ Index: @seeds>init
    "tiles": {
      "remaining": 0,
      "deck": []
-@@ -29,7 +36,14 @@
-   "playerActions": {
+@@ -30,7 +37,14 @@
+     "excess": false,
      "possibilities": []
    },
    "technical": {
@@ -92,7 +92,7 @@ Index: @tiles>init
    "cards": {
      "remaining": 0,
      "deck": []
-@@ -42,8 +75,48 @@
+@@ -43,8 +76,48 @@
          "type": "@seeds>init",
          "payload": {
            "master": "87FZ2jefz"
@@ -204,7 +204,7 @@ Index: @cards>init
    "players": [],
    "enemies": [],
    "grid": [
-@@ -115,8 +156,56 @@
+@@ -116,8 +157,56 @@
                "remaining": 2
              }
            ]
@@ -413,11 +413,11 @@ Index: @players>init
    "grid": [
      {
        "id": "QqyB-54vIKWS3s4ku7j5Y",
-@@ -107,9 +239,46 @@
-       "status": []
+@@ -108,9 +240,46 @@
      }
    ],
    "playerActions": {
+     "excess": false,
 -    "possibilities": []
 +    "possibilities": [
 +      {
@@ -461,7 +461,7 @@ Index: @players>init
    "technical": {
      "actions": [
        {
-@@ -204,8 +373,130 @@
+@@ -205,8 +374,130 @@
                "remaining": 4
              }
            ]
@@ -644,7 +644,7 @@ Index: @cards>pick
    "players": [
      {
        "type": "medic",
-@@ -495,8 +502,23 @@
+@@ -496,8 +503,23 @@
              },
              "name": "xXx-scoot-xXx"
            }

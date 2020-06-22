@@ -33,6 +33,12 @@ export const pass = (store, action) => {
   const turnEnd = firstPlayerIndex === nextCurrentPlayerIndex
 
   store.mutate((state) => {
+    // reset player actions
+    state.playerActions = {
+      possibilities: [],
+      excess: false,
+    }
+
     state.players[currentPlayerIndex].current = false
 
     if (turnEnd) {
@@ -293,6 +299,11 @@ export const heal = (store, action) => {
 export const excess = (store, action) => {
   const player = { id: action.payload.playerId }
 
+  // mark the player as excessing
+  store.mutate((state) => {
+    state.playerActions.excess = true
+  })
+
   // dispatch the action (or damage)
   store.dispatch(
     roll.branch(
@@ -302,8 +313,4 @@ export const excess = (store, action) => {
       action.payload.actionOnSuccess,
     ),
   )
-
-  // pass the turn
-  // FIXME: IT DOES NOT WORK because we don't have time to 'drop' a tile for example
-  store.dispatch('@players>pass')
 }

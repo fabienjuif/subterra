@@ -21,6 +21,10 @@ describe('players', () => {
       players.pass(store, {})
       expect(store.dispatch).toHaveBeenCalledTimes(0)
       expect(store.getState()).toEqual({
+        playerActions: {
+          excess: false,
+          possibilities: [],
+        },
         players: [
           {
             id: 'SoE',
@@ -58,6 +62,10 @@ describe('players', () => {
       store.dispatch = jest.fn()
       players.pass(store, {})
       expect(store.getState()).toEqual({
+        playerActions: {
+          excess: false,
+          possibilities: [],
+        },
         players: [
           {
             id: 'SoE',
@@ -102,6 +110,10 @@ describe('players', () => {
       store.dispatch = jest.fn()
       players.pass(store, {})
       expect(store.getState()).toEqual({
+        playerActions: {
+          excess: false,
+          possibilities: [],
+        },
         players: [
           {
             id: 'SoE',
@@ -1271,7 +1283,11 @@ describe('players', () => {
 
   describe('excess', () => {
     it('should roll a dice then damage or do the action', () => {
-      const store = createStore({})
+      const store = createStore({
+        playerActions: {
+          excess: false,
+        },
+      })
       store.dispatch = jest.fn()
 
       const actionToExcess = {
@@ -1284,7 +1300,11 @@ describe('players', () => {
       const action = actions.excess(actionToExcess)
       players.excess(store, action)
 
-      expect(store.getState()).toEqual({})
+      expect(store.getState()).toEqual({
+        playerActions: {
+          excess: true,
+        },
+      })
       expect(store.dispatch).toHaveBeenCalledTimes(1)
       expect(store.dispatch).toHaveBeenCalledWith(
         roll.branch(

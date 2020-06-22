@@ -33,6 +33,7 @@ export const initState = () => ({
   ],
   playerActions: {
     tile: undefined,
+    excess: false, // if true we currently excessing
     possibilities: [], // known possible actions for the current player
   },
   technical: {
