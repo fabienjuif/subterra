@@ -9,4 +9,8 @@
   &:hover {
     filter: brightness(1.1);
   }
+
+  &.excess {
+    background-color: #f26a6a;
+  }
 }
