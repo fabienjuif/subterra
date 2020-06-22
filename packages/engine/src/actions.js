@@ -54,6 +54,10 @@ export const players = {
       amount: 1,
     },
   }),
+  excess: (possibility) => ({
+    type: '@players>excess',
+    payload: possibility,
+  }),
 }
 
 export const enemies = {

@@ -805,7 +805,7 @@ describe('players', () => {
       ])
     })
 
-    it('should not find any possibilities when the player has no action points', () => {
+    it('should not find any possibilities when the player has no action points nor excess', () => {
       const store = createStore({
         players: [
           {
@@ -813,7 +813,7 @@ describe('players', () => {
             x: 0,
             y: 0,
             health: 1,
-            actionPoints: 0,
+            actionPoints: -1,
             current: true,
             skills: [],
             archetype: {
@@ -909,6 +909,7 @@ describe('players', () => {
             x: 0,
             y: 0,
             skills: [],
+            actionPoints: 2,
             health: 2,
             archetype: {
               health: 3,
@@ -973,6 +974,7 @@ describe('players', () => {
           // heal itself
           {
             id: 'SoE',
+            actionPoints: 2,
             current: true,
             x: 0,
             y: 0,
@@ -1029,6 +1031,59 @@ describe('players', () => {
       expect(store.getState().playerActions.possibilities).toEqual([
         actions.heal({ id: 'SoE' }), // can not use the skill "heal" on itself
         actions.heal({ id: 'Tripa' }, { cost: 1 }),
+      ])
+    })
+
+    it('should excess on heal but not on move', () => {
+      const store = createStore({
+        playerActions: {
+          possibilities: [],
+        },
+        players: [
+          {
+            id: 'SoE',
+            actionPoints: 1,
+            current: true,
+            x: 0,
+            y: 0,
+            skills: [],
+            health: 3,
+            archetype: {
+              health: 3,
+            },
+          },
+          // heal an ally
+          {
+            id: 'Tripa',
+            x: 0,
+            y: 0,
+            skills: [],
+            health: 3,
+            archetype: {
+              health: 5,
+            },
+          },
+        ],
+        grid: [
+          {
+            x: 0,
+            y: 0,
+            right: true,
+          },
+          // move right
+          {
+            x: 1,
+            y: 0,
+            left: true,
+          },
+        ],
+      })
+
+      players.findPossibilities(store, {})
+
+      expect(store.getState().playerActions.possibilities).toEqual([
+        actions.excess(actions.heal({ id: 'Tripa' })),
+        actions.move({ id: 'SoE' }, { x: 1, y: 0 }),
       ])
     })
   })

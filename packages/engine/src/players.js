@@ -151,7 +151,7 @@ export const findPossibilities = (store, action) => {
     const player = state.players.find(({ current }) => current)
     state.playerActions.possibilities = []
 
-    if (player.actionPoints === 0 || player.health === 0) return // TODO: We should add excess in another PR by filter all actions once they are created
+    if (player.health === 0) return
 
     const tile = state.grid.find(tiles.isCellEqual(player))
     const playersOnCell = state.players.filter(tiles.isCellEqual(player))
@@ -164,7 +164,16 @@ export const findPossibilities = (store, action) => {
         // some health is missing
         .filter(({ health, archetype }) => health < archetype.health)
         // map it to an action
-        .map((currentPlayer) => actions.heal(currentPlayer)), // TODO: We should add excess in another PR by filter all actions once they are created
+        .map((currentPlayer) =>
+          actions.heal(
+            currentPlayer,
+            // can be a skill, if not found the cost is set by actions.heal
+            // the medic can not heal himself
+            currentPlayer === player
+              ? undefined
+              : player.skills.find(({ type }) => type === 'heal'),
+          ),
+        ),
     ]
 
     // actions on cells
@@ -173,28 +182,29 @@ export const findPossibilities = (store, action) => {
     const cellsActions = cells.flatMap(findPlayerActionsOnCell)
 
     // actions based on skills
+    // - heal is done above with the common "heal" skill
     const skillsActions = []
-    // - heal
-    if (player.skills.some(({ type }) => type === 'heal')) {
-      // this is already processed in common actions, we just lower the cost
-      commonActions = commonActions.map((currAction) => {
-        if (currAction.type !== '@players>heal') return currAction
-        if (currAction.payload.playerId === player.id) return currAction
-        return {
-          ...currAction,
-          payload: {
-            ...currAction.payload,
-            cost: player.skills.find(({ type }) => type === 'heal').cost, // TODO: We should add excess in another PR by filter all actions once they are created
-          },
-        }
-      })
-    }
+    // TODO:
 
+    // possibilities + filter on cost + add excess
     state.playerActions.possibilities = [
       ...commonActions,
       ...skillsActions,
       ...cellsActions,
     ]
+      .map((possibility) => {
+        const actionPointsAfter = player.actionPoints - possibility.payload.cost
+
+        // can be done
+        if (actionPointsAfter >= 0) return possibility
+
+        // can be done with one more AP, this is an excess
+        if (actionPointsAfter === -1) return actions.excess(possibility)
+
+        // can not be done, even with on more AP
+        return undefined
+      })
+      .filter(Boolean)
   })
 }
 
