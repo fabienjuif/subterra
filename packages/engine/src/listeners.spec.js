@@ -287,4 +287,14 @@ describe('listeners', () => {
       expect(seeds.init).toHaveBeenCalledTimes(1)
     })
   })
+
+  describe('@players>excess', () => {
+    it('should call players.excess', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@players>excess')
+
+      expect(players.excess).toHaveBeenCalledTimes(1)
+    })
+  })
 })

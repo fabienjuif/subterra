@@ -1,6 +1,6 @@
 import createStore from '@myrtille/mutate'
 import * as players from './players'
-import { players as actions } from './actions'
+import { players as actions, roll } from './actions'
 
 describe('players', () => {
   describe('pass', () => {
@@ -1266,6 +1266,34 @@ describe('players', () => {
           },
         ],
       })
+    })
+  })
+
+  describe('excess', () => {
+    it('should roll a dice then damage or do the action', () => {
+      const store = createStore({})
+      store.dispatch = jest.fn()
+
+      const actionToExcess = {
+        type: '@mock_possibility',
+        payload: {
+          type: '@next_action',
+          playerId: 'uid1',
+        },
+      }
+      const action = actions.excess(actionToExcess)
+      players.excess(store, action)
+
+      expect(store.getState()).toEqual({})
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith(
+        roll.branch(
+          4,
+          { id: 'uid1' },
+          actions.damage({ id: 'uid1' }, 1, action),
+          actionToExcess,
+        ),
+      )
     })
   })
 })

@@ -1,5 +1,5 @@
 import { FinalTile } from '@subterra/data'
-import { isActionEquals, players as actions } from './actions'
+import { isActionEquals, players as actions, roll } from './actions'
 import { players as selectors } from './selectors'
 import { tiles, random } from './utils'
 
@@ -280,4 +280,17 @@ export const heal = (store, action) => {
     )
     player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
   })
+}
+
+export const excess = (store, action) => {
+  const player = { id: action.payload.playerId }
+
+  store.dispatch(
+    roll.branch(
+      4,
+      player,
+      actions.damage(player, 1, action),
+      action.payload.actionOnSuccess,
+    ),
+  )
 }

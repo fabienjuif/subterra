@@ -54,9 +54,12 @@ export const players = {
       amount: 1,
     },
   }),
-  excess: (possibility) => ({
+  excess: (actionOnSuccess) => ({
     type: '@players>excess',
-    payload: possibility,
+    payload: {
+      playerId: actionOnSuccess.payload.playerId,
+      actionOnSuccess,
+    },
   }),
 }
 
@@ -94,6 +97,15 @@ export const roll = {
     type: '@dices>roll',
     payload: {
       nextAction,
+    },
+  }),
+  branch: (min, player, actionOnFail, actionOnSuccess) => ({
+    type: '@dices>roll',
+    payload: {
+      min,
+      playerId: player.id,
+      actionOnFail,
+      actionOnSuccess,
     },
   }),
 }

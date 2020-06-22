@@ -37,6 +37,7 @@ export default [
   ['@enemies>kill', enemies.kill],
   ['@enemies>process', enemies.process],
   ['@enemies>move', enemies.move],
+  ['@players>excess', players.excess],
   // "random"
   ['@seeds>init', seeds.init],
   ['@dices>roll', dices.roll],
