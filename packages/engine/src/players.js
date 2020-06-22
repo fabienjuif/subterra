@@ -3,6 +3,16 @@ import { isActionEquals, players as actions, roll } from './actions'
 import { players as selectors } from './selectors'
 import { tiles, random } from './utils'
 
+const isActionAPossibility = (state) => (action) => {
+  return state.playerActions.possibilities.some((possibility) => {
+    if (possibility.type === '@players>excess') {
+      return isActionEquals(action)(possibility.payload.actionOnSuccess)
+    }
+
+    return isActionEquals(action)(possibility)
+  })
+}
+
 export const pass = (store, action) => {
   const previousState = store.getState()
   const firstPlayerIndex = previousState.players.findIndex(({ first }) => first)
@@ -44,7 +54,7 @@ export const pass = (store, action) => {
 
 export const move = (store, action) => {
   store.mutate((state) => {
-    if (!state.playerActions.possibilities.some(isActionEquals(action))) return
+    if (!isActionAPossibility(state)(action)) return
 
     const player = selectors.findById(state, action)
 
@@ -56,7 +66,7 @@ export const move = (store, action) => {
 
 export const look = (store, action) => {
   store.mutate((state) => {
-    if (!state.playerActions.possibilities.some(isActionEquals(action))) return
+    if (!isActionAPossibility(state)(action)) return
 
     const player = selectors.findById(state, action)
     const playerTile = state.grid.find(tiles.isCellEqual(player))
@@ -139,7 +149,7 @@ export const rotate = (store, action) => {
 
 export const drop = (store, action) => {
   store.mutate((state) => {
-    if (!state.playerActions.possibilities.some(isActionEquals(action))) return
+    if (!isActionAPossibility(state)(action)) return
 
     state.grid.push(state.playerActions.tile)
     state.playerActions.tile = undefined
@@ -268,9 +278,7 @@ export const init = (store, action) => {
 export const heal = (store, action) => {
   const prevState = store.getState()
 
-  if (!prevState.playerActions.possibilities.some(isActionEquals(action))) {
-    return
-  }
+  if (!isActionAPossibility(prevState)(action)) return
 
   store.mutate((state) => {
     const player = selectors.findById(state, action)
