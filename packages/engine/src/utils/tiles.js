@@ -1,3 +1,4 @@
+import getClosestPath from '@fabienjuif/astar'
 import { players } from '../actions'
 
 const rotate90 = (where) => {
@@ -13,6 +14,17 @@ const rotate90 = (where) => {
     default:
       return where
   }
+}
+
+export const mapGridToAstarGraph = (grid) => {
+  const graph = []
+
+  grid.forEach((cell) => {
+    if (!graph[cell.x]) graph[cell.x] = []
+    if (!graph[cell.x][cell.y]) graph[cell.x][cell.y] = [cell.x, cell.y]
+  })
+
+  return graph
 }
 
 export const nextRotation = (tile) => {
@@ -111,20 +123,41 @@ export const getSimpleDistanceFromTo = (from) => (to) => {
   return Math.abs(from.y - to.y) + Math.abs(from.x - to.x)
 }
 
-export const getDistanceFromTo = (from) => (to) => {
-  // TODO: use A*
-  //      care of tile cost
-  return getSimpleDistanceFromTo(from)(to)
-}
-
-export const findActionsOnCell = (player, playerTile) => (cell) => {
-  if (getDistanceFromTo(playerTile)(cell) > 1) return []
-
+export const findActionsOnCell = (player, playerTile, grid) => (cell) => {
   const actions = []
 
   if (isCellTile(cell)) {
-    if (canMoveFromTo(playerTile, cell.tile)) {
+    // if simple distance is greater than the max we can move, we just can't do anything
+    if (getSimpleDistanceFromTo(playerTile)(cell) > 3) return []
+
+    // in other cases we get the real distance between the cell and the player
+    const [status, path] = getClosestPath(
+      mapGridToAstarGraph(grid),
+      [cell.x, cell.y],
+      [playerTile.x, playerTile.y],
+      {
+        heuristic: (start, end) => {
+          if (
+            canMoveFromTo(
+              grid.find(isCellEqual({ x: start[0], y: start[1] })),
+              grid.find(isCellEqual({ x: end[0], y: end[1] })),
+            )
+          ) {
+            return 1
+          }
+
+          return Infinity
+        },
+      },
+    )
+
+    // no path or same cell
+    if (status !== 0 || path.length <= 1) return []
+
+    if (path.length === 2) {
       actions.push(players.move(player, cell.tile))
+    } else if (path.length <= 4) {
+      actions.push(players.run(player, cell.tile))
     }
   } else {
     // create a fake tile that is opened everywhere
@@ -138,10 +171,10 @@ export const findActionsOnCell = (player, playerTile) => (cell) => {
     }
     if (
       isCellsTouched(playerTile, cell) &&
-      canMoveFromTo(playerTile, fakeOpenTile)
+      canMoveFromTo(playerTile, fakeOpenTile) // TODO: use distance instead of canMoveFrom to, since distance check everything with A*
     ) {
       actions.push(players.look(player, fakeOpenTile))
-      //actions.push({ cell, code: 'explore', cost: 1 })
+      // FIXME: actions.push({ cell, code: 'explore', cost: 1 })
     }
   }
 

@@ -2,17 +2,6 @@ import getClosestPath from '@fabienjuif/astar'
 import { tiles } from './utils'
 import { enemies as actions } from './actions'
 
-const mapGridToAstarGraph = (grid) => {
-  const graph = []
-
-  grid.forEach((cell) => {
-    if (!graph[cell.x]) graph[cell.x] = []
-    if (!graph[cell.x][cell.y]) graph[cell.x][cell.y] = [cell.x, cell.y]
-  })
-
-  return graph
-}
-
 export const process = (store, action) => {
   const previousState = store.getState()
   const { grid, players } = previousState
@@ -29,7 +18,7 @@ export const process = (store, action) => {
     )
 
   // map grid to a star graph
-  const graph = mapGridToAstarGraph(grid)
+  const graph = tiles.mapGridToAstarGraph(grid)
 
   // for each enemy get the closest player
   // - get all path from enemy to each player

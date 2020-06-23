@@ -194,7 +194,11 @@ export const findPossibilities = (store, action) => {
 
     // actions on cells
     const cells = tiles.getWrappingCells(state.grid)
-    const findPlayerActionsOnCell = tiles.findActionsOnCell(player, tile)
+    const findPlayerActionsOnCell = tiles.findActionsOnCell(
+      player,
+      tile,
+      state.grid,
+    )
     const cellsActions = cells.flatMap(findPlayerActionsOnCell)
 
     // actions based on skills
