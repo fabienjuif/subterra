@@ -33,11 +33,29 @@ describe('listeners', () => {
 
   describe('@players>damage', () => {
     it('should call player.damage', () => {
-      const engine = createEngine({})
+      const engine = createEngine({
+        playerActions: {
+          excess: false,
+        },
+      })
 
       engine.dispatch('@players>damage')
 
       expect(players.damage).toHaveBeenCalledTimes(1)
+      expect(players.pass).toHaveBeenCalledTimes(0)
+    })
+
+    it('should call player.pass on excess', () => {
+      const engine = createEngine({
+        playerActions: {
+          excess: true,
+        },
+      })
+
+      engine.dispatch('@players>damage')
+
+      expect(players.damage).toHaveBeenCalledTimes(1)
+      expect(players.pass).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -54,12 +72,33 @@ describe('listeners', () => {
 
   describe('@players>move', () => {
     it('should call players.move and players.findPossibilities', () => {
-      const engine = createEngine({})
+      const engine = createEngine({
+        playerActions: {
+          excess: false,
+        },
+      })
 
       engine.dispatch('@players>move')
 
       expect(players.move).toHaveBeenCalledTimes(1)
       expect(players.findPossibilities).toHaveBeenCalledTimes(1)
+      expect(players.pass).toHaveBeenCalledTimes(0)
+    })
+
+    it('should call player.pass on excess', () => {
+      const engine = createEngine({
+        playerActions: {
+          excess: true,
+        },
+      })
+
+      engine.dispatch('@players>move')
+
+      expect(players.move).toHaveBeenCalledTimes(1)
+      expect(players.pass).toHaveBeenCalledTimes(1)
+      // once after move
+      // once after pass
+      expect(players.findPossibilities).toHaveBeenCalledTimes(2)
     })
   })
 
@@ -85,12 +124,31 @@ describe('listeners', () => {
 
   describe('@players>drop', () => {
     it('should call players.drop and players.findPossibilities', () => {
-      const engine = createEngine({})
+      const engine = createEngine({
+        playerActions: {
+          excess: false,
+        },
+      })
 
       engine.dispatch('@players>drop')
 
       expect(players.drop).toHaveBeenCalledTimes(1)
       expect(players.findPossibilities).toHaveBeenCalledTimes(1)
+      expect(players.pass).toHaveBeenCalledTimes(0)
+    })
+
+    it('should call player.pass on excess', () => {
+      const engine = createEngine({
+        playerActions: {
+          excess: true,
+        },
+      })
+      engine.dispatch('@players>drop')
+
+      expect(players.drop).toHaveBeenCalledTimes(1)
+      expect(players.pass).toHaveBeenCalledTimes(1)
+      // once for drop, once for pas
+      expect(players.findPossibilities).toHaveBeenCalledTimes(2)
     })
   })
 
@@ -270,11 +328,29 @@ describe('listeners', () => {
 
   describe('@players>heal', () => {
     it('should call players.heal', () => {
-      const engine = createEngine({})
+      const engine = createEngine({
+        playerActions: {
+          excess: false,
+        },
+      })
 
       engine.dispatch('@players>heal')
 
       expect(players.heal).toHaveBeenCalledTimes(1)
+      expect(players.pass).toHaveBeenCalledTimes(0)
+    })
+
+    it('should call players.pass on excess', () => {
+      const engine = createEngine({
+        playerActions: {
+          excess: true,
+        },
+      })
+
+      engine.dispatch('@players>heal')
+
+      expect(players.heal).toHaveBeenCalledTimes(1)
+      expect(players.pass).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -285,6 +361,16 @@ describe('listeners', () => {
       engine.dispatch('@seeds>init')
 
       expect(seeds.init).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('@players>excess', () => {
+    it('should call players.excess', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@players>excess')
+
+      expect(players.excess).toHaveBeenCalledTimes(1)
     })
   })
 })

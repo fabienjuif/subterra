@@ -103,9 +103,14 @@ const Game = ({ cards, players, tiles, dices, seeds }) => {
 
     cells = cells.map((cell) => ({
       ...cell,
-      actions: state.playerActions.possibilities.filter((action) =>
-        tilesHelpers.isCellEqual(action.payload)(cell),
-      ),
+      actions: state.playerActions.possibilities.filter((action) => {
+        const currCellEqual = tilesHelpers.isCellEqual(cell)
+
+        if (action.type === '@players>excess') {
+          return currCellEqual(action.payload.actionOnSuccess.payload)
+        }
+        return currCellEqual(action.payload)
+      }),
     }))
 
     setCells(cells)

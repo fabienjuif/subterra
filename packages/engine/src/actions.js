@@ -54,6 +54,13 @@ export const players = {
       amount: 1,
     },
   }),
+  excess: (actionOnSuccess) => ({
+    type: '@players>excess',
+    payload: {
+      playerId: actionOnSuccess.payload.playerId,
+      actionOnSuccess,
+    },
+  }),
 }
 
 export const enemies = {
@@ -90,6 +97,15 @@ export const roll = {
     type: '@dices>roll',
     payload: {
       nextAction,
+    },
+  }),
+  branch: (min, player, actionOnFail, actionOnSuccess) => ({
+    type: '@dices>roll',
+    payload: {
+      min,
+      playerId: player.id,
+      actionOnFail,
+      actionOnSuccess,
     },
   }),
 }

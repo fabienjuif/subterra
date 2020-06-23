@@ -6,6 +6,12 @@ import * as game from './game'
 import * as players from './players'
 import * as seeds from './seeds'
 
+const checkAndForcePass = (store) => {
+  if (!store.getState().playerActions.excess) return
+
+  store.dispatch('@players>pass')
+}
+
 export default [
   // initializations
   ['@players>init', players.init],
@@ -37,8 +43,15 @@ export default [
   ['@enemies>kill', enemies.kill],
   ['@enemies>process', enemies.process],
   ['@enemies>move', enemies.move],
+  ['@players>excess', players.excess],
   // "random"
   ['@seeds>init', seeds.init],
   ['@dices>roll', dices.roll],
   ['@dices>rolled', dices.checkAndDispatch],
+  // actions that can trigger a pass
+  // these actions are last in this list so we make sure we letting them finish first
+  ['@players>damage', checkAndForcePass],
+  ['@players>move', checkAndForcePass],
+  ['@players>drop', checkAndForcePass],
+  ['@players>heal', checkAndForcePass],
 ]

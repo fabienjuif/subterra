@@ -1,6 +1,6 @@
 import createStore from '@myrtille/mutate'
 import * as players from './players'
-import { players as actions } from './actions'
+import { players as actions, roll } from './actions'
 
 describe('players', () => {
   describe('pass', () => {
@@ -21,6 +21,10 @@ describe('players', () => {
       players.pass(store, {})
       expect(store.dispatch).toHaveBeenCalledTimes(0)
       expect(store.getState()).toEqual({
+        playerActions: {
+          excess: false,
+          possibilities: [],
+        },
         players: [
           {
             id: 'SoE',
@@ -58,6 +62,10 @@ describe('players', () => {
       store.dispatch = jest.fn()
       players.pass(store, {})
       expect(store.getState()).toEqual({
+        playerActions: {
+          excess: false,
+          possibilities: [],
+        },
         players: [
           {
             id: 'SoE',
@@ -102,6 +110,10 @@ describe('players', () => {
       store.dispatch = jest.fn()
       players.pass(store, {})
       expect(store.getState()).toEqual({
+        playerActions: {
+          excess: false,
+          possibilities: [],
+        },
         players: [
           {
             id: 'SoE',
@@ -805,7 +817,7 @@ describe('players', () => {
       ])
     })
 
-    it('should not find any possibilities when the player has no action points', () => {
+    it('should not find any possibilities when the player has no action points nor excess', () => {
       const store = createStore({
         players: [
           {
@@ -813,7 +825,7 @@ describe('players', () => {
             x: 0,
             y: 0,
             health: 1,
-            actionPoints: 0,
+            actionPoints: -1,
             current: true,
             skills: [],
             archetype: {
@@ -909,6 +921,7 @@ describe('players', () => {
             x: 0,
             y: 0,
             skills: [],
+            actionPoints: 2,
             health: 2,
             archetype: {
               health: 3,
@@ -973,6 +986,7 @@ describe('players', () => {
           // heal itself
           {
             id: 'SoE',
+            actionPoints: 2,
             current: true,
             x: 0,
             y: 0,
@@ -1029,6 +1043,59 @@ describe('players', () => {
       expect(store.getState().playerActions.possibilities).toEqual([
         actions.heal({ id: 'SoE' }), // can not use the skill "heal" on itself
         actions.heal({ id: 'Tripa' }, { cost: 1 }),
+      ])
+    })
+
+    it('should excess on heal but not on move', () => {
+      const store = createStore({
+        playerActions: {
+          possibilities: [],
+        },
+        players: [
+          {
+            id: 'SoE',
+            actionPoints: 1,
+            current: true,
+            x: 0,
+            y: 0,
+            skills: [],
+            health: 3,
+            archetype: {
+              health: 3,
+            },
+          },
+          // heal an ally
+          {
+            id: 'Tripa',
+            x: 0,
+            y: 0,
+            skills: [],
+            health: 3,
+            archetype: {
+              health: 5,
+            },
+          },
+        ],
+        grid: [
+          {
+            x: 0,
+            y: 0,
+            right: true,
+          },
+          // move right
+          {
+            x: 1,
+            y: 0,
+            left: true,
+          },
+        ],
+      })
+
+      players.findPossibilities(store, {})
+
+      expect(store.getState().playerActions.possibilities).toEqual([
+        actions.excess(actions.heal({ id: 'Tripa' })),
+        actions.move({ id: 'SoE' }, { x: 1, y: 0 }),
       ])
     })
   })
@@ -1211,6 +1278,42 @@ describe('players', () => {
           },
         ],
       })
+    })
+  })
+
+  describe('excess', () => {
+    it('should roll a dice then damage or do the action', () => {
+      const store = createStore({
+        playerActions: {
+          excess: false,
+        },
+      })
+      store.dispatch = jest.fn()
+
+      const actionToExcess = {
+        type: '@mock_possibility',
+        payload: {
+          type: '@next_action',
+          playerId: 'uid1',
+        },
+      }
+      const action = actions.excess(actionToExcess)
+      players.excess(store, action)
+
+      expect(store.getState()).toEqual({
+        playerActions: {
+          excess: true,
+        },
+      })
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith(
+        roll.branch(
+          4,
+          { id: 'uid1' },
+          actions.damage({ id: 'uid1' }, 1, action),
+          actionToExcess,
+        ),
+      )
     })
   })
 })
