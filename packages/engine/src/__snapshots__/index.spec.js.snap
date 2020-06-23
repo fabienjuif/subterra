@@ -413,7 +413,7 @@ Index: @players>init
    "grid": [
      {
        "id": "QqyB-54vIKWS3s4ku7j5Y",
-@@ -108,9 +240,55 @@
+@@ -108,9 +240,46 @@
      }
    ],
    "playerActions": {
@@ -455,22 +455,13 @@ Index: @players>init
 +          "y": 1,
 +          "cost": 1
 +        }
-+      },
-+      {
-+        "type": "@players>run",
-+        "payload": {
-+          "playerId": "medic",
-+          "x": 0,
-+          "y": 0,
-+          "cost": 1
-+        }
 +      }
 +    ]
    },
    "technical": {
      "actions": [
        {
-@@ -205,8 +383,130 @@
+@@ -205,8 +374,130 @@
                "remaining": 4
              }
            ]
@@ -653,7 +644,7 @@ Index: @cards>pick
    "players": [
      {
        "type": "medic",
-@@ -505,8 +512,23 @@
+@@ -496,8 +503,23 @@
              },
              "name": "xXx-scoot-xXx"
            }
