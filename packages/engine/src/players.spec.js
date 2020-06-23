@@ -1098,6 +1098,42 @@ describe('players', () => {
         actions.move({ id: 'SoE' }, { x: 1, y: 0 }),
       ])
     })
+
+    it('should find run possibilities', () => {
+      const store = createStore({
+        players: [
+          {
+            id: 'Hatsu',
+            x: 0,
+            y: 0,
+            health: 1,
+            actionPoints: 1,
+            current: true,
+            skills: [],
+            archetype: {
+              health: 1,
+            },
+          },
+        ],
+        grid: [
+          { x: 0, y: 0, right: true },
+          { x: 1, y: 0, left: true, right: true },
+          { x: 2, y: 0, left: true, right: true },
+          { x: 3, y: 0, left: true },
+        ],
+        playerActions: {
+          possibilities: [],
+        },
+      })
+
+      players.findPossibilities(store, {})
+
+      expect(store.getState().playerActions.possibilities).toEqual([
+        actions.move({ id: 'Hatsu' }, { x: 1, y: 0 }),
+        actions.run({ id: 'Hatsu' }, { x: 2, y: 0 }),
+        actions.run({ id: 'Hatsu' }, { x: 3, y: 0 }),
+      ])
+    })
   })
 
   describe('heal', () => {
