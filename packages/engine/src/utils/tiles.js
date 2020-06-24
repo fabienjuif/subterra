@@ -155,7 +155,7 @@ export const findActionsOnCell = (player, tile, grid) => (cell) => {
     }
     if (isCellsTouched(tile, cell) && canMoveFromTo(tile, fakeOpenTile)) {
       actions.push(players.look(player, fakeOpenTile))
-      // FIXME: actions.push({ cell, code: 'explore', cost: 1 })
+      actions.push(players.explore(player, fakeOpenTile))
     }
   }
 

@@ -102,6 +102,16 @@ describe('listeners', () => {
     })
   })
 
+  describe('@players>explore', () => {
+    it('should call players.explore', () => {
+      const engine = createEngine({})
+
+      engine.dispatch('@players>explore')
+
+      expect(players.explore).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('@players>run', () => {
     it('should call players.move and players.findPossibilities', () => {
       const engine = createEngine({

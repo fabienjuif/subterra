@@ -23,6 +23,7 @@ describe('players', () => {
       expect(store.getState()).toEqual({
         playerActions: {
           excess: false,
+          exploring: false,
           possibilities: [],
         },
         players: [
@@ -64,6 +65,7 @@ describe('players', () => {
       expect(store.getState()).toEqual({
         playerActions: {
           excess: false,
+          exploring: false,
           possibilities: [],
         },
         players: [
@@ -112,6 +114,7 @@ describe('players', () => {
       expect(store.getState()).toEqual({
         playerActions: {
           excess: false,
+          exploring: false,
           possibilities: [],
         },
         players: [
@@ -162,7 +165,7 @@ describe('players', () => {
     it('should not move player when the action is not a known possibilities', () => {
       const action = {
         type: '@players>move',
-        payload: { playerid: 'Hatsu', cost: 1, x: 1, y: -1 },
+        payload: { playerId: 'Hatsu', cost: 1, x: 1, y: -1 },
       }
       const store = createStore({
         players: [
@@ -178,6 +181,27 @@ describe('players', () => {
         { id: 'Hatsu', actionPoints: 1, x: 0, y: 0 },
         { id: 'SoE', actionPoints: 2, x: 0, y: 0 },
       ])
+    })
+
+    it('should move player even if this is not a possibility when we are exploring', () => {
+      const store = createStore({
+        players: [
+          { id: 'Hatsu', actionPoints: 1, x: 0, y: 0 },
+          { id: 'SoE', actionPoints: 2, x: 0, y: 0 },
+        ],
+        playerActions: { possibilities: [], exploring: true },
+      })
+
+      players.move(store, {
+        type: '@players>move',
+        payload: { playerId: 'Hatsu', cost: 0, x: 1, y: -1 },
+      })
+
+      expect(store.getState().players).toEqual([
+        { id: 'Hatsu', actionPoints: 1, x: 1, y: -1 },
+        { id: 'SoE', actionPoints: 2, x: 0, y: 0 },
+      ])
+      expect(store.getState().playerActions.exploring).toEqual(false)
     })
   })
 
@@ -406,6 +430,35 @@ describe('players', () => {
     })
   })
 
+  describe('explore', () => {
+    it('should mark exploring state and dispatch look event', () => {
+      const store = createStore({
+        playerActions: {
+          exploring: false,
+        },
+      })
+      store.dispatch = jest.fn()
+
+      players.explore(store, actions.explore({ id: 'Hatsu' }, { x: 1, y: 0 }))
+
+      expect(store.getState()).toEqual({
+        playerActions: {
+          exploring: true,
+        },
+      })
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@players>look',
+        payload: {
+          playerId: 'Hatsu',
+          x: 1,
+          y: 0,
+          cost: 1,
+        },
+      })
+    })
+  })
+
   describe('rotate', () => {
     it('should rotate the playerAction.tile to the expected rotation', () => {
       const action = actions.rotate({ id: 'Hatsu' }, 90)
@@ -524,6 +577,47 @@ describe('players', () => {
         playerActions: {
           tile: { x: 1, y: 0 },
           possibilities: [],
+        },
+      })
+    })
+
+    it('should trigger move action if we are exploring', () => {
+      const action = actions.drop({ id: 'Hatsu' })
+      const store = createStore({
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        grid: [{ x: 0, y: 0 }],
+        playerActions: {
+          tile: { x: 1, y: 0 },
+          possibilities: [action],
+          exploring: true, // exploring
+        },
+      })
+      store.dispatch = jest.fn()
+
+      players.drop(store, action)
+
+      expect(store.getState()).toEqual({
+        players: [{ id: 'Hatsu', actionPoints: 1, x: 0, y: 0 }],
+        grid: [
+          { x: 0, y: 0 },
+          { x: 1, y: 0 },
+        ],
+        playerActions: {
+          tile: undefined,
+          possibilities: [actions.drop({ id: 'Hatsu' })],
+          exploring: true,
+        },
+      })
+      expect(store.dispatch).toHaveBeenCalledTimes(1)
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: '@players>move',
+        payload: {
+          playerId: 'Hatsu',
+          // moving to the droped tile
+          x: 1,
+          y: 0,
+          // cost 0 since we pay the cost with "look" action
+          cost: 0,
         },
       })
     })

@@ -1,3 +1,13 @@
+const playerMove = (player, tile) => ({
+  type: '@players>move',
+  payload: {
+    playerId: player.id,
+    x: tile.x,
+    y: tile.y,
+    cost: 1, // TODO: Get this from the tile and block any action with a cost > pa
+  },
+})
+
 export const players = {
   damage: (player, damage, from) => ({
     type: '@players>damage',
@@ -13,13 +23,12 @@ export const players = {
       playerId: player.id,
     },
   }),
-  move: (player, tile) => ({
-    type: '@players>move',
+  move: playerMove,
+  exploreMove: (player, tile) => ({
+    ...playerMove(player, tile),
     payload: {
-      playerId: player.id,
-      x: tile.x,
-      y: tile.y,
-      cost: 1, // TODO: Get this from the tile and block any action with a cost > pa
+      ...playerMove(player, tile).payload,
+      cost: 0,
     },
   }),
   run: (player, tile) => ({
@@ -33,6 +42,15 @@ export const players = {
   }),
   look: (player, tile) => ({
     type: '@players>look',
+    payload: {
+      playerId: player.id,
+      x: tile.x,
+      y: tile.y,
+      cost: 1,
+    },
+  }),
+  explore: (player, tile) => ({
+    type: '@players>explore',
     payload: {
       playerId: player.id,
       x: tile.x,
