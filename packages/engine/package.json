@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "type": "module",
   "dependencies": {
-    "@fabienjuif/astar": "^0.1.0",
+    "@fabienjuif/astar": "^0.2.0",
     "@myrtille/mutate": "^0.8.1",
     "@subterra/data": "^0.1.0",
     "immer": "^6.0.2",

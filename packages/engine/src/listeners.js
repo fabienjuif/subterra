@@ -44,6 +44,8 @@ export default [
   ['@enemies>process', enemies.process],
   ['@enemies>move', enemies.move],
   ['@players>excess', players.excess],
+  ['@players>run', players.move],
+  ['@players>run', players.findPossibilities],
   // "random"
   ['@seeds>init', seeds.init],
   ['@dices>roll', dices.roll],
@@ -54,4 +56,5 @@ export default [
   ['@players>move', checkAndForcePass],
   ['@players>drop', checkAndForcePass],
   ['@players>heal', checkAndForcePass],
+  ['@players>run', checkAndForcePass],
 ]

@@ -2,17 +2,6 @@ import getClosestPath from '@fabienjuif/astar'
 import { tiles } from './utils'
 import { enemies as actions } from './actions'
 
-const mapGridToAstarGraph = (grid) => {
-  const graph = []
-
-  grid.forEach((cell) => {
-    if (!graph[cell.x]) graph[cell.x] = []
-    if (!graph[cell.x][cell.y]) graph[cell.x][cell.y] = [cell.x, cell.y]
-  })
-
-  return graph
-}
-
 export const process = (store, action) => {
   const previousState = store.getState()
   const { grid, players } = previousState
@@ -28,9 +17,6 @@ export const process = (store, action) => {
       }).map(() => tile),
     )
 
-  // map grid to a star graph
-  const graph = mapGridToAstarGraph(grid)
-
   // for each enemy get the closest player
   // - get all path from enemy to each player
   // - get the shortest path
@@ -42,25 +28,22 @@ export const process = (store, action) => {
     let closestPlayer
 
     players.forEach((player) => {
-      const [status, path] = getClosestPath(
-        graph,
-        [enemy.x, enemy.y],
-        [player.x, player.y],
-        {
-          heuristic: (start, end) => {
-            if (
-              tiles.canMoveFromTo(
-                grid.find(tiles.isCellEqual({ x: start[0], y: start[1] })),
-                grid.find(tiles.isCellEqual({ x: end[0], y: end[1] })),
-              )
+      const { status, path } = getClosestPath(grid, enemy, player, {
+        heuristic: (start, end) => {
+          if (
+            tiles.canMoveFromTo(
+              grid.find(tiles.isCellEqual(start)),
+              grid.find(tiles.isCellEqual(end)),
             )
-              return 1
-            return Infinity
-          },
-        },
-      )
+          ) {
+            return 1
+          }
 
-      if (status === 0) {
+          return Infinity
+        },
+      })
+
+      if (status === 'success') {
         if (!shortestPath || path.length === shortestPath.length) {
           if (!closestPlayer || closestPlayer.strength > player.strength) {
             shortestPath = path
@@ -74,13 +57,7 @@ export const process = (store, action) => {
     })
 
     if (shortestPath && shortestPath.length > 1 && shortestPath.length < 7) {
-      store.dispatch(
-        actions.move(
-          enemy,
-          shortestPath.map(([x, y]) => ({ x, y })),
-          closestPlayer,
-        ),
-      )
+      store.dispatch(actions.move(enemy, shortestPath, closestPlayer))
     } else {
       store.dispatch(actions.kill(enemy))
     }

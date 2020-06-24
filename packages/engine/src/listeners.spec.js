@@ -102,6 +102,38 @@ describe('listeners', () => {
     })
   })
 
+  describe('@players>run', () => {
+    it('should call players.move and players.findPossibilities', () => {
+      const engine = createEngine({
+        playerActions: {
+          excess: false,
+        },
+      })
+
+      engine.dispatch('@players>run')
+
+      expect(players.move).toHaveBeenCalledTimes(1)
+      expect(players.findPossibilities).toHaveBeenCalledTimes(1)
+      expect(players.pass).toHaveBeenCalledTimes(0)
+    })
+
+    it('should call player.pass on excess', () => {
+      const engine = createEngine({
+        playerActions: {
+          excess: true,
+        },
+      })
+
+      engine.dispatch('@players>run')
+
+      expect(players.move).toHaveBeenCalledTimes(1)
+      expect(players.pass).toHaveBeenCalledTimes(1)
+      // once after move
+      // once after pass
+      expect(players.findPossibilities).toHaveBeenCalledTimes(2)
+    })
+  })
+
   describe('@players>look', () => {
     it('should call players.look', () => {
       const engine = createEngine({})

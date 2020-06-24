@@ -1023,10 +1023,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/memoize/-/memoize-0.7.4.tgz#19bf0f5af19149111c40d98bb0cf82119f5d9eeb"
   integrity sha512-Ja/Vfqe3HpuzRsG1oBtWTHk2PGZ7GR+2Vz5iYGelAw8dx32K0y7PjVuxK6z1nMpZOqAFsRUPCkK1YjJ56qJlgw==
 
-"@fabienjuif/astar@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@fabienjuif/astar/-/astar-0.1.0.tgz#dbc303efb9c343c9d71cbeab289e91badfe3cd07"
-  integrity sha512-iSYH2Th1DLO4QHuBHiXZaSQjZESJz//QPnsWnoEAOBwxqbb1hxNwUZQplgZOWVeOfV3DR2TFXIrsu0YjAVPFuw==
+"@fabienjuif/astar@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@fabienjuif/astar/-/astar-0.2.0.tgz#8ce324c40cbf14a9154bda85d5ced9bc008812bd"
+  integrity sha512-viw98X05A1LA/6b1Kl2jrc/8/E5sPX3/05N0al+0xK39Gs7vNmLD60mZMCdGiqBtgydj2gwrHdm6G869xkSVWA==
 
 "@fabienjuif/dynamo-client@^2.0.0":
   version "2.0.0"

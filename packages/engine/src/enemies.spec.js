@@ -43,8 +43,8 @@ describe('enemies', () => {
 
       expect(store.getState()).toEqual({
         grid: [
-          createCell(0, 0),
-          createCell(0, -1),
+          expect.objectContaining(createCell(0, 0)),
+          expect.objectContaining(createCell(0, -1)),
           {
             x: 1,
             y: 0,
@@ -173,9 +173,9 @@ describe('enemies', () => {
           // enemy, path, player
           { x: 2, y: 0 },
           [
-            { x: 2, y: 0 },
-            { x: 1, y: 0 },
-            { x: 0, y: 0 },
+            expect.objectContaining({ x: 2, y: 0 }),
+            expect.objectContaining({ x: 1, y: 0 }),
+            expect.objectContaining({ x: 0, y: 0 }),
           ], //
           { id: 'Tripa' },
         ),
@@ -223,8 +223,8 @@ describe('enemies', () => {
         actions.move(
           { x: 2, y: 0 },
           [
-            { x: 2, y: 0 },
-            { x: 2, y: 1 },
+            expect.objectContaining({ x: 2, y: 0 }),
+            expect.objectContaining({ x: 2, y: 1 }),
           ],
           { id: 'SoE' },
         ),
@@ -277,8 +277,8 @@ describe('enemies', () => {
         actions.move(
           { x: 2, y: 0 },
           [
-            { x: 2, y: 0 },
-            { x: 1, y: 0 },
+            expect.objectContaining({ x: 2, y: 0 }),
+            expect.objectContaining({ x: 1, y: 0 }),
           ],
           { id: 'Tripa' },
         ),
@@ -290,8 +290,8 @@ describe('enemies', () => {
         actions.move(
           { x: 2, y: 0 },
           [
-            { x: 2, y: 0 },
-            { x: 2, y: 1 },
+            expect.objectContaining({ x: 2, y: 0 }),
+            expect.objectContaining({ x: 2, y: 1 }),
           ],
           { id: 'SoE' },
         ),
@@ -338,26 +338,26 @@ describe('enemies', () => {
         actions.move(
           { x: 1, y: 0 },
           [
-            { x: 1, y: 0 },
-            { x: 0, y: 0 },
+            expect.objectContaining({ x: 1, y: 0 }),
+            expect.objectContaining({ x: 0, y: 0 }),
           ],
           { id: 'Tripa' },
         ),
         actions.move(
           { x: 2, y: 0 },
           [
-            { x: 2, y: 0 },
-            { x: 1, y: 0 },
-            { x: 0, y: 0 },
+            expect.objectContaining({ x: 2, y: 0 }),
+            expect.objectContaining({ x: 1, y: 0 }),
+            expect.objectContaining({ x: 0, y: 0 }),
           ],
           { id: 'Tripa' },
         ),
         actions.move(
           { x: 2, y: 0 },
           [
-            { x: 2, y: 0 },
-            { x: 1, y: 0 },
-            { x: 0, y: 0 },
+            expect.objectContaining({ x: 2, y: 0 }),
+            expect.objectContaining({ x: 1, y: 0 }),
+            expect.objectContaining({ x: 0, y: 0 }),
           ],
           { id: 'Tripa' },
         ),
@@ -438,11 +438,11 @@ describe('enemies', () => {
         actions.move(
           { x: 2, y: 0 },
           [
-            { x: 2, y: 0 },
-            { x: 2, y: 1 },
-            { x: 1, y: 1 },
-            { x: 1, y: 0 },
-            { x: 0, y: 0 },
+            expect.objectContaining({ x: 2, y: 0 }),
+            expect.objectContaining({ x: 2, y: 1 }),
+            expect.objectContaining({ x: 1, y: 1 }),
+            expect.objectContaining({ x: 1, y: 0 }),
+            expect.objectContaining({ x: 0, y: 0 }),
           ],
           { id: 'Tripa' },
         ),
