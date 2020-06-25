@@ -37,6 +37,7 @@ export const pass = (store, action) => {
     state.playerActions = {
       possibilities: [],
       excess: false,
+      exploring: false,
     }
 
     state.players[currentPlayerIndex].current = false
@@ -60,13 +61,20 @@ export const pass = (store, action) => {
 
 export const move = (store, action) => {
   store.mutate((state) => {
-    if (!isActionAPossibility(state)(action)) return
+    if (
+      !state.playerActions.exploring &&
+      !isActionAPossibility(state)(action)
+    ) {
+      return
+    }
 
     const player = selectors.findById(state, action)
 
     player.actionPoints = Math.max(0, player.actionPoints - action.payload.cost)
     player.x = action.payload.x
     player.y = action.payload.y
+
+    state.playerActions.exploring = false
   })
 }
 
@@ -132,6 +140,16 @@ export const look = (store, action) => {
   })
 }
 
+export const explore = (store, action) => {
+  // like look but exploring
+  // this boolean is used to trigger the move action after the "drop" is done
+  store.mutate((state) => {
+    state.playerActions.exploring = true
+  })
+
+  store.dispatch(actions.look({ id: action.payload.playerId }, action.payload))
+}
+
 export const rotate = (store, action) => {
   store.mutate((state) => {
     if (!state.playerActions.possibilities.some(isActionEquals(action))) return
@@ -154,12 +172,24 @@ export const rotate = (store, action) => {
 }
 
 export const drop = (store, action) => {
+  const prevState = store.getState()
+
   store.mutate((state) => {
     if (!isActionAPossibility(state)(action)) return
 
     state.grid.push(state.playerActions.tile)
     state.playerActions.tile = undefined
   })
+
+  // if we were exploring we have to move now
+  if (prevState.playerActions.exploring) {
+    store.dispatch(
+      actions.exploreMove(
+        { id: action.payload.playerId },
+        prevState.playerActions.tile,
+      ),
+    )
+  }
 }
 
 export const findPossibilities = (store, action) => {

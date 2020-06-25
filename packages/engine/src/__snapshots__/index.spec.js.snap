@@ -21,8 +21,8 @@ Index: @seeds>init
    "tiles": {
      "remaining": 0,
      "deck": []
-@@ -30,7 +37,14 @@
-     "excess": false,
+@@ -31,7 +38,14 @@
+     "exploring": false,
      "possibilities": []
    },
    "technical": {
@@ -92,7 +92,7 @@ Index: @tiles>init
    "cards": {
      "remaining": 0,
      "deck": []
-@@ -43,8 +76,48 @@
+@@ -44,8 +77,48 @@
          "type": "@seeds>init",
          "payload": {
            "master": "87FZ2jefz"
@@ -204,7 +204,7 @@ Index: @cards>init
    "players": [],
    "enemies": [],
    "grid": [
-@@ -116,8 +157,56 @@
+@@ -117,8 +158,56 @@
                "remaining": 2
              }
            ]
@@ -413,15 +413,24 @@ Index: @players>init
    "grid": [
      {
        "id": "QqyB-54vIKWS3s4ku7j5Y",
-@@ -108,9 +240,46 @@
-     }
+@@ -109,9 +241,82 @@
    ],
    "playerActions": {
      "excess": false,
+     "exploring": false,
 -    "possibilities": []
 +    "possibilities": [
 +      {
 +        "type": "@players>look",
++        "payload": {
++          "playerId": "medic",
++          "x": 0,
++          "y": -1,
++          "cost": 1
++        }
++      },
++      {
++        "type": "@players>explore",
 +        "payload": {
 +          "playerId": "medic",
 +          "x": 0,
@@ -439,7 +448,25 @@ Index: @players>init
 +        }
 +      },
 +      {
++        "type": "@players>explore",
++        "payload": {
++          "playerId": "medic",
++          "x": -1,
++          "y": 0,
++          "cost": 1
++        }
++      },
++      {
 +        "type": "@players>look",
++        "payload": {
++          "playerId": "medic",
++          "x": 1,
++          "y": 0,
++          "cost": 1
++        }
++      },
++      {
++        "type": "@players>explore",
 +        "payload": {
 +          "playerId": "medic",
 +          "x": 1,
@@ -455,13 +482,22 @@ Index: @players>init
 +          "y": 1,
 +          "cost": 1
 +        }
++      },
++      {
++        "type": "@players>explore",
++        "payload": {
++          "playerId": "medic",
++          "x": 0,
++          "y": 1,
++          "cost": 1
++        }
 +      }
 +    ]
    },
    "technical": {
      "actions": [
        {
-@@ -205,8 +374,130 @@
+@@ -206,8 +411,130 @@
                "remaining": 4
              }
            ]
@@ -644,7 +680,7 @@ Index: @cards>pick
    "players": [
      {
        "type": "medic",
-@@ -496,8 +503,23 @@
+@@ -533,8 +540,23 @@
              },
              "name": "xXx-scoot-xXx"
            }

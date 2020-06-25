@@ -22,6 +22,7 @@ export default [
   ['@players>pass', players.pass],
   ['@players>pass', players.findPossibilities],
   ['@players>look', players.look],
+  ['@players>explore', players.explore],
   ['@players>rotate', players.rotate],
   ['@players>drop', players.drop],
   ['@players>drop', players.findPossibilities],
