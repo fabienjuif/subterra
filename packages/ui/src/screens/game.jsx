@@ -135,7 +135,10 @@ const Game = ({ cards, players, tiles, dices, seeds }) => {
         <button onClick={() => dispatch('@players>pass')}>pass</button>
         {orderedPlayers.map((player) => (
           <motion.div key={player.type} positionTransition>
-            <UIPlayer {...player} />
+            <UIPlayer
+              {...player}
+              possibilities={state.playerActions.possibilities}
+            />
           </motion.div>
         ))}
       </div>

@@ -1,9 +1,20 @@
 import React from 'react'
 import cn from 'classnames'
+import Action from '../action'
 import classes from './player.module.scss'
 import gameClasses from '../playerIcon.module.scss' // TODO: use icon react
 
-const Player = ({ actionPoints, health, name, type, current }) => {
+const PLAYER_ACTIONS_TYPES = ['@players>heal']
+
+const Player = ({
+  id,
+  actionPoints,
+  health,
+  name,
+  type,
+  current,
+  possibilities,
+}) => {
   return (
     <table
       className={cn('player', classes.player, gameClasses[type], {
@@ -26,6 +37,23 @@ const Player = ({ actionPoints, health, name, type, current }) => {
         <tr>
           <td>health</td>
           <td>{health}</td>
+        </tr>
+        <tr>
+          <td colSpan={2}>
+            {possibilities
+              .filter((possibility) => {
+                const action =
+                  possibility.payload.actionOnSuccess || possibility
+                const { type, payload } = action
+
+                return (
+                  payload.playerId === id && PLAYER_ACTIONS_TYPES.includes(type)
+                )
+              })
+              .map((possibility) => (
+                <Action {...possibility} />
+              ))}
+          </td>
         </tr>
       </tbody>
     </table>
