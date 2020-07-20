@@ -6,7 +6,7 @@
   "arn": "arn:aws:lambda:eu-west-3:427962677004:function:getUserInfos",
   "dependencies": {
     "@fabienjuif/dynamo-client": "^2.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "node-fetch": "^2.6.0"
   },
   "workspaceDependencies": {
